@@ -6,11 +6,14 @@
 // and so on.
 //
 // Mutability:
+// The functions in this package will generally aim to mutate the underlaying
+// slice unless doing so doesn't make sense given the nature of the operation
+// or doing so would lead to confusion about which values are being mutated.
 // Transforms that mutate the supplied sources will always require the slice
-// as a pointer. If a function is operating on a slice value, it will not mutate
-// the underlaying slice. Thus, if a function requires that a slice be passed
+// as a pointer. Thus, if a function requires that a slice be passed
 // as a pointer, it can be expected that the function is mutating the
-// underlaying slice.
+// underlaying slice. Conversly, functions that require slices be passed as
+// values, can be expected to be immutable.
 //
 // Null result handling:
 // Transforms that reduce a result to a single value (such as Dequeue, or Fold)
@@ -104,14 +107,14 @@ func Clone(aa SliceType) SliceType {
 	return append(SliceType{}, aa...)
 }
 
-// Collect applies a given function against each item in the source list and
-// each item of a second list, and returns the concatenation of each result.
+// Collect applies a given function against each item in slice aa and
+// each item of a slice bb, and returns the concatenation of each result.
 //
 //   Illustration:
-//     source:     [A, B, C]
-//     otherList:  [X, Y, Z]
-//     collector:  sourceNode + listANode
-//     source.Collect(otherList, collector) -> [AX, AY, AZ, BX, BY, BZ, CX, XY, CZ]
+//     aa:  		[A, B, C]
+//     bb: 			[X, Y, Z]
+//     collector:   func(a, b) { return a + b }
+//     Collect(aa, bb, collector) -> [AX, AY, AZ, BX, BY, BZ, CX, XY, CZ]
 func Collect(aa SliceType, bb SliceType, collector func(a, b PrimitiveType) PrimitiveType) SliceType {
 	cc := SliceType{}
 	for _, a := range aa {
@@ -186,7 +189,8 @@ func Difference(aa, bb SliceType, equal func(a, b PrimitiveType) bool) SliceType
 	return cc
 }
 
-// Distinct removes all duplicates from the slice.
+// Distinct removes all duplicates from the slice, using the supplied equal
+// function to determine equality.
 func Distinct(aa *SliceType, equal func(a, b PrimitiveType) bool) {
 	bb := SliceType{}
 	dups := make([]bool, len(*aa))
@@ -222,6 +226,16 @@ func Enqueue(aa *SliceType, a PrimitiveType) {
 	*aa = append(*aa, a)
 	copy((*aa)[1:], (*aa)[:len(*aa)-1])
 	(*aa)[0] = a
+}
+
+// Filter removes all items from the slice for which the supplied test function
+// returns true.
+func Filter(aa *SliceType, test func(PrimitiveType) bool) {
+	for i := len(*aa) - 1; i >= 0; i-- {
+		if test((*aa)[i]) {
+			RemoveAt(aa, int64(i))
+		}
+	}
 }
 
 //Remove applies a test function to each item in the list, and removes all items

@@ -319,7 +319,29 @@ var Specifications = []Specification{
 				t.Skip()
 			},
 		},
-	}}
+	},
+	Specification{
+		FunctionName: "Filter",
+		StandardPath: Behavior{
+			Description: "Items are removed for which the test function returns true.",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{1, 2, 3, 4}
+				test := func(a generic.PrimitiveType) bool {
+					return a.(int)%2 == 0
+				}
+				generic.Filter(&aa, test)
+				bb := generic.SliceType{1, 3}
+				assert.ElementsMatch(t, aa, bb)
+			},
+		},
+		AlternativePath: Behavior{
+			Description: "",
+			Expectation: func(t *testing.T) {
+				t.Skip()
+			},
+		},
+	},
+}
 
 func TestTransforms(t *testing.T) {
 	for _, specification := range Specifications {

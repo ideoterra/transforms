@@ -4,14 +4,15 @@ import (
 	"math/big"
 
 	"github.com/cheekybits/genny/generic"
+	"github.com/jecolasurdo/transforms/pkg/slices/slicetypes"
 )
 
 //Generic is a placeholder for an interface{}
 type Generic generic.Type
 
 //AsUintSlice converts a []Generic to a UintSlice
-func AsUintSlice(s []Generic, conversion func(value Generic) uint) UintSlice {
-	r := make(UintSlice, len(s))
+func AsUintSlice(s []Generic, conversion func(value Generic) uint) slicetypes.UintSlice {
+	r := make(slicetypes.UintSlice, len(s))
 	for i, v := range s {
 		r[i] = conversion(v)
 	}
@@ -19,8 +20,8 @@ func AsUintSlice(s []Generic, conversion func(value Generic) uint) UintSlice {
 }
 
 //AsUint8Slice converts a []Generic to a Uint8Slice
-func AsUint8Slice(s []Generic, conversion func(value Generic) uint8) Uint8Slice {
-	r := make(Uint8Slice, len(s))
+func AsUint8Slice(s []Generic, conversion func(value Generic) uint8) slicetypes.Uint8Slice {
+	r := make(slicetypes.Uint8Slice, len(s))
 	for i, v := range s {
 		r[i] = conversion(v)
 	}
@@ -28,8 +29,8 @@ func AsUint8Slice(s []Generic, conversion func(value Generic) uint8) Uint8Slice 
 }
 
 //AsUint16Slice converts a []Generic to a Uint16Slice
-func AsUint16Slice(s []Generic, conversion func(value Generic) uint16) Uint16Slice {
-	r := make(Uint16Slice, len(s))
+func AsUint16Slice(s []Generic, conversion func(value Generic) uint16) slicetypes.Uint16Slice {
+	r := make(slicetypes.Uint16Slice, len(s))
 	for i, v := range s {
 		r[i] = conversion(v)
 	}
@@ -37,8 +38,8 @@ func AsUint16Slice(s []Generic, conversion func(value Generic) uint16) Uint16Sli
 }
 
 //AsUint32Slice converts a []Generic to a Uint32Slice
-func AsUint32Slice(s []Generic, conversion func(value Generic) uint32) Uint32Slice {
-	r := make(Uint32Slice, len(s))
+func AsUint32Slice(s []Generic, conversion func(value Generic) uint32) slicetypes.Uint32Slice {
+	r := make(slicetypes.Uint32Slice, len(s))
 	for i, v := range s {
 		r[i] = conversion(v)
 	}
@@ -46,8 +47,8 @@ func AsUint32Slice(s []Generic, conversion func(value Generic) uint32) Uint32Sli
 }
 
 //AsUint64Slice converts a []Generic to a Uint64Slice
-func AsUint64Slice(s []Generic, conversion func(value Generic) uint64) Uint64Slice {
-	r := make(Uint64Slice, len(s))
+func AsUint64Slice(s []Generic, conversion func(value Generic) uint64) slicetypes.Uint64Slice {
+	r := make(slicetypes.Uint64Slice, len(s))
 	for i, v := range s {
 		r[i] = conversion(v)
 	}
@@ -55,8 +56,8 @@ func AsUint64Slice(s []Generic, conversion func(value Generic) uint64) Uint64Sli
 }
 
 //AsIntSlice converts a []Generic to an IntSlice
-func AsIntSlice(s []Generic, conversion func(value Generic) int) IntSlice {
-	r := make(IntSlice, len(s))
+func AsIntSlice(s []Generic, conversion func(value Generic) int) slicetypes.IntSlice {
+	r := make(slicetypes.IntSlice, len(s))
 	for i, v := range s {
 		r[i] = conversion(v)
 	}
@@ -64,8 +65,8 @@ func AsIntSlice(s []Generic, conversion func(value Generic) int) IntSlice {
 }
 
 //AsInt8Slice converts a []Generic to an Int8Slice
-func AsInt8Slice(s []Generic, conversion func(value Generic) int8) Int8Slice {
-	r := make(Int8Slice, len(s))
+func AsInt8Slice(s []Generic, conversion func(value Generic) int8) slicetypes.Int8Slice {
+	r := make(slicetypes.Int8Slice, len(s))
 	for i, v := range s {
 		r[i] = conversion(v)
 	}
@@ -73,8 +74,8 @@ func AsInt8Slice(s []Generic, conversion func(value Generic) int8) Int8Slice {
 }
 
 //AsInt16Slice converts a []Generic to an Int16Slice
-func AsInt16Slice(s []Generic, conversion func(value Generic) int16) Int16Slice {
-	r := make(Int16Slice, len(s))
+func AsInt16Slice(s []Generic, conversion func(value Generic) int16) slicetypes.Int16Slice {
+	r := make(slicetypes.Int16Slice, len(s))
 	for i, v := range s {
 		r[i] = conversion(v)
 	}
@@ -82,8 +83,8 @@ func AsInt16Slice(s []Generic, conversion func(value Generic) int16) Int16Slice 
 }
 
 //AsInt32Slice converts a []Generic to an Int32Slice
-func AsInt32Slice(s []Generic, conversion func(value Generic) int32) Int32Slice {
-	r := make(Int32Slice, len(s))
+func AsInt32Slice(s []Generic, conversion func(value Generic) int32) slicetypes.Int32Slice {
+	r := make(slicetypes.Int32Slice, len(s))
 	for i, v := range s {
 		r[i] = conversion(v)
 	}
@@ -91,8 +92,8 @@ func AsInt32Slice(s []Generic, conversion func(value Generic) int32) Int32Slice 
 }
 
 //AsInt64Slice converts a []Generic to an Int64Slice
-func AsInt64Slice(s []Generic, conversion func(value Generic) int64) Int64Slice {
-	r := make(Int64Slice, len(s))
+func AsInt64Slice(s []Generic, conversion func(value Generic) int64) slicetypes.Int64Slice {
+	r := make(slicetypes.Int64Slice, len(s))
 	for i, v := range s {
 		r[i] = conversion(v)
 	}
@@ -100,8 +101,8 @@ func AsInt64Slice(s []Generic, conversion func(value Generic) int64) Int64Slice 
 }
 
 //AsFloat32Slice converts a []Generic to a Float32Slice
-func AsFloat32Slice(s []Generic, conversion func(value Generic) float32) Float32Slice {
-	r := make(Float32Slice, len(s))
+func AsFloat32Slice(s []Generic, conversion func(value Generic) float32) slicetypes.Float32Slice {
+	r := make(slicetypes.Float32Slice, len(s))
 	for i, v := range s {
 		r[i] = conversion(v)
 	}
@@ -109,8 +110,8 @@ func AsFloat32Slice(s []Generic, conversion func(value Generic) float32) Float32
 }
 
 //AsFloat64Slice converts a []Generic to a Float64Slice
-func AsFloat64Slice(s []Generic, conversion func(value Generic) float64) Float64Slice {
-	r := make(Float64Slice, len(s))
+func AsFloat64Slice(s []Generic, conversion func(value Generic) float64) slicetypes.Float64Slice {
+	r := make(slicetypes.Float64Slice, len(s))
 	for i, v := range s {
 		r[i] = conversion(v)
 	}
@@ -118,8 +119,8 @@ func AsFloat64Slice(s []Generic, conversion func(value Generic) float64) Float64
 }
 
 //AsComplex64Slice converts a []Generic to a Complex64Slice
-func AsComplex64Slice(s []Generic, conversion func(value Generic) complex64) Complex64Slice {
-	r := make(Complex64Slice, len(s))
+func AsComplex64Slice(s []Generic, conversion func(value Generic) complex64) slicetypes.Complex64Slice {
+	r := make(slicetypes.Complex64Slice, len(s))
 	for i, v := range s {
 		r[i] = conversion(v)
 	}
@@ -127,8 +128,8 @@ func AsComplex64Slice(s []Generic, conversion func(value Generic) complex64) Com
 }
 
 //AsComplex128Slice converts a []Generic to a Complex128Slice
-func AsComplex128Slice(s []Generic, conversion func(value Generic) complex128) Complex128Slice {
-	r := make(Complex128Slice, len(s))
+func AsComplex128Slice(s []Generic, conversion func(value Generic) complex128) slicetypes.Complex128Slice {
+	r := make(slicetypes.Complex128Slice, len(s))
 	for i, v := range s {
 		r[i] = conversion(v)
 	}
@@ -136,8 +137,8 @@ func AsComplex128Slice(s []Generic, conversion func(value Generic) complex128) C
 }
 
 //AsByteSlice converts a []Generic to a ByteSlice
-func AsByteSlice(s []Generic, conversion func(value Generic) byte) ByteSlice {
-	r := make(ByteSlice, len(s))
+func AsByteSlice(s []Generic, conversion func(value Generic) byte) slicetypes.ByteSlice {
+	r := make(slicetypes.ByteSlice, len(s))
 	for i, v := range s {
 		r[i] = conversion(v)
 	}
@@ -145,8 +146,8 @@ func AsByteSlice(s []Generic, conversion func(value Generic) byte) ByteSlice {
 }
 
 //AsRuneSlice converts a []Generic to a RuneSlice
-func AsRuneSlice(s []Generic, conversion func(value Generic) rune) RuneSlice {
-	r := make(RuneSlice, len(s))
+func AsRuneSlice(s []Generic, conversion func(value Generic) rune) slicetypes.RuneSlice {
+	r := make(slicetypes.RuneSlice, len(s))
 	for i, v := range s {
 		r[i] = conversion(v)
 	}
@@ -154,8 +155,8 @@ func AsRuneSlice(s []Generic, conversion func(value Generic) rune) RuneSlice {
 }
 
 //AsUintptrSlice converts a []Generic to a UintptrSlice
-func AsUintptrSlice(s []Generic, conversion func(value Generic) uintptr) UintptrSlice {
-	r := make(UintptrSlice, len(s))
+func AsUintptrSlice(s []Generic, conversion func(value Generic) uintptr) slicetypes.UintptrSlice {
+	r := make(slicetypes.UintptrSlice, len(s))
 	for i, v := range s {
 		r[i] = conversion(v)
 	}
@@ -163,8 +164,8 @@ func AsUintptrSlice(s []Generic, conversion func(value Generic) uintptr) Uintptr
 }
 
 //AsStringSlice converts a []Generic to a StringSlice
-func AsStringSlice(s []Generic, conversion func(value Generic) string) StringSlice {
-	r := make(StringSlice, len(s))
+func AsStringSlice(s []Generic, conversion func(value Generic) string) slicetypes.StringSlice {
+	r := make(slicetypes.StringSlice, len(s))
 	for i, v := range s {
 		r[i] = conversion(v)
 	}
@@ -172,8 +173,8 @@ func AsStringSlice(s []Generic, conversion func(value Generic) string) StringSli
 }
 
 //AsInterfaceSlice converts a []Generic to an InterfaceSlice
-func AsInterfaceSlice(s []Generic, conversion func(value Generic) interface{}) InterfaceSlice {
-	r := make(InterfaceSlice, len(s))
+func AsInterfaceSlice(s []Generic, conversion func(value Generic) interface{}) slicetypes.InterfaceSlice {
+	r := make(slicetypes.InterfaceSlice, len(s))
 	for i, v := range s {
 		r[i] = conversion(v)
 	}
@@ -181,8 +182,8 @@ func AsInterfaceSlice(s []Generic, conversion func(value Generic) interface{}) I
 }
 
 //AsBigIntSlice converts a []Generic to a BigIntSlice
-func AsBigIntSlice(s []Generic, conversion func(value Generic) *big.Int) BigIntSlice {
-	r := make(BigIntSlice, len(s))
+func AsBigIntSlice(s []Generic, conversion func(value Generic) *big.Int) slicetypes.BigIntSlice {
+	r := make(slicetypes.BigIntSlice, len(s))
 	for i, v := range s {
 		r[i] = conversion(v)
 	}
@@ -190,8 +191,8 @@ func AsBigIntSlice(s []Generic, conversion func(value Generic) *big.Int) BigIntS
 }
 
 //AsBigFloatSlice converts a []Generic to a BigFloatSlice
-func AsBigFloatSlice(s []Generic, conversion func(value Generic) *big.Float) BigFloatSlice {
-	r := make(BigFloatSlice, len(s))
+func AsBigFloatSlice(s []Generic, conversion func(value Generic) *big.Float) slicetypes.BigFloatSlice {
+	r := make(slicetypes.BigFloatSlice, len(s))
 	for i, v := range s {
 		r[i] = conversion(v)
 	}
