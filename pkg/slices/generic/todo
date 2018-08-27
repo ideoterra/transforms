@@ -1,0 +1,96 @@
+package generic
+
+
+
+	Specification{
+		FunctionName: "",
+		StandardPath: Behavior{
+			Description: "",
+			Expectation: func(t *testing.T){
+				t.Skip()
+			},
+		},
+		AlternativePath: Behavior{
+			Description: "",
+			Expectation: func(t *testing.T){
+				t.Skip()
+			},
+		},
+	},
+
+/*
+
+All([]float64, func(float64) bool) []float
+AutoCorrelate *
+CrossCorrelate *
+Convolute *
+SkipUntil *
+TakeUntil *
+
+Difference
+Distinct
+Empty
+End
+Enqueue
+Equal
+Filter
+FindIndex
+First
+Flatten *
+Fold
+Foldi
+ForEach
+ForEachConcurrently
+Group
+Head
+Indices
+InsertAfter
+InsertBefore
+InsertAt
+Intersection
+IsProperSubset
+IsProperSuperset
+IsSubset
+IsSuperset
+Item
+Iter
+Last
+Len
+Map
+None
+Pairwise
+Partition
+Permutable
+Permutations
+Permute
+Pop
+Push
+Reduce
+RemoveAt
+Reverse
+Skip
+SkipWhile
+Some
+Sort
+SplitAfter
+SplitAt
+SplitBefore
+String
+Swap
+SwapIndex
+Tail
+Take
+TakeWhile
+Union
+Unzip
+WindowedC
+WindowedL
+WindowedR
+Zip
+
+*/
+
+
+Ripe for performance improvement
+Any <- Can do a parallel search, splitting the list into chunks, each scanned by a different channel
+Count <- Can be split and counted in parallel

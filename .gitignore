@@ -1,1 +1,4 @@
 vendor
+cover.out
+coverage.out
+tmp.out
