@@ -28,6 +28,9 @@ Convolute *
 CountSorted *
 DistinctSorted *
 FilterS *
+FindIndexS *
+FindIndices *
+FindIndicesS *
 FirstS *
 Flatten *
 GroupS *
@@ -47,7 +50,6 @@ SplitBeforeS*
 SkipUntil *
 TakeUntil *
 
-Filter
 FindIndex
 First
 Fold

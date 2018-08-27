@@ -238,6 +238,17 @@ func Filter(aa *SliceType, test func(PrimitiveType) bool) {
 	}
 }
 
+// FindIndex returns the index for the first element in the slice for which the
+// supplied test function returns true. If no matches are found, -1 is returned.
+func FindIndex(aa SliceType, test func(PrimitiveType) bool) int64 {
+	for i, a := range aa {
+		if test(a) {
+			return int64(i)
+		}
+	}
+	return -1
+}
+
 //Remove applies a test function to each item in the list, and removes all items
 //for which the test returns true.
 // func Remove(aa *SliceType, test func(PrimitiveType) bool) {

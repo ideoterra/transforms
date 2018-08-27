@@ -341,6 +341,31 @@ var Specifications = []Specification{
 			},
 		},
 	},
+	Specification{
+		FunctionName: "FindIndex",
+		StandardPath: Behavior{
+			Description: "The first matching element is returned.",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{1, 2, 3, 4}
+				test := func(a generic.PrimitiveType) bool {
+					return a.(int) >= 3
+				}
+				n := generic.FindIndex(aa, test)
+				assert.Equal(t, int64(2), n)
+			},
+		},
+		AlternativePath: Behavior{
+			Description: "If no match is found, -1 is returned.",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{1, 2, 3, 4}
+				test := func(a generic.PrimitiveType) bool {
+					return a.(int) >= 5
+				}
+				n := generic.FindIndex(aa, test)
+				assert.Equal(t, int64(-1), n)
+			},
+		},
+	},
 }
 
 func TestTransforms(t *testing.T) {
