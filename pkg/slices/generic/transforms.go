@@ -204,6 +204,11 @@ func Distinct(aa *SliceType, equal func(a, b PrimitiveType) bool) {
 	Append(aa, bb...)
 }
 
+// Empty returns true if the length of the slice is zero.
+func Empty(aa SliceType) bool {
+	return len(aa) == 0
+}
+
 //Remove applies a test function to each item in the list, and removes all items
 //for which the test returns true.
 // func Remove(aa *SliceType, test func(PrimitiveType) bool) {

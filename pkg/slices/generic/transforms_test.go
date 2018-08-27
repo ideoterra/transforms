@@ -265,7 +265,25 @@ var Specifications = []Specification{
 				t.Skip()
 			},
 		},
-	}}
+	},
+	Specification{
+		FunctionName: "Empty",
+		StandardPath: Behavior{
+			Description: "Returns true if slice is empty",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{}
+				assert.True(t, generic.Empty(aa))
+			},
+		},
+		AlternativePath: Behavior{
+			Description: "Returns false if slice is not empty",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{1}
+				assert.False(t, generic.Empty(aa))
+			},
+		},
+	},
+}
 
 func TestTransforms(t *testing.T) {
 	for _, specification := range Specifications {
