@@ -217,6 +217,13 @@ func End(aa SliceType) SliceType {
 	return SliceType{aa[len(aa)-1]}
 }
 
+// Enqueue places an item at the head of the slice.
+func Enqueue(aa *SliceType, a PrimitiveType) {
+	*aa = append(*aa, a)
+	copy((*aa)[1:], (*aa)[:len(*aa)-1])
+	(*aa)[0] = a
+}
+
 //Remove applies a test function to each item in the list, and removes all items
 //for which the test returns true.
 // func Remove(aa *SliceType, test func(PrimitiveType) bool) {

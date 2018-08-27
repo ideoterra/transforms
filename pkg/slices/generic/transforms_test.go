@@ -302,7 +302,24 @@ var Specifications = []Specification{
 			},
 		},
 	},
-}
+	Specification{
+		FunctionName: "Enqueue",
+		StandardPath: Behavior{
+			Description: "The value is added to the head of the slice.",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{1, 2, 3}
+				generic.Enqueue(&aa, 4)
+				bb := generic.SliceType{4, 1, 2, 3}
+				assert.ElementsMatch(t, aa, bb)
+			},
+		},
+		AlternativePath: Behavior{
+			Description: "",
+			Expectation: func(t *testing.T) {
+				t.Skip()
+			},
+		},
+	}}
 
 func TestTransforms(t *testing.T) {
 	for _, specification := range Specifications {

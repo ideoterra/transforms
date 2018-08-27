@@ -47,9 +47,6 @@ SplitBeforeS*
 SkipUntil *
 TakeUntil *
 
-Empty
-End
-Enqueue
 Filter
 FindIndex
 First
