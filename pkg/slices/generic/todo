@@ -20,23 +20,40 @@ package generic
 
 /*
 
-All([]float64, func(float64) bool) []float
+AnyS*
+AllS*
 AutoCorrelate *
 CrossCorrelate *
 Convolute *
+CountSorted *
+DistinctSorted *
+FilterS *
+FirstS *
+Flatten *
+GroupS *
+InsertAfterS *
+InsertBeforeS *
+IntersectionS *
+IsProperSubsetS*
+IsProperSupersetS*
+IsSubsetS*
+IsSupersetS*
+LastS*
+NoneS*
+PartitionS*
+RemoveS *
+SplitAfterS*  
+SplitBeforeS*
 SkipUntil *
 TakeUntil *
 
-Difference
 Distinct
 Empty
 End
 Enqueue
-Equal
 Filter
 FindIndex
 First
-Flatten *
 Fold
 Foldi
 ForEach
@@ -94,3 +111,4 @@ Zip
 Ripe for performance improvement
 Any <- Can do a parallel search, splitting the list into chunks, each scanned by a different channel
 Count <- Can be split and counted in parallel
+Difference <- currently has a minor optimiation to only scan the shorter list. However, other strategies could improve performance quite a bit.

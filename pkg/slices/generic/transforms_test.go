@@ -214,6 +214,37 @@ var Specifications = []Specification{
 			},
 		},
 	},
+	Specification{
+		FunctionName: "Difference",
+		StandardPath: Behavior{
+			Description: "Returns the difference between two slices",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{1, 2, 3, 4}
+				bb := generic.SliceType{5, 4, 3}
+				equal := func(a, b generic.PrimitiveType) bool {
+					return a.(int) == b.(int)
+				}
+				cc := generic.Difference(aa, bb, equal)
+				dd := generic.SliceType{1, 2, 5}
+				assert.ElementsMatch(t, cc, dd)
+			},
+		},
+		AlternativePath: Behavior{
+			Description: `Duplicates are handled.
+						  Those from aa appear first in the result. bb appear
+						  second. Order and duplicates should be maintained.`,
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{1, 2, 3, 3, 1, 4}
+				bb := generic.SliceType{5, 4, 3, 5}
+				equal := func(a, b generic.PrimitiveType) bool {
+					return a.(int) == b.(int)
+				}
+				cc := generic.Difference(aa, bb, equal)
+				dd := generic.SliceType{1, 2, 1, 5, 5}
+				assert.ElementsMatch(t, cc, dd)
+			},
+		},
+	},
 }
 
 func TestTransforms(t *testing.T) {

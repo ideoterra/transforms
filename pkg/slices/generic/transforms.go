@@ -1,31 +1,53 @@
 // Package generic contains transform functions for SliceTypes.
 //
+// Parameter Naming:
 // By convention, the source slice will be named `aa`. If multiple slices are
 // to be supplied as arguments to a function, they are named `aa`, `bb`, `cc`,
 // and so on.
 //
+// Mutability:
 // Transforms that mutate the supplied sources will always require the slice
 // as a pointer. If a function is operating on a slice value, it will not mutate
-// the underlaying slice. However, if a function requires that a slice be passed
+// the underlaying slice. Thus, if a function requires that a slice be passed
 // as a pointer, it can be expected that the function is mutating the
 // underlaying slice.
 //
+// Null result handling:
 // Transforms that reduce a result to a single value (such as Dequeue, or Fold)
-// return a SliceType containing a single element rather than a PrimitiveType.
-// This is done to avoid edge cases associated with applying transformations
-// on empty lists or that result in an empty value. There are generally three
+// return a SliceType containing a single element rather than return a
+// PrimitiveType. This is done to avoid edge cases associated with
+// transformations that result in an null value. There are generally three
 // options for how to handle an empty result. 1) Have the result be a pointer
 // rather than a 'value', and set the result to nil if there is no result.
-// 2) If there is no result, just return a zero value. 3) Return the result as
+// 2) If there is no result, return a zero value. 3) Return the result as
 // an empty slice if there is no result. Option 1 (returning nil) can be
-// confusing if the underlaying slice contains pointers such as `[]*struct{}`
-// in this case, it would be difficult to differentiate between a nil that is
+// confusing if the underlaying slice contains pointers such as `[]*struct{}`.
+// In such a case, it would be difficult to differentiate between a nil that is
 // returned because the slice's head contained a nil pointer vs the slice being
 // initially empty. A similar issue exists for option 2 (return a zero-value).
 // Returning a zero value has a different implication from returning no value.
-// As such, it seemed to make sense to just return a slice in all circumstances.
-// If the slice is empty, we know there was no result returned, and confusion is
-// avoided.
+// As such, it makes sense to just return a slice in all circumstances. If the
+// resulting slice is empty, we know there was no result returned, and confusion
+// is avoided.
+//
+// Ordinality:
+// Unless otherwise noted, the algorithms implemented for the transformations
+// make no assumptions about the order or orderability of the dataset. For
+// instance, the algorithms for `Any()` and `Difference()` are intentionally
+// naive, so as to make as few assumptions about the nature of the data as
+// possible. In cases where performance can be improved using a sorted dataset
+// alternative functions are provided, such as in `AnyS()`, and
+// `DifferenceS())`. By convention all functions that expect the inbound data
+// to be sorted are suffixed with an 'S'. Such methods assume the data is sorted
+// and may return unexpected results if the data is not, in fact, sorted.
+//
+// Equality (and Less) functions:
+// Transforms that need to test the equality of slice elements are intentionaly
+// left naive, and do not make any assumptions about how to test for equality.
+// As a result, functions such as `Difference()` require an equality function
+// to be supplied. For primitive types, typical equality (and `Less()`)
+// functions are provided in the `eq` and `less` packages. It is encouraged to
+// use the supplied equality (and less) functions for primitive types.
 package generic
 
 import (
@@ -124,24 +146,45 @@ func Dequeue(aa *SliceType) SliceType {
 	return SliceType{head}
 }
 
-// // Difference returns a new slice that contains items that are not common
-// // between slice aa and slice bb.
-// // The optional equality function is used to compare each item in the slices.
-// // If no equality function is supplied, the standard infix equality operator
-// // `==` is applied to each element of the two slices.
-// func Difference(aa, bb SliceType, equal ...Equality) SliceType {
-// 	// seems like we should have two different types of generic transforms.
-// 	// numeric transforms, where the type has a standard equality operator,
-// 	// and non-numeric transforms, where the type does not have a standard equality
-// 	// operator
-// 	//
-// 	// Another approach is to presume that no standard comparisons exist
-// 	//
-// 	// Yet another approach could be to supply a set of standard equality functions
-// 	// That can be supplied if the user doesn't want to write their own. I kindof
-// 	// like this option. As such, we will need to generate a set of equality
-// 	// generic equality functions, one for each primitive type.
-// }
+// Difference returns a new slice that contains items that are not common
+// between aa and bb. The supplied equal function is used to compare values
+// between each slice. Duplicates are retained through this process. As such,
+// The elements in the slice that results from this transform may not be
+// distinct. Distinct values from aa are listed ahead of those from bb in the
+// resulting slice.
+//
+// Illustration:
+//   aa: [1,2,3,3,1,4]
+//   bb: [5,4,3,5]
+//   equal: func(a, b) bool {return a == b}
+//   Difference(aa, bb, equal) -> [1,2,1,5,5]
+func Difference(aa, bb SliceType, equal func(a, b PrimitiveType) bool) SliceType {
+	ii := make([]bool, len(aa))
+	jj := make([]bool, len(bb))
+	for i, a := range aa {
+		for j, b := range bb {
+			if equal(a, b) {
+				ii[i] = true
+				jj[j] = true
+			}
+		}
+	}
+
+	cc := SliceType{}
+	for i, a := range aa {
+		if !ii[i] {
+			cc = append(cc, a)
+		}
+	}
+
+	for j, b := range bb {
+		if !jj[j] {
+			cc = append(cc, b)
+		}
+	}
+
+	return cc
+}
 
 //Remove applies a test function to each item in the list, and removes all items
 //for which the test returns true.
