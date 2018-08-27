@@ -283,6 +283,25 @@ var Specifications = []Specification{
 			},
 		},
 	},
+	Specification{
+		FunctionName: "End",
+		StandardPath: Behavior{
+			Description: "Returns a slice with the last element.",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{1, 2, 3}
+				bb := generic.End(aa)
+				assert.Equal(t, 3, bb[0])
+			},
+		},
+		AlternativePath: Behavior{
+			Description: "An empty slice returns an empty slice.",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{}
+				bb := generic.End(aa)
+				assert.True(t, generic.Empty(bb))
+			},
+		},
+	},
 }
 
 func TestTransforms(t *testing.T) {

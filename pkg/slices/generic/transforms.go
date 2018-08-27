@@ -209,6 +209,14 @@ func Empty(aa SliceType) bool {
 	return len(aa) == 0
 }
 
+// End returns the a SliceType containing only the last element from aa.
+func End(aa SliceType) SliceType {
+	if Empty(aa) {
+		return SliceType{}
+	}
+	return SliceType{aa[len(aa)-1]}
+}
+
 //Remove applies a test function to each item in the list, and removes all items
 //for which the test returns true.
 // func Remove(aa *SliceType, test func(PrimitiveType) bool) {
