@@ -186,6 +186,24 @@ func Difference(aa, bb SliceType, equal func(a, b PrimitiveType) bool) SliceType
 	return cc
 }
 
+// Distinct removes all duplicates from the slice.
+func Distinct(aa *SliceType, equal func(a, b PrimitiveType) bool) {
+	bb := SliceType{}
+	dups := make([]bool, len(*aa))
+	for i, a := range *aa {
+		if !dups[i] {
+			bb = append(bb, a)
+		}
+		for j := i + 1; j < len(*aa); j++ {
+			if equal(a, (*aa)[j]) {
+				dups[j] = true
+			}
+		}
+	}
+	Clear(aa)
+	Append(aa, bb...)
+}
+
 //Remove applies a test function to each item in the list, and removes all items
 //for which the test returns true.
 // func Remove(aa *SliceType, test func(PrimitiveType) bool) {

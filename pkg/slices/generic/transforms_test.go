@@ -245,7 +245,27 @@ var Specifications = []Specification{
 			},
 		},
 	},
-}
+	Specification{
+		FunctionName: "Distinct",
+		StandardPath: Behavior{
+			Description: "Duplicates are removed from the slice, mutating the original",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{"Dani", "Riley", "Dani", "Tori", "Janice"}
+				equal := func(a, b generic.PrimitiveType) bool {
+					return a.(string) == b.(string)
+				}
+				generic.Distinct(&aa, equal)
+				bb := generic.SliceType{"Dani", "Riley", "Tori", "Janice"}
+				assert.ElementsMatch(t, aa, bb)
+			},
+		},
+		AlternativePath: Behavior{
+			Description: "",
+			Expectation: func(t *testing.T) {
+				t.Skip()
+			},
+		},
+	}}
 
 func TestTransforms(t *testing.T) {
 	for _, specification := range Specifications {
