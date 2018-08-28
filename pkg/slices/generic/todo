@@ -33,8 +33,10 @@ FindIndices *
 FindIndicesS *
 FirstS *
 Flatten *
-ForEachi *
-ForEachiC
+ForEachI *
+ForEachIC
+ForEachIR
+ForEachCIR
 GroupS *
 InsertAfterS *
 InsertBeforeS *

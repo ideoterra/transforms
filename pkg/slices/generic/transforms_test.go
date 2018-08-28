@@ -445,17 +445,25 @@ var Specifications = []Specification{
 			Expectation: func(t *testing.T) {
 				aa := generic.SliceType{"A", "B", "C"}
 				result := ""
-				fn := func(a generic.PrimitiveType) {
+				fn := func(a generic.PrimitiveType) bool {
 					result = result + a.(string)
+					return true
 				}
 				generic.ForEach(aa, fn)
 				assert.Equal(t, "ABC", result)
 			},
 		},
 		AlternativePath: Behavior{
-			Description: "",
+			Description: "The iterator stops if false is returned.",
 			Expectation: func(t *testing.T) {
-				t.Skip()
+				aa := generic.SliceType{"A", "B", "C"}
+				result := ""
+				fn := func(a generic.PrimitiveType) bool {
+					result = result + a.(string)
+					return a.(string) != "B"
+				}
+				generic.ForEach(aa, fn)
+				assert.Equal(t, "AB", result)
 			},
 		},
 	},
@@ -908,6 +916,27 @@ var Specifications = []Specification{
 			},
 		},
 	},
+	// Specification{
+	// 	FunctionName: "Last",
+	// 	StandardPath: Behavior{
+	// 		Description: "Returns the last that matches the expectation.",
+	// 		Expectation: func(t *testing.T) {
+	// 			aa := generic.SliceType{1, 2, 3, 4, 5, 6, 7, 8}
+	// 			test := func(a generic.PrimitiveType) bool {
+	// 				return a.(int)%2 != 0
+	// 			}
+	// 			bb := generic.Last(aa, test)
+	// 			cc := generic.SliceType{7}
+	// 			assert.ElementsMatch(t, bb, cc)
+	// 		},
+	// 	},
+	// 	AlternativePath: Behavior{
+	// 		Description: "",
+	// 		Expectation: func(t *testing.T) {
+	// 			t.Skip()
+	// 		},
+	// 	},
+	// },
 }
 
 func TestTransforms(t *testing.T) {

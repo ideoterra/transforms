@@ -336,9 +336,12 @@ func FoldI(aa SliceType, acc PrimitiveType, folder func(i int64, a, acc Primitiv
 }
 
 // ForEach applies each element of the list to the given function.
-func ForEach(aa SliceType, fn func(PrimitiveType)) {
+// ForEach will stop iterating if fn return false.
+func ForEach(aa SliceType, fn func(PrimitiveType) bool) {
 	for _, a := range aa {
-		fn(a)
+		if !fn(a) {
+			return
+		}
 	}
 }
 
@@ -462,12 +465,14 @@ func InsertAt(aa *SliceType, a PrimitiveType, i int64) {
 // to both aa and bb. Duplicates are removed in this process.
 func Intersection(aa, bb SliceType, equal func(a, b PrimitiveType) bool) SliceType {
 	cc := SliceType{}
-	ForEach(aa, func(a PrimitiveType) {
-		ForEach(bb, func(b PrimitiveType) {
+	ForEach(aa, func(a PrimitiveType) bool {
+		ForEach(bb, func(b PrimitiveType) bool {
 			if equal(a, b) && !Any(cc, func(c PrimitiveType) bool { return equal(a, c) }) {
 				Append(&cc, a)
 			}
+			return true
 		})
+		return true
 	})
 	return cc
 }
@@ -530,8 +535,8 @@ func Item(aa SliceType, i int64) SliceType {
 }
 
 // ItemFuzzy returns a SliceType containing the element at aa[i].
-// if the supplied index is out of bounds of aa, ItemFuzzy will attempt to
-// retrieve the head or end element of aa according to the following rules:
+// if the supplied index is outside of the bounds of aa, ItemFuzzy will attempt
+// to retrieve the head or end element of aa according to the following rules:
 // If len(aa) == 0 an empty SliceType is returned.
 // If i < 0, the head of aa is returned.
 // If i >= len(aa), the end of the aa is returned.
@@ -551,8 +556,15 @@ func ItemFuzzy(aa SliceType, i int64) SliceType {
 // Last applies a test function to each element in aa, and returns a SliceType
 // containing the last element for which the test returned true. If no elements
 // pass the supplied test, the resulting SliceType will be empty.
-func Last(aa SliceType, test func(a PrimitiveType) bool) SliceType {
-	panic("not implemented")
+func Last(aa SliceType, test func(PrimitiveType) bool) SliceType {
+	bb := SliceType{}
+	ForEachR(aa, func(a PrimitiveType) {
+		if test(a) {
+			Append(&bb, a)
+			return
+		}
+	})
+	return bb
 }
 
 //Remove applies a test function to each item in the list, and removes all items
