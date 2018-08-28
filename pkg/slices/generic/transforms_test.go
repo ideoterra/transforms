@@ -571,15 +571,27 @@ var Specifications = []Specification{
 	Specification{
 		FunctionName: "InsertAfter",
 		StandardPath: Behavior{
-			Description: "",
+			Description: "Inserts after the first element passing the test",
 			Expectation: func(t *testing.T) {
-				t.Skip()
+				aa := generic.SliceType{1, 2, 3}
+				test := func(a generic.PrimitiveType) bool {
+					return a.(int)%2 != 0
+				}
+				generic.InsertAfter(&aa, 9, test)
+				bb := generic.SliceType{1, 9, 2, 3}
+				assert.ElementsMatch(t, aa, bb)
 			},
 		},
 		AlternativePath: Behavior{
-			Description: "",
+			Description: "No tests pass, inserts at end.",
 			Expectation: func(t *testing.T) {
-				t.Skip()
+				aa := generic.SliceType{1, 2, 3}
+				test := func(a generic.PrimitiveType) bool {
+					return a.(int) > 10
+				}
+				generic.InsertAfter(&aa, 9, test)
+				bb := generic.SliceType{1, 2, 3, 9}
+				assert.ElementsMatch(t, aa, bb)
 			},
 		},
 	},
