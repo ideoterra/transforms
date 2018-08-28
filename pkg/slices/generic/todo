@@ -51,7 +51,6 @@ SplitBeforeS*
 SkipUntil *
 TakeUntil *
 
-Group
 Head
 Indices
 InsertAfter
@@ -105,3 +104,4 @@ Ripe for performance improvement
 Any <- Can do a parallel search, splitting the list into chunks, each scanned by a different channel
 Count <- Can be split and counted in parallel
 Difference <- currently has a minor optimiation to only scan the shorter list. However, other strategies could improve performance quite a bit.
+Group <- internal hashing is really naive. Could be optimized if hashes were sorted.

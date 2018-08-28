@@ -327,17 +327,33 @@ func ForEachC(aa SliceType, c int, fn func(PrimitiveType)) {
 }
 
 // Group consolidates like-items into groups according to the supplied grouper
-// function, and returns them as a two dimensional SliceType2
-// The grouper function is expected to return hash value (expressed as slice
-// index value) which Group will use to determine into which bucket each element
-// should be plaed.
+// function, and returns them as a SliceType2.
+// The grouper function is expected to return a hash value which Group will use
+// to determine into which bucket each element wil be placed.
 func Group(aa SliceType, grouper func(PrimitiveType) int64) SliceType2 {
-	bb := SliceType2{}
-	for _, a := range aa {
-		i := grouper(a)
-		// if i >= len(bb), then extend bb somehow so that it contains i.
-		// append a to the slice at index i of bb
+	return Groupi(aa, func(_ int64, a PrimitiveType) int64 { return grouper(a) })
+}
+
+// Groupi consolidates like-items into groups according to the supplied grouper
+// function, and returns them as a SliceType2.
+// The grouper function is expected to return a hash value which Group will use
+// to determine into which bucket each element wil be placed. For convenience
+// the index value from aa is also passed into the grouper function.
+func Groupi(aa SliceType, grouper func(int64, PrimitiveType) int64) SliceType2 {
+	groupMap := map[int64]SliceType{}
+	for i, a := range aa {
+		hash := grouper(int64(i), a)
+		if _, exists := groupMap[hash]; exists {
+			groupMap[hash] = append(groupMap[hash], a)
+		} else {
+			groupMap[hash] = SliceType{a}
+		}
 	}
+	group := SliceType2{}
+	for _, bb := range groupMap {
+		group = append(group, bb)
+	}
+	return group
 }
 
 //Remove applies a test function to each item in the list, and removes all items

@@ -483,7 +483,71 @@ var Specifications = []Specification{
 				t.Skip()
 			},
 		},
-	}}
+	},
+	Specification{
+		FunctionName: "Group",
+		StandardPath: Behavior{
+			Description: "Elements are grouped as expected.",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{"A", "B", "C", "D", "E", "F"}
+				grouper := func(a generic.PrimitiveType) int64 {
+					switch {
+					case a.(string) == "A" || a.(string) == "B":
+						return 1
+					case a.(string) == "C" || a.(string) == "D":
+						return 2
+					default:
+						return 3
+					}
+				}
+				bb := generic.Group(aa, grouper)
+				cc := generic.SliceType2{
+					generic.SliceType{"A", "B"},
+					generic.SliceType{"C", "D"},
+					generic.SliceType{"E", "F"},
+				}
+				assert.ElementsMatch(t, bb, cc)
+			},
+		},
+		AlternativePath: Behavior{
+			Description: "",
+			Expectation: func(t *testing.T) {
+				t.Skip()
+			},
+		},
+	}, Specification{
+		FunctionName: "Groupi",
+		StandardPath: Behavior{
+			Description: "Elements are grouped as expected.",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{"A", "B", "C", "D", "E", "F"}
+				grouper := func(i int64, a generic.PrimitiveType) int64 {
+					switch {
+					case i <= 1:
+						return 1
+					case i <= 3:
+						return 2
+					default:
+						return 3
+					}
+				}
+				bb := generic.Groupi(aa, grouper)
+				cc := generic.SliceType2{
+					generic.SliceType{"A", "B"},
+					generic.SliceType{"C", "D"},
+					generic.SliceType{"E", "F"},
+				}
+				assert.ElementsMatch(t, bb, cc)
+			},
+		},
+		AlternativePath: Behavior{
+			Description: "",
+			Expectation: func(t *testing.T) {
+				t.Skip()
+			},
+		},
+	},
+}
 
 func TestTransforms(t *testing.T) {
 	for _, specification := range Specifications {
