@@ -445,9 +445,9 @@ var Specifications = []Specification{
 			Expectation: func(t *testing.T) {
 				aa := generic.SliceType{"A", "B", "C"}
 				result := ""
-				fn := func(a generic.PrimitiveType) bool {
+				fn := func(a generic.PrimitiveType) generic.Continue {
 					result = result + a.(string)
-					return true
+					return generic.ContinueYes
 				}
 				generic.ForEach(aa, fn)
 				assert.Equal(t, "ABC", result)
@@ -458,7 +458,7 @@ var Specifications = []Specification{
 			Expectation: func(t *testing.T) {
 				aa := generic.SliceType{"A", "B", "C"}
 				result := ""
-				fn := func(a generic.PrimitiveType) bool {
+				fn := func(a generic.PrimitiveType) generic.Continue {
 					result = result + a.(string)
 					return a.(string) != "B"
 				}
@@ -475,10 +475,11 @@ var Specifications = []Specification{
 				aa := generic.SliceType{"A", "B", "C"}
 				mu := new(sync.Mutex)
 				result := ""
-				fn := func(a generic.PrimitiveType) {
+				fn := func(a generic.PrimitiveType, cancelPending func() bool) generic.Continue {
 					mu.Lock()
 					defer mu.Unlock()
 					result = result + a.(string)
+					return generic.ContinueYes
 				}
 				assert.PanicsWithValue(t,
 					"ForEachC: The channel pool size (c) must be non-negative.",
@@ -500,17 +501,25 @@ var Specifications = []Specification{
 			Expectation: func(t *testing.T) {
 				aa := generic.SliceType{"A", "B", "C"}
 				result := ""
-				fn := func(a generic.PrimitiveType) {
+				fn := func(a generic.PrimitiveType) generic.Continue {
 					result = result + a.(string)
+					return true
 				}
 				generic.ForEachR(aa, fn)
 				assert.Equal(t, "CBA", result)
 			},
 		},
 		AlternativePath: Behavior{
-			Description: "",
+			Description: `The iterator stops when the function return true.`,
 			Expectation: func(t *testing.T) {
-				t.Skip()
+				aa := generic.SliceType{"A", "B", "C"}
+				result := ""
+				fn := func(a generic.PrimitiveType) generic.Continue {
+					result = result + a.(string)
+					return a.(string) != "B"
+				}
+				generic.ForEachR(aa, fn)
+				assert.Equal(t, "CB", result)
 			},
 		},
 	},

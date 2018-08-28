@@ -94,6 +94,8 @@
 package generic
 
 import (
+	"sync/atomic"
+
 	"github.com/cheekybits/genny/generic"
 )
 
@@ -105,6 +107,17 @@ type SliceType []PrimitiveType
 
 // PrimitiveType is a placeholder for the type underpinning the generic SliceType.
 type PrimitiveType generic.Type
+
+// Continue instructs iterators about whether or not to keep iterating.
+type Continue bool
+
+const (
+	// ContinueYes signals to an iterator that it should continue iterating.
+	ContinueYes Continue = true
+
+	// ContinueNo signals to an iterator that it should stop iterating.
+	ContinueNo Continue = false
+)
 
 // All applies a test function to each element in the slice, and returns true if
 // the test function returns true for all items in the slice.
@@ -337,7 +350,7 @@ func FoldI(aa SliceType, acc PrimitiveType, folder func(i int64, a, acc Primitiv
 
 // ForEach applies each element of the list to the given function.
 // ForEach will stop iterating if fn return false.
-func ForEach(aa SliceType, fn func(PrimitiveType) bool) {
+func ForEach(aa SliceType, fn func(PrimitiveType) Continue) {
 	for _, a := range aa {
 		if !fn(a) {
 			return
@@ -347,21 +360,38 @@ func ForEach(aa SliceType, fn func(PrimitiveType) bool) {
 
 // ForEachC concurrently applies each element of the list to the given function.
 // The elements of the list are marshalled to a pool of channels where they are
-// supplied to function (fn) concurrently. The channel pool is
-// limited to contain no more than c active channels at any time.
-// Note that if a channel pool size of 0 is supplied, this method will block
-// indifinitely. This function will panic if a negative value is supplied for c.
-func ForEachC(aa SliceType, c int, fn func(PrimitiveType)) {
+// supplied to function (fn) concurrently.
+//
+// The channel pool is limited to contain no more than c active goroutines at
+// any time. Note that if a channel pool size of 0 is supplied, this method will
+// block indefinitely. This function will panic if a negative value is supplied
+// for c.
+//
+// If any execution of fn returns ContinueNo, ForEachC will cease marshalling
+// any backlogged work, and will immediately set the cancellation flag to true.
+// Any goroutines monitoring the cancelPending closure can wind down their
+// activities as necessary. ForEachC will continue to block until all active
+// goroutines exit cleanly.
+func ForEachC(aa SliceType, c int, fn func(a PrimitiveType, cancelPending func() bool) Continue) {
 	if c < 0 {
 		panic("ForEachC: The channel pool size (c) must be non-negative.")
+	}
+	halt := int64(0)
+	cancelPending := func() bool {
+		return atomic.LoadInt64(&halt) > 0
 	}
 	sem := make(chan struct{}, c)
 	defer close(sem)
 	for _, a := range aa {
+		if halt > 0 {
+			break
+		}
 		sem <- struct{}{}
 		go func(a PrimitiveType) {
 			defer func() { <-sem }()
-			fn(a)
+			if !fn(a, cancelPending) {
+				atomic.AddInt64(&halt, 1)
+			}
 		}(a)
 	}
 	for i := 0; i < cap(sem); i++ {
@@ -372,9 +402,11 @@ func ForEachC(aa SliceType, c int, fn func(PrimitiveType)) {
 // ForEachR applies each element of aa to a given function, scanning
 // through the slice in reverse order, starting from the end and working towards
 // the head.
-func ForEachR(aa SliceType, fn func(PrimitiveType)) {
+func ForEachR(aa SliceType, fn func(PrimitiveType) Continue) {
 	for i := len(aa) - 1; i >= 0; i-- {
-		fn(aa[i])
+		if !fn(aa[i]) {
+			return
+		}
 	}
 }
 
@@ -465,14 +497,14 @@ func InsertAt(aa *SliceType, a PrimitiveType, i int64) {
 // to both aa and bb. Duplicates are removed in this process.
 func Intersection(aa, bb SliceType, equal func(a, b PrimitiveType) bool) SliceType {
 	cc := SliceType{}
-	ForEach(aa, func(a PrimitiveType) bool {
-		ForEach(bb, func(b PrimitiveType) bool {
+	ForEach(aa, func(a PrimitiveType) Continue {
+		ForEach(bb, func(b PrimitiveType) Continue {
 			if equal(a, b) && !Any(cc, func(c PrimitiveType) bool { return equal(a, c) }) {
 				Append(&cc, a)
 			}
-			return true
+			return ContinueYes
 		})
-		return true
+		return ContinueYes
 	})
 	return cc
 }
@@ -558,11 +590,12 @@ func ItemFuzzy(aa SliceType, i int64) SliceType {
 // pass the supplied test, the resulting SliceType will be empty.
 func Last(aa SliceType, test func(PrimitiveType) bool) SliceType {
 	bb := SliceType{}
-	ForEachR(aa, func(a PrimitiveType) {
+	ForEachR(aa, func(a PrimitiveType) Continue {
 		if test(a) {
 			Append(&bb, a)
-			return
+			return ContinueYes
 		}
+		return ContinueYes
 	})
 	return bb
 }
