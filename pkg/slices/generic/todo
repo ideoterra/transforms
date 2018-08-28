@@ -54,7 +54,6 @@ SplitBeforeS*
 SkipUntil *
 TakeUntil *
 
-Intersection
 IsProperSubset
 IsProperSuperset
 IsSubset
@@ -103,3 +102,4 @@ Any <- Can do a parallel search, splitting the list into chunks, each scanned by
 Count <- Can be split and counted in parallel
 Difference <- currently has a minor optimiation to only scan the shorter list. However, other strategies could improve performance quite a bit.
 Group <- internal hashing is really naive. Could be optimized if hashes were sorted.
+Intersection <- Currently uses Any() to determine if an element has already been added. This has a low memory overhead, but a huge performance pentalty. A better approach would be to store the matches in a map then convert the map to a slice in a single pass.

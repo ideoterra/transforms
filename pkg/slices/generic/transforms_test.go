@@ -692,6 +692,33 @@ var Specifications = []Specification{
 			},
 		},
 	},
+	Specification{
+		FunctionName: "IsProperSubset",
+		StandardPath: Behavior{
+			Description: "Returns true if bb is a proper subset of aa",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{1, 2, 3, 4, 5}
+				bb := generic.SliceType{1, 2, 3, 4}
+				equal := func(a, b generic.PrimitiveType) bool {
+					return a.(int) == b.(int)
+				}
+				result := generic.IsProperSubset(aa, bb, equal)
+				assert.True(t, result)
+			},
+		},
+		AlternativePath: Behavior{
+			Description: "Returns false if bb is not a proper subset of aa",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{1, 2, 3, 4, 5}
+				bb := generic.SliceType{1, 2, 3, 4, 5}
+				equal := func(a, b generic.PrimitiveType) bool {
+					return a.(int) == b.(int)
+				}
+				result := generic.IsProperSubset(aa, bb, equal)
+				assert.False(t, result)
+			},
+		},
+	},
 }
 
 func TestTransforms(t *testing.T) {
