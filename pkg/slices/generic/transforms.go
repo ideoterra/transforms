@@ -62,7 +62,11 @@
 // convinience, that can come at the cost of performance because the underlaying
 // datastructure simply may not be optimized for the operation being performed.
 // With that said, efforts are made to provide reasonably performant
-// algorythmic implementations for non-native operations.
+// algorythmic implementations for non-native operations. Other admissions are
+// made to accomodate for the application of non-native functions to a slice.
+// For instance, Sets, by definition, do not contain duplicates. However, there
+// is no such requirement in a slice. As such, the set-type operations provided
+// in this package are tollerant to duplicates.
 package generic
 
 import (
@@ -435,29 +439,38 @@ func Intersection(aa, bb SliceType, equal func(a, b PrimitiveType) bool) SliceTy
 	return cc
 }
 
-// IsProperSubset returns true if bb is a proper subset of aa.
-// bb is considered a proper subset if all of its elements exist within aa, but
-// aa also contains some elements that do not exist within bb.
+// IsProperSubset returns true if aa is a proper subset of bb.
+// aa is considered a proper subset if all of its elements exist within bb, but
+// bb also contains some elements that do not exist within aa.
 func IsProperSubset(aa, bb SliceType, equal func(a, b PrimitiveType) bool) bool {
-	aa1 := Clone(aa)
-	bb1 := Clone(bb)
-	removeIntersections(&aa1, &bb1, equal)
-	return len(bb1) == 0 && len(aa1) > 0
+	aa1, bb1 := removeIntersections(aa, bb, equal)
+	return len(aa1) == 0 && len(bb1) > 0
 }
 
-func removeIntersections(aa, bb *SliceType, equal func(a, b PrimitiveType) bool) {
-	for ai := int64(len(*aa)) - 1; ai >= 0; ai-- {
+// IsProperSuperset returns true if aa is a proper superset of bb.
+// aa is considered a proper superset if it contains all of bb's elements, but
+// aa also contains some elements that do not exist within bb.
+func IsProperSuperset(aa, bb SliceType, equal func(a, b PrimitiveType) bool) bool {
+	aa1, bb1 := removeIntersections(aa, bb, equal)
+	return len(aa1) > 0 && len(bb1) == 0
+}
+
+func removeIntersections(aa, bb SliceType, equal func(a, b PrimitiveType) bool) (SliceType, SliceType) {
+	aa1 := Clone(aa)
+	bb1 := Clone(bb)
+	for ai := int64(len(aa1)) - 1; ai >= 0; ai-- {
 		intersectionFound := false
-		for bi := int64(len(*bb)) - 1; bi >= 0; bi-- {
-			if equal((*aa)[ai], (*bb)[bi]) {
+		for bi := int64(len(bb1)) - 1; bi >= 0; bi-- {
+			if equal((aa1)[ai], (bb1)[bi]) {
 				intersectionFound = true
-				RemoveAt(bb, bi)
+				RemoveAt(&bb1, bi)
 			}
 		}
 		if intersectionFound {
-			RemoveAt(aa, ai)
+			RemoveAt(&aa1, ai)
 		}
 	}
+	return aa1, bb1
 }
 
 //Remove applies a test function to each item in the list, and removes all items
