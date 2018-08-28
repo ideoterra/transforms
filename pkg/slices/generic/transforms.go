@@ -364,6 +364,29 @@ func Head(aa SliceType) SliceType {
 	return SliceType{aa[0]}
 }
 
+// InsertAfter inserts an element in aa after first element for which the
+// supplied test function returns true. If none of the tests return true, the
+// element is appended to the end of the aa.
+func InsertAfter(aa *SliceType, a PrimitiveType, test func(PrimitiveType) bool) {
+
+}
+
+// InsertAt inserts an element in aa at the specified index i, shifting the
+// element originally at index i (and all subsequent elements) one position
+// to the right. If i < 0, the element is inserted at index 0. If
+// i >= len(aa), the value is appended to the end of aa.
+func InsertAt(aa *SliceType, a PrimitiveType, i int64) {
+	*aa = append(*aa, a)
+	if i >= int64(len(*aa)) {
+		return
+	}
+	if i < 0 {
+		i = 0
+	}
+	copy((*aa)[i+1:], (*aa)[i:])
+	(*aa)[i] = a
+}
+
 //Remove applies a test function to each item in the list, and removes all items
 //for which the test returns true.
 // func Remove(aa *SliceType, test func(PrimitiveType) bool) {

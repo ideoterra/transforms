@@ -46,12 +46,13 @@ LastS*
 NoneS*
 PartitionS*
 RemoveS *
+RemoveFirst *
+RemoveFirstS *
 SplitAfterS*  
 SplitBeforeS*
 SkipUntil *
 TakeUntil *
 
-Indices
 InsertAfter
 InsertBefore
 InsertAt

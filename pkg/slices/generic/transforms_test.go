@@ -568,6 +568,77 @@ var Specifications = []Specification{
 			},
 		},
 	},
+	Specification{
+		FunctionName: "InsertAfter",
+		StandardPath: Behavior{
+			Description: "",
+			Expectation: func(t *testing.T) {
+				t.Skip()
+			},
+		},
+		AlternativePath: Behavior{
+			Description: "",
+			Expectation: func(t *testing.T) {
+				t.Skip()
+			},
+		},
+	},
+	Specification{
+		FunctionName: "InsertBefore",
+		StandardPath: Behavior{
+			Description: "",
+			Expectation: func(t *testing.T) {
+				t.Skip()
+			},
+		},
+		AlternativePath: Behavior{
+			Description: "",
+			Expectation: func(t *testing.T) {
+				t.Skip()
+			},
+		},
+	},
+	Specification{
+		FunctionName: "InsertAt",
+		StandardPath: Behavior{
+			Description: "Inserts properly in middle of list.",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{1, 2, 3}
+				generic.InsertAt(&aa, 9, 2)
+				bb := generic.SliceType{1, 2, 9, 3}
+				assert.ElementsMatch(t, aa, bb)
+			},
+		},
+		AlternativePath: Behavior{
+			Description: "Inserts into an empty list.",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{}
+				generic.InsertAt(&aa, 9, 0)
+				bb := generic.SliceType{9}
+				assert.ElementsMatch(t, aa, bb)
+			},
+		},
+		EdgeCases: []Behavior{
+			Behavior{
+				Description: "Negative index inserted at 0",
+				Expectation: func(t *testing.T) {
+					aa := generic.SliceType{1, 2, 3}
+					generic.InsertAt(&aa, 9, -2)
+					bb := generic.SliceType{9, 1, 2, 3}
+					assert.ElementsMatch(t, aa, bb)
+				},
+			},
+			Behavior{
+				Description: "Index greater than length appended to end.",
+				Expectation: func(t *testing.T) {
+					aa := generic.SliceType{1, 2, 3}
+					generic.InsertAt(&aa, 9, 99)
+					bb := generic.SliceType{1, 2, 3, 9}
+					assert.ElementsMatch(t, aa, bb)
+				},
+			},
+		},
+	},
 }
 
 func TestTransforms(t *testing.T) {
