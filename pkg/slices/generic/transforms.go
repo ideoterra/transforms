@@ -262,6 +262,23 @@ func First(aa SliceType, test func(PrimitiveType) bool) SliceType {
 	return bb
 }
 
+// Fold applies a function to each item in slice aa, threading an accumulator
+// through each iteration. The accumulated value is returned once aa is fully
+// scanned.
+//
+//  Illustration:
+//    aa: [1,2,3,4]
+//    acc:    1
+//    folder: acc + sourceNode
+//    Fold(aa, acc, folder) -> [11]
+func Fold(aa SliceType, acc PrimitiveType, folder func(a, acc PrimitiveType) PrimitiveType) PrimitiveType {
+	accumulation := acc
+	for _, a := range aa {
+		accumulation = folder(a, accumulation)
+	}
+	return accumulation
+}
+
 //Remove applies a test function to each item in the list, and removes all items
 //for which the test returns true.
 // func Remove(aa *SliceType, test func(PrimitiveType) bool) {

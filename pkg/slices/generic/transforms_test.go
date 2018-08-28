@@ -392,7 +392,28 @@ var Specifications = []Specification{
 				assert.ElementsMatch(t, bb, cc)
 			},
 		},
-	}}
+	},
+	Specification{
+		FunctionName: "Fold",
+		StandardPath: Behavior{
+			Description: "Fold accumulates values properly",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{1, 2, 3, 4}
+				folder := func(a, acc generic.PrimitiveType) generic.PrimitiveType {
+					return a.(int) + acc.(int)
+				}
+				b := generic.Fold(aa, 1, folder)
+				assert.Equal(t, 11, b)
+			},
+		},
+		AlternativePath: Behavior{
+			Description: "",
+			Expectation: func(t *testing.T) {
+				t.Skip()
+			},
+		},
+	},
+}
 
 func TestTransforms(t *testing.T) {
 	for _, specification := range Specifications {
