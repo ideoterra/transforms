@@ -50,7 +50,6 @@ SplitBeforeS*
 SkipUntil *
 TakeUntil *
 
-FindIndex
 First
 Fold
 Foldi

@@ -366,7 +366,33 @@ var Specifications = []Specification{
 			},
 		},
 	},
-}
+	Specification{
+		FunctionName: "First",
+		StandardPath: Behavior{
+			Description: "The first matching element is returned.",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{1, 2, 3, 4}
+				test := func(a generic.PrimitiveType) bool {
+					return a.(int) >= 2
+				}
+				bb := generic.First(aa, test)
+				cc := generic.SliceType{2}
+				assert.ElementsMatch(t, bb, cc)
+			},
+		},
+		AlternativePath: Behavior{
+			Description: "An empty slice is returned if there are no matches.",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{1, 2, 3, 4}
+				test := func(a generic.PrimitiveType) bool {
+					return a.(int) >= 5
+				}
+				bb := generic.First(aa, test)
+				cc := generic.SliceType{}
+				assert.ElementsMatch(t, bb, cc)
+			},
+		},
+	}}
 
 func TestTransforms(t *testing.T) {
 	for _, specification := range Specifications {
