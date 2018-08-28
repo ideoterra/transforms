@@ -54,12 +54,6 @@ SplitBeforeS*
 SkipUntil *
 TakeUntil *
 
-IsProperSubset
-IsProperSuperset
-IsSubset
-IsSuperset
-Item
-Iter
 Last
 Len
 Map

@@ -1,6 +1,30 @@
 // Package generic contains transform functions for SliceTypes.
 //
-// Parameter Naming:
+// Function Naming Conventions:
+// Often the same conceptual function can be implemented in more than one way.
+// When multiple variants of a function are implemented in this package, each
+// variant will start with the same base name, and the name will be suffixed
+// with 0 or more flags that indicate details about the implementation. Such
+// suffixes are as follows:
+//
+//   C: Functions with this suffix use concurrent operations internally, and
+//		will typically require that a concurrency pool size be specified as an
+//		argument. C functions guarantee that they will only use up to their
+//		alotted number of concurrent goroutines for each invocation.
+//
+//   I: Functions with this suffix will have an index value threaded
+// 		through each call to their applicable closure function.
+//
+//   R: Functions with this suffix operate against the underlaying slice
+//		in reverse order (without incurring the penalty of actually
+//		reversing the ordering of elements in the slice).
+//
+//   S: Functions with this suffix are optimized for an ordinal dataset
+//		that has been presorted. Any time data is ordinal in nature, and
+//		can be pre-sorted, there is typically a significant performance
+//		advantage to using S variants.
+//
+// Parameter Naming Conventions:
 // By convention, the source slice will be named `aa`. If multiple slices are
 // to be supplied as arguments to a function, they are named `aa`, `bb`, `cc`,
 // and so on.
@@ -291,10 +315,10 @@ func First(aa SliceType, test func(PrimitiveType) bool) SliceType {
 //    folder: acc + sourceNode
 //    Fold(aa, acc, folder) -> [11]
 func Fold(aa SliceType, acc PrimitiveType, folder func(a, acc PrimitiveType) PrimitiveType) PrimitiveType {
-	return Foldi(aa, acc, func(_ int64, a, acc PrimitiveType) PrimitiveType { return folder(a, acc) })
+	return FoldI(aa, acc, func(_ int64, a, acc PrimitiveType) PrimitiveType { return folder(a, acc) })
 }
 
-// Foldi applies a function to each item in slice aa, threading an accumulator
+// FoldI applies a function to each item in slice aa, threading an accumulator
 // and an index value through each iteration. The accumulated value is returned
 // once aa is fully scanned.
 //
@@ -303,7 +327,7 @@ func Fold(aa SliceType, acc PrimitiveType, folder func(a, acc PrimitiveType) Pri
 //    acc:    1
 //    folder: acc + sourceNode
 //    Fold(aa, acc, folder) -> [11]
-func Foldi(aa SliceType, acc PrimitiveType, folder func(i int64, a, acc PrimitiveType) PrimitiveType) PrimitiveType {
+func FoldI(aa SliceType, acc PrimitiveType, folder func(i int64, a, acc PrimitiveType) PrimitiveType) PrimitiveType {
 	accumulation := acc
 	for i, a := range aa {
 		accumulation = folder(int64(i), a, accumulation)
@@ -342,20 +366,29 @@ func ForEachC(aa SliceType, c int, fn func(PrimitiveType)) {
 	}
 }
 
+// ForEachR applies each element of aa to a given function, scanning
+// through the slice in reverse order, starting from the end and working towards
+// the head.
+func ForEachR(aa SliceType, fn func(PrimitiveType)) {
+	for i := len(aa) - 1; i >= 0; i-- {
+		fn(aa[i])
+	}
+}
+
 // Group consolidates like-items into groups according to the supplied grouper
 // function, and returns them as a SliceType2.
 // The grouper function is expected to return a hash value which Group will use
 // to determine into which bucket each element wil be placed.
 func Group(aa SliceType, grouper func(PrimitiveType) int64) SliceType2 {
-	return Groupi(aa, func(_ int64, a PrimitiveType) int64 { return grouper(a) })
+	return GroupI(aa, func(_ int64, a PrimitiveType) int64 { return grouper(a) })
 }
 
-// Groupi consolidates like-items into groups according to the supplied grouper
+// GroupI consolidates like-items into groups according to the supplied grouper
 // function, and returns them as a SliceType2.
 // The grouper function is expected to return a hash value which Group will use
 // to determine into which bucket each element wil be placed. For convenience
 // the index value from aa is also passed into the grouper function.
-func Groupi(aa SliceType, grouper func(int64, PrimitiveType) int64) SliceType2 {
+func GroupI(aa SliceType, grouper func(int64, PrimitiveType) int64) SliceType2 {
 	groupMap := map[int64]SliceType{}
 	for i, a := range aa {
 		hash := grouper(int64(i), a)
@@ -513,6 +546,13 @@ func ItemFuzzy(aa SliceType, i int64) SliceType {
 		return End(aa)
 	}
 	return SliceType{aa[i]}
+}
+
+// Last applies a test function to each element in aa, and returns a SliceType
+// containing the last element for which the test returned true. If no elements
+// pass the supplied test, the resulting SliceType will be empty.
+func Last(aa SliceType, test func(a PrimitiveType) bool) SliceType {
+	panic("not implemented")
 }
 
 //Remove applies a test function to each item in the list, and removes all items

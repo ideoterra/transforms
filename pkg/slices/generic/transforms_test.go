@@ -416,9 +416,9 @@ var Specifications = []Specification{
 		},
 	},
 	Specification{
-		FunctionName: "Foldi",
+		FunctionName: "FoldI",
 		StandardPath: Behavior{
-			Description: "Foldi accumulates values properly",
+			Description: "FoldI accumulates values properly",
 			Expectation: func(t *testing.T) {
 				aa := generic.SliceType{"A", "B", "C"}
 				folder := func(i int64, a, acc generic.PrimitiveType) generic.PrimitiveType {
@@ -427,7 +427,7 @@ var Specifications = []Specification{
 						strconv.Itoa(int(i)),
 						a.(string))
 				}
-				b := generic.Foldi(aa, "X", folder)
+				b := generic.FoldI(aa, "X", folder)
 				assert.Equal(t, "X0A1B2C", b)
 			},
 		},
@@ -485,6 +485,28 @@ var Specifications = []Specification{
 		},
 	},
 	Specification{
+		FunctionName: "ForEachR",
+		StandardPath: Behavior{
+			Description: `Each element of the list is applied to the function
+						  in reverse order`,
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{"A", "B", "C"}
+				result := ""
+				fn := func(a generic.PrimitiveType) {
+					result = result + a.(string)
+				}
+				generic.ForEachR(aa, fn)
+				assert.Equal(t, "CBA", result)
+			},
+		},
+		AlternativePath: Behavior{
+			Description: "",
+			Expectation: func(t *testing.T) {
+				t.Skip()
+			},
+		},
+	},
+	Specification{
 		FunctionName: "Group",
 		StandardPath: Behavior{
 			Description: "Elements are grouped as expected.",
@@ -516,7 +538,7 @@ var Specifications = []Specification{
 			},
 		},
 	}, Specification{
-		FunctionName: "Groupi",
+		FunctionName: "GroupI",
 		StandardPath: Behavior{
 			Description: "Elements are grouped as expected.",
 			Expectation: func(t *testing.T) {
@@ -531,7 +553,7 @@ var Specifications = []Specification{
 						return 3
 					}
 				}
-				bb := generic.Groupi(aa, grouper)
+				bb := generic.GroupI(aa, grouper)
 				cc := generic.SliceType2{
 					generic.SliceType{"A", "B"},
 					generic.SliceType{"C", "D"},
