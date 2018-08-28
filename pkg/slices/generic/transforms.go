@@ -455,6 +455,13 @@ func IsProperSuperset(aa, bb SliceType, equal func(a, b PrimitiveType) bool) boo
 	return len(aa1) > 0 && len(bb1) == 0
 }
 
+// IsSubset returns true if aa is a subset of bb.
+// aa is considered a subset if all of its elements exist within bb.
+func IsSubset(aa, bb SliceType, equal func(a, b PrimitiveType) bool) bool {
+	aa1, bb1 := removeIntersections(aa, bb, equal)
+	return len(aa1) == 0 && len(bb1) >= 0
+}
+
 func removeIntersections(aa, bb SliceType, equal func(a, b PrimitiveType) bool) (SliceType, SliceType) {
 	aa1 := Clone(aa)
 	bb1 := Clone(bb)
