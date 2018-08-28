@@ -481,15 +481,30 @@ var Specifications = []Specification{
 					result = result + a.(string)
 					return generic.ContinueYes
 				}
-				assert.PanicsWithValue(t,
-					"ForEachC: The channel pool size (c) must be non-negative.",
-					func() { generic.ForEachC(aa, -1, fn) })
+				generic.ForEachC(aa, 1, fn)
+				bb := generic.SliceType{"ABC", "BAC", "CAB", "ACB", "BCA", "CBA"}
+				if !generic.Any(bb, func(b generic.PrimitiveType) bool {
+					return b.(string) == result
+				}) {
+					t.Errorf("Expected a variant of 'ABC', but got '%v'", result)
+				}
 			},
 		},
 		AlternativePath: Behavior{
-			Description: "",
+			Description: "The function panic if a negative pool size is specified.",
 			Expectation: func(t *testing.T) {
-				t.Skip()
+				aa := generic.SliceType{"A", "B", "C"}
+				mu := new(sync.Mutex)
+				result := ""
+				fn := func(a generic.PrimitiveType, cancelPending func() bool) generic.Continue {
+					mu.Lock()
+					defer mu.Unlock()
+					result = result + a.(string)
+					return generic.ContinueYes
+				}
+				assert.PanicsWithValue(t,
+					"ForEachC: The channel pool size (c) must be non-negative.",
+					func() { generic.ForEachC(aa, -1, fn) })
 			},
 		},
 	},
