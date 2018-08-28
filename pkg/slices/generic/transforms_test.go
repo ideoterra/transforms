@@ -800,6 +800,92 @@ var Specifications = []Specification{
 			},
 		},
 	},
+	Specification{
+		FunctionName: "Item",
+		StandardPath: Behavior{
+			Description: "Element at i is returned.",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{1, 2, 3}
+				bb := generic.Item(aa, 1)
+				cc := generic.SliceType{2}
+				assert.ElementsMatch(t, bb, cc)
+			},
+		},
+		AlternativePath: Behavior{
+			Description: "aa is empty, returns empty for any index",
+			Expectation: func(t *testing.T) {
+				for i := int64(-1); i <= 1; i++ {
+					aa := generic.SliceType{}
+					bb := generic.ItemFuzzy(aa, i)
+					cc := generic.SliceType{}
+					assert.ElementsMatch(t, bb, cc)
+				}
+			},
+		},
+		EdgeCases: []Behavior{
+			Behavior{
+				Description: "i < 0 returns empty",
+				Expectation: func(t *testing.T) {
+					aa := generic.SliceType{1, 2, 3}
+					bb := generic.Item(aa, -1)
+					cc := generic.SliceType{}
+					assert.ElementsMatch(t, bb, cc)
+				},
+			},
+			Behavior{
+				Description: "i >= len(aa) returns empty",
+				Expectation: func(t *testing.T) {
+					aa := generic.SliceType{1, 2, 3}
+					bb := generic.Item(aa, 10)
+					cc := generic.SliceType{}
+					assert.ElementsMatch(t, bb, cc)
+				},
+			},
+		},
+	},
+	Specification{
+		FunctionName: "ItemFuzzy",
+		StandardPath: Behavior{
+			Description: "Element at i is returned.",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{1, 2, 3}
+				bb := generic.ItemFuzzy(aa, 1)
+				cc := generic.SliceType{2}
+				assert.ElementsMatch(t, bb, cc)
+			},
+		},
+		AlternativePath: Behavior{
+			Description: "aa is empty, returns empty for any index",
+			Expectation: func(t *testing.T) {
+				for i := int64(-1); i <= 1; i++ {
+					aa := generic.SliceType{}
+					bb := generic.ItemFuzzy(aa, i)
+					cc := generic.SliceType{}
+					assert.ElementsMatch(t, bb, cc)
+				}
+			},
+		},
+		EdgeCases: []Behavior{
+			Behavior{
+				Description: "i < 0 returns head",
+				Expectation: func(t *testing.T) {
+					aa := generic.SliceType{1, 2, 3}
+					bb := generic.ItemFuzzy(aa, -1)
+					cc := generic.SliceType{1}
+					assert.ElementsMatch(t, bb, cc)
+				},
+			},
+			Behavior{
+				Description: "i >= len(aa) returns end",
+				Expectation: func(t *testing.T) {
+					aa := generic.SliceType{1, 2, 3}
+					bb := generic.ItemFuzzy(aa, 10)
+					cc := generic.SliceType{3}
+					assert.ElementsMatch(t, bb, cc)
+				},
+			},
+		},
+	},
 }
 
 func TestTransforms(t *testing.T) {

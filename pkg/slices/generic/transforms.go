@@ -487,6 +487,34 @@ func removeIntersections(aa, bb SliceType, equal func(a, b PrimitiveType) bool) 
 	return aa1, bb1
 }
 
+// Item returns a SliceType containing the element at aa[i].
+// If len(aa) == 0, i < 0, or, i >= len(aa), the resulting slice will be empty.
+func Item(aa SliceType, i int64) SliceType {
+	if Empty(aa) || i < 0 || i >= int64(len(aa)) {
+		return SliceType{}
+	}
+	return SliceType{aa[i]}
+}
+
+// ItemFuzzy returns a SliceType containing the element at aa[i].
+// if the supplied index is out of bounds of aa, ItemFuzzy will attempt to
+// retrieve the head or end element of aa according to the following rules:
+// If len(aa) == 0 an empty SliceType is returned.
+// If i < 0, the head of aa is returned.
+// If i >= len(aa), the end of the aa is returned.
+func ItemFuzzy(aa SliceType, i int64) SliceType {
+	if Empty(aa) {
+		return SliceType{}
+	}
+	if i < 0 {
+		return Head(aa)
+	}
+	if i >= int64(len(aa)) {
+		return End(aa)
+	}
+	return SliceType{aa[i]}
+}
+
 //Remove applies a test function to each item in the list, and removes all items
 //for which the test returns true.
 // func Remove(aa *SliceType, test func(PrimitiveType) bool) {
