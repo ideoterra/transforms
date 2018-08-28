@@ -51,7 +51,6 @@ SplitBeforeS*
 SkipUntil *
 TakeUntil *
 
-Head
 Indices
 InsertAfter
 InsertBefore

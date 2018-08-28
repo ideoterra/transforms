@@ -547,6 +547,27 @@ var Specifications = []Specification{
 			},
 		},
 	},
+	Specification{
+		FunctionName: "Head",
+		StandardPath: Behavior{
+			Description: "Returns the first item from the slice.",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{1, 2, 3}
+				bb := generic.Head(aa)
+				assert.ElementsMatch(t, bb, generic.SliceType{1})
+			},
+		},
+		AlternativePath: Behavior{
+			Description: "Returns an empty slice if the source slice is empty.",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{}
+				bb := generic.Head(aa)
+				if len(bb) != 0 {
+					t.Error("Expected bb to be empty.")
+				}
+			},
+		},
+	},
 }
 
 func TestTransforms(t *testing.T) {

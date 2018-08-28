@@ -356,6 +356,14 @@ func Groupi(aa SliceType, grouper func(int64, PrimitiveType) int64) SliceType2 {
 	return group
 }
 
+// Head returns a SliceType containing the first item from the aa.
+func Head(aa SliceType) SliceType {
+	if Empty(aa) {
+		return SliceType{}
+	}
+	return SliceType{aa[0]}
+}
+
 //Remove applies a test function to each item in the list, and removes all items
 //for which the test returns true.
 // func Remove(aa *SliceType, test func(PrimitiveType) bool) {
