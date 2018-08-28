@@ -1,4 +1,4 @@
-package slicetypes
+package types
 
 import (
 	"math/big"

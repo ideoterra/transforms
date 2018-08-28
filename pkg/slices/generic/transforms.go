@@ -57,7 +57,10 @@ import (
 	"github.com/cheekybits/genny/generic"
 )
 
-// SliceType is a placeholder for a generic slice.
+// SliceType2 is a two dimensional slice of PrimitiveType
+type SliceType2 SliceType
+
+// SliceType is a one dimensional slice of PrimitiveType.
 type SliceType []PrimitiveType
 
 // PrimitiveType is a placeholder for the type underpinning the generic SliceType.
@@ -320,6 +323,20 @@ func ForEachC(aa SliceType, c int, fn func(PrimitiveType)) {
 	}
 	for i := 0; i < cap(sem); i++ {
 		sem <- struct{}{}
+	}
+}
+
+// Group consolidates like-items into groups according to the supplied grouper
+// function, and returns them as a two dimensional SliceType2
+// The grouper function is expected to return hash value (expressed as slice
+// index value) which Group will use to determine into which bucket each element
+// should be plaed.
+func Group(aa SliceType, grouper func(PrimitiveType) int64) SliceType2 {
+	bb := SliceType2{}
+	for _, a := range aa {
+		i := grouper(a)
+		// if i >= len(bb), then extend bb somehow so that it contains i.
+		// append a to the slice at index i of bb
 	}
 }
 
