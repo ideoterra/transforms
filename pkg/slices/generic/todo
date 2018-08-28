@@ -51,8 +51,6 @@ SplitBeforeS*
 SkipUntil *
 TakeUntil *
 
-ForEach
-ForEachConcurrently
 Group
 Head
 Indices

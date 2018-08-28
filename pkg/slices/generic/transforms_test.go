@@ -3,6 +3,7 @@ package generic_test
 import (
 	"fmt"
 	"strconv"
+	"sync"
 	"testing"
 
 	"github.com/jecolasurdo/transforms/pkg/slices/generic"
@@ -458,7 +459,31 @@ var Specifications = []Specification{
 			},
 		},
 	},
-}
+	Specification{
+		FunctionName: "ForEachC",
+		StandardPath: Behavior{
+			Description: "Each element of the list is applied to the function",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{"A", "B", "C"}
+				mu := new(sync.Mutex)
+				result := ""
+				fn := func(a generic.PrimitiveType) {
+					mu.Lock()
+					defer mu.Unlock()
+					result = result + a.(string)
+				}
+				assert.PanicsWithValue(t,
+					"ForEachC: The channel pool size (c) must be non-negative.",
+					func() { generic.ForEachC(aa, -1, fn) })
+			},
+		},
+		AlternativePath: Behavior{
+			Description: "",
+			Expectation: func(t *testing.T) {
+				t.Skip()
+			},
+		},
+	}}
 
 func TestTransforms(t *testing.T) {
 	for _, specification := range Specifications {

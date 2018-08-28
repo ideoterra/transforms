@@ -299,6 +299,30 @@ func ForEach(aa SliceType, fn func(PrimitiveType)) {
 	}
 }
 
+// ForEachC concurrently applies each element of the list to the given function.
+// The elements of the list are marshalled to a pool of channels where they are
+// supplied to function (fn) concurrently. The channel pool is
+// limited to contain no more than c active channels at any time.
+// Note that if a channel pool size of 0 is supplied, this method will block
+// indifinitely. This function will panic if a negative value is supplied for c.
+func ForEachC(aa SliceType, c int, fn func(PrimitiveType)) {
+	if c < 0 {
+		panic("ForEachC: The channel pool size (c) must be non-negative.")
+	}
+	sem := make(chan struct{}, c)
+	defer close(sem)
+	for _, a := range aa {
+		sem <- struct{}{}
+		go func(a PrimitiveType) {
+			defer func() { <-sem }()
+			fn(a)
+		}(a)
+	}
+	for i := 0; i < cap(sem); i++ {
+		sem <- struct{}{}
+	}
+}
+
 //Remove applies a test function to each item in the list, and removes all items
 //for which the test returns true.
 // func Remove(aa *SliceType, test func(PrimitiveType) bool) {
