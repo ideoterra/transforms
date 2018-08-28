@@ -663,6 +663,35 @@ var Specifications = []Specification{
 			},
 		},
 	},
+	Specification{
+		FunctionName: "Intersection",
+		StandardPath: Behavior{
+			Description: "Returns a slice of the commmon items.",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{1, 4, 2, 5}
+				bb := generic.SliceType{4, 3, 7, 2}
+				equal := func(a, b generic.PrimitiveType) bool {
+					return a.(int) == b.(int)
+				}
+				cc := generic.Intersection(aa, bb, equal)
+				dd := generic.SliceType{4, 2}
+				assert.ElementsMatch(t, cc, dd)
+			},
+		},
+		AlternativePath: Behavior{
+			Description: "Duplicates are not retained",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{1, 4, 2, 2, 2, 5, 4}
+				bb := generic.SliceType{4, 3, 2, 7, 2}
+				equal := func(a, b generic.PrimitiveType) bool {
+					return a.(int) == b.(int)
+				}
+				cc := generic.Intersection(aa, bb, equal)
+				dd := generic.SliceType{4, 2}
+				assert.ElementsMatch(t, cc, dd)
+			},
+		},
+	},
 }
 
 func TestTransforms(t *testing.T) {

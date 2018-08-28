@@ -34,6 +34,7 @@ FindIndicesS *
 FirstS *
 Flatten *
 ForEachi *
+ForEachiC
 GroupS *
 InsertAfterS *
 InsertBeforeS *
@@ -53,9 +54,6 @@ SplitBeforeS*
 SkipUntil *
 TakeUntil *
 
-InsertAfter
-InsertBefore
-InsertAt
 Intersection
 IsProperSubset
 IsProperSuperset

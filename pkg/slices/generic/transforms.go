@@ -252,7 +252,7 @@ func FindIndex(aa SliceType, test func(PrimitiveType) bool) int64 {
 	return -1
 }
 
-// First returns a SliceType contaiing the first element in the slice for which
+// First returns a SliceType containing the first element in the slice for which
 // the supplied test function returns true.
 func First(aa SliceType, test func(PrimitiveType) bool) SliceType {
 	bb := SliceType{}
@@ -406,6 +406,21 @@ func InsertAt(aa *SliceType, a PrimitiveType, i int64) {
 	}
 	copy((*aa)[i+1:], (*aa)[i:])
 	(*aa)[i] = a
+}
+
+// Intersection compares each element of aa and bb using the supplied equal
+// function, and returns a SliceType containing the elements which are common
+// to both aa and bb. Duplicates are removed in this process.
+func Intersection(aa, bb SliceType, equal func(a, b PrimitiveType) bool) SliceType {
+	cc := SliceType{}
+	ForEach(aa, func(a PrimitiveType) {
+		ForEach(bb, func(b PrimitiveType) {
+			if equal(a, b) && !Any(cc, func(c PrimitiveType) bool { return equal(a, c) }) {
+				Append(&cc, a)
+			}
+		})
+	})
+	return cc
 }
 
 //Remove applies a test function to each item in the list, and removes all items
