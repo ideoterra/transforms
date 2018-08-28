@@ -292,6 +292,13 @@ func Foldi(aa SliceType, acc PrimitiveType, folder func(i int64, a, acc Primitiv
 	return accumulation
 }
 
+// ForEach applies each element of the list to the given function.
+func ForEach(aa SliceType, fn func(PrimitiveType)) {
+	for _, a := range aa {
+		fn(a)
+	}
+}
+
 //Remove applies a test function to each item in the list, and removes all items
 //for which the test returns true.
 // func Remove(aa *SliceType, test func(PrimitiveType) bool) {

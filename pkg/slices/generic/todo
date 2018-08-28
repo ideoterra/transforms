@@ -33,6 +33,7 @@ FindIndices *
 FindIndicesS *
 FirstS *
 Flatten *
+ForEachi *
 GroupS *
 InsertAfterS *
 InsertBeforeS *
@@ -50,9 +51,6 @@ SplitBeforeS*
 SkipUntil *
 TakeUntil *
 
-First
-Fold
-Foldi
 ForEach
 ForEachConcurrently
 Group

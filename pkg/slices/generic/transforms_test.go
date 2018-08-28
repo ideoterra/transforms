@@ -437,6 +437,27 @@ var Specifications = []Specification{
 			},
 		},
 	},
+	Specification{
+		FunctionName: "ForEach",
+		StandardPath: Behavior{
+			Description: "Each element of the list is applied to the function",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{"A", "B", "C"}
+				result := ""
+				fn := func(a generic.PrimitiveType) {
+					result = result + a.(string)
+				}
+				generic.ForEach(aa, fn)
+				assert.Equal(t, "ABC", result)
+			},
+		},
+		AlternativePath: Behavior{
+			Description: "",
+			Expectation: func(t *testing.T) {
+				t.Skip()
+			},
+		},
+	},
 }
 
 func TestTransforms(t *testing.T) {
