@@ -2,6 +2,7 @@ package generic_test
 
 import (
 	"fmt"
+	"strconv"
 	"testing"
 
 	"github.com/jecolasurdo/transforms/pkg/slices/generic"
@@ -404,6 +405,29 @@ var Specifications = []Specification{
 				}
 				b := generic.Fold(aa, 1, folder)
 				assert.Equal(t, 11, b)
+			},
+		},
+		AlternativePath: Behavior{
+			Description: "",
+			Expectation: func(t *testing.T) {
+				t.Skip()
+			},
+		},
+	},
+	Specification{
+		FunctionName: "Foldi",
+		StandardPath: Behavior{
+			Description: "Foldi accumulates values properly",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{"A", "B", "C"}
+				folder := func(i int64, a, acc generic.PrimitiveType) generic.PrimitiveType {
+					return fmt.Sprintf("%v%v%v",
+						acc.(string),
+						strconv.Itoa(int(i)),
+						a.(string))
+				}
+				b := generic.Foldi(aa, "X", folder)
+				assert.Equal(t, "X0A1B2C", b)
 			},
 		},
 		AlternativePath: Behavior{

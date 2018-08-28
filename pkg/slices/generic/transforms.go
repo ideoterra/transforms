@@ -272,9 +272,22 @@ func First(aa SliceType, test func(PrimitiveType) bool) SliceType {
 //    folder: acc + sourceNode
 //    Fold(aa, acc, folder) -> [11]
 func Fold(aa SliceType, acc PrimitiveType, folder func(a, acc PrimitiveType) PrimitiveType) PrimitiveType {
+	return Foldi(aa, acc, func(_ int64, a, acc PrimitiveType) PrimitiveType { return folder(a, acc) })
+}
+
+// Foldi applies a function to each item in slice aa, threading an accumulator
+// and an index value through each iteration. The accumulated value is returned
+// once aa is fully scanned.
+//
+//  Illustration:
+//    aa: [1,2,3,4]
+//    acc:    1
+//    folder: acc + sourceNode
+//    Fold(aa, acc, folder) -> [11]
+func Foldi(aa SliceType, acc PrimitiveType, folder func(i int64, a, acc PrimitiveType) PrimitiveType) PrimitiveType {
 	accumulation := acc
-	for _, a := range aa {
-		accumulation = folder(a, accumulation)
+	for i, a := range aa {
+		accumulation = folder(int64(i), a, accumulation)
 	}
 	return accumulation
 }
