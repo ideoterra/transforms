@@ -598,15 +598,27 @@ var Specifications = []Specification{
 	Specification{
 		FunctionName: "InsertBefore",
 		StandardPath: Behavior{
-			Description: "",
+			Description: "Inserts before the first element passing the test.",
 			Expectation: func(t *testing.T) {
-				t.Skip()
+				aa := generic.SliceType{1, 2, 3, 4}
+				test := func(a generic.PrimitiveType) bool {
+					return a.(int)%2 == 0
+				}
+				generic.InsertBefore(&aa, 9, test)
+				bb := generic.SliceType{1, 9, 2, 3, 4}
+				assert.ElementsMatch(t, aa, bb)
 			},
 		},
 		AlternativePath: Behavior{
-			Description: "",
+			Description: "Inserts at head if no tests pass",
 			Expectation: func(t *testing.T) {
-				t.Skip()
+				aa := generic.SliceType{1, 2, 3, 4}
+				test := func(a generic.PrimitiveType) bool {
+					return a.(int) == 10
+				}
+				generic.InsertBefore(&aa, 9, test)
+				bb := generic.SliceType{9, 1, 2, 3, 4}
+				assert.ElementsMatch(t, aa, bb)
 			},
 		},
 	},

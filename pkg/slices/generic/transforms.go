@@ -364,7 +364,7 @@ func Head(aa SliceType) SliceType {
 	return SliceType{aa[0]}
 }
 
-// InsertAfter inserts an element in aa after first element for which the
+// InsertAfter inserts an element in aa after the first element for which the
 // supplied test function returns true. If none of the tests return true, the
 // element is appended to the end of the aa.
 func InsertAfter(aa *SliceType, b PrimitiveType, test func(PrimitiveType) bool) {
@@ -376,6 +376,20 @@ func InsertAfter(aa *SliceType, b PrimitiveType, test func(PrimitiveType) bool) 
 		}
 	}
 	InsertAt(aa, b, int64(i+1))
+}
+
+// InsertBefore inserts an element in aa before the first element for which the
+// supplied test function returns true. If none of the tests return true,
+// the element is inserted at the head of aa.
+func InsertBefore(aa *SliceType, b PrimitiveType, test func(PrimitiveType) bool) {
+	var i int
+	var a PrimitiveType
+	for i, a = range *aa {
+		if test(a) {
+			break
+		}
+	}
+	InsertAt(aa, b, int64(i-1))
 }
 
 // InsertAt inserts an element in aa at the specified index i, shifting the
