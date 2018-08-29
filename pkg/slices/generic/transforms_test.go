@@ -561,14 +561,59 @@ var Specifications = []Specification{
 				Description: `Upon cancellation, active goroutines are allowed
 							  to wind down before the function returns.`,
 				Expectation: func(t *testing.T) {
-					t.Skip()
-				},
-			},
-			Behavior{
-				Description: `Backlogged work is abandoned after cancellation
-							  is requested.`,
-				Expectation: func(t *testing.T) {
-					t.Skip()
+					// Elements "A" and "B" will spawn infinitely loops, which
+					// check for pending cancellation on each iteration.
+					// Element "C" will spawn an operation that will wait until
+					// "A" and "B" are both running, at which point "C" will
+					// cancel further iterations.
+					// "A" and "B" will then identify the cancellation, and
+					// will halt.
+					//
+					// "A", and "B" will each write out a value upon
+					// cancellation, which is used to verify that the function
+					// blocked until all goroutines exited cleanly.
+					aa := generic.SliceType{"A", "B", "C"}
+					mu := new(sync.RWMutex)
+					aIsRunning := false
+					bIsRunning := false
+					aExitedCleanly := false
+					bExitedCleanly := false
+					fn := func(a generic.PrimitiveType, cancelPending func() bool) generic.Continue {
+						if a.(string) == "A" || a.(string) == "B" {
+							mu.Lock()
+							if a.(string) == "A" {
+								aIsRunning = true
+							} else {
+								bIsRunning = true
+							}
+							mu.Unlock()
+							for cancelPending() == false {
+							}
+							mu.Lock()
+							if a.(string) == "A" {
+								aExitedCleanly = true
+							} else {
+								bExitedCleanly = true
+							}
+							mu.Unlock()
+							return generic.ContinueYes
+						} else {
+							halt := false
+							for {
+								mu.RLock()
+								if aIsRunning && bIsRunning {
+									halt = true
+								}
+								mu.RUnlock()
+								if halt {
+									return generic.ContinueNo
+								}
+							}
+						}
+					}
+					generic.ForEachC(aa, 3, fn)
+					assert.True(t, aExitedCleanly)
+					assert.True(t, bExitedCleanly)
 				},
 			},
 		},
