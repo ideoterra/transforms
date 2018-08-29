@@ -1050,27 +1050,27 @@ var Specifications = []Specification{
 			},
 		},
 	},
-	// Specification{
-	// 	FunctionName: "Last",
-	// 	StandardPath: Behavior{
-	// 		Description: "Returns the last that matches the expectation.",
-	// 		Expectation: func(t *testing.T) {
-	// 			aa := generic.SliceType{1, 2, 3, 4, 5, 6, 7, 8}
-	// 			test := func(a generic.PrimitiveType) bool {
-	// 				return a.(int)%2 != 0
-	// 			}
-	// 			bb := generic.Last(aa, test)
-	// 			cc := generic.SliceType{7}
-	// 			assert.ElementsMatch(t, bb, cc)
-	// 		},
-	// 	},
-	// 	AlternativePath: Behavior{
-	// 		Description: "",
-	// 		Expectation: func(t *testing.T) {
-	// 			t.Skip()
-	// 		},
-	// 	},
-	// },
+	Specification{
+		FunctionName: "Last",
+		StandardPath: Behavior{
+			Description: "Returns the last that matches the expectation.",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{1, 2, 3, 4, 5, 6, 7, 8}
+				test := func(a generic.PrimitiveType) bool {
+					return a.(int)%2 != 0
+				}
+				bb := generic.Last(aa, test)
+				cc := generic.SliceType{7}
+				assert.ElementsMatch(t, bb, cc)
+			},
+		},
+		AlternativePath: Behavior{
+			Description: "",
+			Expectation: func(t *testing.T) {
+				t.Skip()
+			},
+		},
+	},
 }
 
 func TestTransforms(t *testing.T) {

@@ -593,7 +593,7 @@ func Last(aa SliceType, test func(PrimitiveType) bool) SliceType {
 	ForEachR(aa, func(a PrimitiveType) Continue {
 		if test(a) {
 			Append(&bb, a)
-			return ContinueYes
+			return ContinueNo
 		}
 		return ContinueYes
 	})
