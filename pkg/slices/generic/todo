@@ -46,9 +46,13 @@ IsProperSupersetS*
 IsSubsetS*
 IsSupersetS*
 LastS*
+MapC
+MapCI
 MapI
 NoneS*
+NoneC*
 PartitionS*
+Reduce?
 RemoveS *
 RemoveFirst *
 RemoveFirstS *
@@ -57,8 +61,6 @@ SplitBeforeS*
 SkipUntil *
 TakeUntil *
 
-Map
-None
 Pairwise
 Partition
 Permutable

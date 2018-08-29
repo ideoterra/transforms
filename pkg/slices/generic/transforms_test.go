@@ -1131,6 +1131,27 @@ var Specifications = []Specification{
 			},
 		},
 	},
+	Specification{
+		FunctionName: "Pairwise",
+		StandardPath: Behavior{
+			Description: "Processes elements pairwise",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{"W", "X", "Y", "Z"}
+				xform := func(a, b generic.PrimitiveType) generic.PrimitiveType {
+					return a.(string) + b.(string)
+				}
+				bb := generic.Pairwise(aa, "V", xform)
+				cc := generic.SliceType{"VW", "WX", "XY", "YZ"}
+				assert.ElementsMatch(t, bb, cc)
+			},
+		},
+		AlternativePath: Behavior{
+			Description: "",
+			Expectation: func(t *testing.T) {
+				t.Skip()
+			},
+		},
+	},
 }
 
 func TestTransforms(t *testing.T) {

@@ -618,6 +618,30 @@ func None(aa SliceType, test func(PrimitiveType) bool) bool {
 	return !Any(aa, test)
 }
 
+// Pairwise threads a transform function through aa, passing to the transform
+// successive two-element pairs, aa[i-1] && aa[i]. For the first pairing
+// the supplied init value is supplied as the initial element in the pair.
+//
+//   Illustration (pseudocode):
+//     aa:  [W,X,Y,Z]
+//     xform: func(a, b string) string { return a + b }
+//     init: V
+//     Pairwise(aa, init, xform) -> [VW, WX, XY, YZ]
+func Pairwise(aa SliceType, init PrimitiveType, xform func(a, b PrimitiveType) PrimitiveType) SliceType {
+	bb := SliceType{}
+	i := 0
+	a1, a2 := init, aa[i]
+	for {
+		bb = append(bb, xform(a1, a2))
+		i++
+		if i >= len(aa) {
+			break
+		}
+		a1, a2 = aa[i-1], aa[i]
+	}
+	return bb
+}
+
 //Remove applies a test function to each item in the list, and removes all items
 //for which the test returns true.
 // func Remove(aa *SliceType, test func(PrimitiveType) bool) {
