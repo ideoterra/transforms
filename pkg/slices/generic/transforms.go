@@ -978,3 +978,20 @@ func WindowCentered(aa SliceType, windowSize int64, windowFn func(window SliceTy
 	Reverse(&ee)
 	return ee
 }
+
+// WindowLeft applies a windowing function across aa, using a left-sided window
+// of the specified size.
+func WindowLeft(aa SliceType, windowSize int64, windowFn func(window SliceType) PrimitiveType) SliceType {
+	bb := SliceType{}
+	for i := int64(0); i < int64(len(aa)); i++ {
+		currentWindow := SliceType{}
+		for n := int64(0); n < windowSize; n++ {
+			if i+n >= int64(len(aa)) {
+				break
+			}
+			Append(&currentWindow, aa[i+n])
+		}
+		Append(&bb, windowFn(currentWindow))
+	}
+	return bb
+}

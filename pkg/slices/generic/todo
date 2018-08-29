@@ -71,8 +71,6 @@ SplitBeforeS*
 SkipUntil *
 TakeUntil *
 
-Unzip
-WindowedC
 WindowedL
 WindowedR
 Zip
@@ -86,3 +84,4 @@ Count <- Can be split and counted in parallel
 Difference <- currently has a minor optimiation to only scan the shorter list. However, other strategies could improve performance quite a bit.
 Group <- internal hashing is really naive. Could be optimized if hashes were sorted.
 Intersection <- Currently uses Any() to determine if an element has already been added. This has a low memory overhead, but a huge performance pentalty. A better approach would be to store the matches in a map then convert the map to a slice in a single pass.
+WindowCentered and WindowRight functions use Reverse a few tiems in the their final steps. This is a holdover from the linkedlist implementation where that wasn't as costly.
