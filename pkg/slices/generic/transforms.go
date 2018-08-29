@@ -791,6 +791,14 @@ func RemoveAt(aa *SliceType, i int64) {
 	}
 }
 
+// Reverse reverses the order of aa.
+func Reverse(aa *SliceType) {
+	for i := len(*aa)/2 - 1; i >= 0; i-- {
+		j := len(*aa) - 1 - i
+		(*aa)[i], (*aa)[j] = (*aa)[j], (*aa)[i]
+	}
+}
+
 // SwapIndex swaps the elements at the specified indices.
 func SwapIndex(aa SliceType, i, j int64) {
 	aa[i], aa[j] = aa[j], aa[i]

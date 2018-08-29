@@ -1400,7 +1400,7 @@ var Specifications = []Specification{
 				Expectation: func(t *testing.T) {
 					var aa generic.SliceType
 					generic.RemoveAt(&aa, 2)
-					assert.NotPanics(t, func() { generic.RemoveAt(&aa, 0) })
+					assert.Nil(t, aa)
 				},
 			},
 			Behavior{
@@ -1423,13 +1423,37 @@ var Specifications = []Specification{
 			},
 		},
 	},
-}
-
-func TestSwapIndex(t *testing.T) {
-	aa := generic.SliceType{1, 2, 3, 4, 5}
-	generic.SwapIndex(aa, 2, 4)
-	bb := generic.SliceType{1, 2, 5, 4, 3}
-	assert.ElementsMatch(t, aa, bb)
+	Specification{
+		FunctionName: "Reverse",
+		StandardPath: Behavior{
+			Description: "Reverses slice",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{1, 2, 3, 4}
+				generic.Reverse(&aa)
+				bb := generic.SliceType{4, 3, 2, 1}
+				assert.ElementsMatch(t, aa, bb)
+			},
+		},
+		AlternativePath: Behavior{
+			Description: "Empty slice has no effect",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{}
+				generic.Reverse(&aa)
+				bb := generic.SliceType{}
+				assert.ElementsMatch(t, aa, bb)
+			},
+		},
+		EdgeCases: []Behavior{
+			Behavior{
+				Description: "Nil slice has no effect",
+				Expectation: func(t *testing.T) {
+					var aa generic.SliceType
+					generic.Reverse(&aa)
+					assert.Nil(t, aa)
+				},
+			},
+		},
+	},
 }
 
 func TestTransforms(t *testing.T) {
@@ -1440,4 +1464,11 @@ func TestTransforms(t *testing.T) {
 			t.Run(fmt.Sprintf("%vEdgeCase%v", specification.FunctionName, i), edgeCase.Expectation)
 		}
 	}
+}
+
+func TestSwapIndex(t *testing.T) {
+	aa := generic.SliceType{1, 2, 3, 4, 5}
+	generic.SwapIndex(aa, 2, 4)
+	bb := generic.SliceType{1, 2, 5, 4, 3}
+	assert.ElementsMatch(t, aa, bb)
 }

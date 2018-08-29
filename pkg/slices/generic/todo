@@ -63,7 +63,6 @@ SplitBeforeS*
 SkipUntil *
 TakeUntil *
 
-Reverse
 Skip
 SkipWhile
 Sort
