@@ -883,7 +883,12 @@ func String(aa SliceType) string {
 	return string(jsonBytes)
 }
 
-// SwapIndex swaps the elements at the specified indices.
+// SwapIndex swaps the elements at the specified indices. If either i or j is
+// out of the bounds of aa, SwapIndex does nothing.
 func SwapIndex(aa SliceType, i, j int64) {
+	l := int64(len(aa))
+	if i < 0 || j < 0 || i >= l || j >= l {
+		return
+	}
 	aa[i], aa[j] = aa[j], aa[i]
 }

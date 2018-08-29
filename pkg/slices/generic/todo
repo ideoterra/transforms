@@ -71,12 +71,6 @@ SplitBeforeS*
 SkipUntil *
 TakeUntil *
 
-SplitAfter
-SplitAt
-SplitBefore
-String
-Swap
-SwapIndex
 Tail
 Take
 TakeWhile

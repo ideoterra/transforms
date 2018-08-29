@@ -1702,6 +1702,39 @@ var Specifications = []Specification{
 			},
 		},
 	},
+	Specification{
+		FunctionName: "SwapIndex",
+		StandardPath: Behavior{
+			Description: "Swaps the specified indices.",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{1, 2, 3, 4, 5}
+				generic.SwapIndex(aa, 2, 4)
+				bb := generic.SliceType{1, 2, 5, 4, 3}
+				assert.ElementsMatch(t, aa, bb)
+			},
+		},
+		AlternativePath: Behavior{
+			Description: "If either index is out of range, swap does nothing.",
+			Expectation: func(t *testing.T) {
+				indices := [][]int64{
+					{-10, -9},
+					{-10, 3},
+					{-10, 10},
+					{3, -10},
+					{3, 10},
+					{10, -10},
+					{10, 3},
+					{10, 9},
+				}
+				for _, ii := range indices {
+					aa := generic.SliceType{1, 2, 3, 4, 5}
+					generic.SwapIndex(aa, ii[0], ii[1])
+					bb := generic.SliceType{1, 2, 3, 4, 5}
+					assert.ElementsMatch(t, aa, bb)
+				}
+			},
+		},
+	},
 }
 
 func TestTransforms(t *testing.T) {
