@@ -874,8 +874,10 @@ func SplitBefore(aa SliceType, test func(PrimitiveType) bool) SliceType2 {
 	return SplitAt(aa, FindIndex(aa, test))
 }
 
-// String returns a string representation of the SliceType, suitable for use
-// with fmt.Print, or other similar functions.
+// String returns a string representation of aa, suitable for use
+// with fmt.Print, or other similar functions. String should be regarded as
+// informational, and should not be relied upon to formally serialize a
+// SliceType.
 func String(aa SliceType) string {
 	jsonBytes, _ := json.Marshal(aa)
 	return string(jsonBytes)
