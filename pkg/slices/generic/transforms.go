@@ -336,33 +336,35 @@ func First(aa SliceType, test func(PrimitiveType) bool) SliceType {
 }
 
 // Fold applies a function to each item in slice aa, threading an accumulator
-// through each iteration. The accumulated value is returned once aa is fully
-// scanned.
+// through each iteration. The accumulated value is returned in a new SliceType
+// once aa is fully scanned. Fold returns a SliceType rather than a
+// PrimitiveType to be consistent with this package's Reduce implementation.
 //
 //  Illustration:
 //    aa: [1,2,3,4]
 //    acc:    1
 //    folder: acc + sourceNode
 //    Fold(aa, acc, folder) -> [11]
-func Fold(aa SliceType, acc PrimitiveType, folder func(a, acc PrimitiveType) PrimitiveType) PrimitiveType {
+func Fold(aa SliceType, acc PrimitiveType, folder func(a, acc PrimitiveType) PrimitiveType) SliceType {
 	return FoldI(aa, acc, func(_ int64, a, acc PrimitiveType) PrimitiveType { return folder(a, acc) })
 }
 
 // FoldI applies a function to each item in slice aa, threading an accumulator
 // and an index value through each iteration. The accumulated value is returned
-// once aa is fully scanned.
+// once aa is fully scanned. Foldi returns a SliceType rather than a
+// PrimitiveType to be consistent with this package's Reduce implementation.
 //
 //  Illustration:
 //    aa: [1,2,3,4]
 //    acc:    1
 //    folder: acc + sourceNode
 //    Fold(aa, acc, folder) -> [11]
-func FoldI(aa SliceType, acc PrimitiveType, folder func(i int64, a, acc PrimitiveType) PrimitiveType) PrimitiveType {
+func FoldI(aa SliceType, acc PrimitiveType, folder func(i int64, a, acc PrimitiveType) PrimitiveType) SliceType {
 	accumulation := acc
 	for i, a := range aa {
 		accumulation = folder(int64(i), a, accumulation)
 	}
-	return accumulation
+	return SliceType{accumulation}
 }
 
 // ForEach applies each element of the list to the given function.
@@ -743,6 +745,28 @@ func Pop(aa *SliceType) SliceType {
 // Push places a prepends a new element at the head of aa.
 func Push(aa *SliceType, a PrimitiveType) {
 	InsertAt(aa, a, 0)
+}
+
+// Reduce applies a reducer function to each element in aa, threading an
+// accumulator through each iteration. The resulting accumulation is returned
+// as an element of a new SliceType. If aa is empty, the resulting SliceType
+// will also be empty.
+//
+//  Illustration:
+//    aa: [1,2,3,4]
+//    reducer: acc + sourceNode
+//    Fold(aa, reducer) -> [10]
+func Reduce(aa SliceType, reducer func(a, acc PrimitiveType) PrimitiveType) SliceType {
+	if len(aa) == 0 {
+		return SliceType{}
+	}
+	accumulator := aa[0]
+	if len(aa) > 1 {
+		for i := 1; i < len(aa); i++ {
+			accumulator = reducer(aa[i], accumulator)
+		}
+	}
+	return SliceType{accumulator}
 }
 
 //Remove applies a test function to each item in the list, and removes all items

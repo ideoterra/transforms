@@ -60,9 +60,6 @@ SplitBeforeS*
 SkipUntil *
 TakeUntil *
 
-Pop
-Push
-Reduce
 RemoveAt
 Reverse
 Skip

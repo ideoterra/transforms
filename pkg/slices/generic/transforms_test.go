@@ -427,8 +427,8 @@ var Specifications = []Specification{
 				folder := func(a, acc generic.PrimitiveType) generic.PrimitiveType {
 					return a.(int) + acc.(int)
 				}
-				b := generic.Fold(aa, 1, folder)
-				assert.Equal(t, 11, b)
+				bb := generic.Fold(aa, 1, folder)
+				assert.Equal(t, 11, bb[0].(int))
 			},
 		},
 		AlternativePath: Behavior{
@@ -450,8 +450,8 @@ var Specifications = []Specification{
 						strconv.Itoa(int(i)),
 						a.(string))
 				}
-				b := generic.FoldI(aa, "X", folder)
-				assert.Equal(t, "X0A1B2C", b)
+				bb := generic.FoldI(aa, "X", folder)
+				assert.Equal(t, "X0A1B2C", bb[0].(string))
 			},
 		},
 		AlternativePath: Behavior{
@@ -1303,6 +1303,47 @@ var Specifications = []Specification{
 			Description: "",
 			Expectation: func(t *testing.T) {
 				t.Skip()
+			},
+		},
+	},
+	Specification{
+		FunctionName: "Reduce",
+		StandardPath: Behavior{
+			Description: "Slice is reduced as expected.",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{1, 2, 3, 4}
+				reducer := func(a, acc generic.PrimitiveType) generic.PrimitiveType {
+					return a.(int) + acc.(int)
+				}
+				bb := generic.Reduce(aa, reducer)
+				cc := generic.SliceType{10}
+				assert.ElementsMatch(t, bb, cc)
+			},
+		},
+		AlternativePath: Behavior{
+			Description: "Reducing empty slice returns an empty slice.",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{}
+				reducer := func(a, acc generic.PrimitiveType) generic.PrimitiveType {
+					return a.(int) + acc.(int)
+				}
+				bb := generic.Reduce(aa, reducer)
+				cc := generic.SliceType{}
+				assert.ElementsMatch(t, bb, cc)
+			},
+		},
+		EdgeCases: []Behavior{
+			Behavior{
+				Description: "Reducing a single element slice returns a single element slice.",
+				Expectation: func(t *testing.T) {
+					aa := generic.SliceType{1}
+					reducer := func(a, acc generic.PrimitiveType) generic.PrimitiveType {
+						return a.(int) + acc.(int)
+					}
+					bb := generic.Reduce(aa, reducer)
+					cc := generic.SliceType{1}
+					assert.ElementsMatch(t, bb, cc)
+				},
 			},
 		},
 	},
