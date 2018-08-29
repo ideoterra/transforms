@@ -1554,31 +1554,39 @@ var Specifications = []Specification{
 			},
 		},
 	},
-
 	Specification{
 		FunctionName: "SplitAfter",
 		StandardPath: Behavior{
-			Description: "",
+			Description: "The slice is spit as expected",
 			Expectation: func(t *testing.T) {
-				t.Skip()
+				aa := generic.SliceType{6, 7, 8, 9}
+				test := func(a generic.PrimitiveType) bool {
+					return a.(int) == 7
+				}
+				bb := generic.SplitAfter(aa, test)
+				cc := generic.SliceType2{
+					generic.SliceType{6, 7},
+					generic.SliceType{8, 9},
+				}
+				assert.ElementsMatch(t, bb, cc)
 			},
 		},
 		AlternativePath: Behavior{
-			Description: "",
+			Description: "No match found, aa will be in SliceType2[0]",
 			Expectation: func(t *testing.T) {
-				t.Skip()
-			},
-		},
-		EdgeCases: []Behavior{
-			Behavior{
-				Description: "",
-				Expectation: func(t *testing.T) {
-					t.Skip()
-				},
+				aa := generic.SliceType{6, 7, 8, 9}
+				test := func(a generic.PrimitiveType) bool {
+					return a.(int) == 10
+				}
+				bb := generic.SplitAfter(aa, test)
+				cc := generic.SliceType2{
+					generic.SliceType{6, 7, 8, 9},
+					generic.SliceType{},
+				}
+				assert.ElementsMatch(t, bb, cc)
 			},
 		},
 	},
-
 	Specification{
 		FunctionName: "SplitAt",
 		StandardPath: Behavior{
@@ -1644,27 +1652,36 @@ var Specifications = []Specification{
 			},
 		},
 	},
-
 	Specification{
 		FunctionName: "SplitBefore",
 		StandardPath: Behavior{
-			Description: "",
+			Description: "The slice is spit as expected",
 			Expectation: func(t *testing.T) {
-				t.Skip()
+				aa := generic.SliceType{6, 7, 8, 9}
+				test := func(a generic.PrimitiveType) bool {
+					return a.(int) == 8
+				}
+				bb := generic.SplitBefore(aa, test)
+				cc := generic.SliceType2{
+					generic.SliceType{6, 7},
+					generic.SliceType{8, 9},
+				}
+				assert.ElementsMatch(t, bb, cc)
 			},
 		},
 		AlternativePath: Behavior{
-			Description: "",
+			Description: "No match found, aa will be in SliceType2[0]",
 			Expectation: func(t *testing.T) {
-				t.Skip()
-			},
-		},
-		EdgeCases: []Behavior{
-			Behavior{
-				Description: "",
-				Expectation: func(t *testing.T) {
-					t.Skip()
-				},
+				aa := generic.SliceType{6, 7, 8, 9}
+				test := func(a generic.PrimitiveType) bool {
+					return a.(int) == 10
+				}
+				bb := generic.SplitBefore(aa, test)
+				cc := generic.SliceType2{
+					generic.SliceType{6, 7, 8, 9},
+					generic.SliceType{},
+				}
+				assert.ElementsMatch(t, bb, cc)
 			},
 		},
 	},
