@@ -507,6 +507,71 @@ var Specifications = []Specification{
 					func() { generic.ForEachC(aa, -1, fn) })
 			},
 		},
+		EdgeCases: []Behavior{
+			Behavior{
+				Description: `Long running operations wind down when a 
+							  cancellation is broadcast`,
+				Expectation: func(t *testing.T) {
+					// Elements "A" and "B" will spawn infinitely loops, which
+					// check for pending cancellation on each iteration.
+					// Element "C" will spawn an operation that will wait until
+					// "A" and "B" are both running, at which point "C" will
+					// cancel further iterations.
+					// "A" and "B" will then identify the cancellation, and
+					// will halt.
+					//
+					// If this test is failing, it should time out. This can
+					// be verified by removing the "halt = true" assignment and
+					// manually confirming that the test would time out in that
+					// case.
+					aa := generic.SliceType{"A", "B", "C"}
+					mu := new(sync.RWMutex)
+					aIsRunning := false
+					bIsRunning := false
+					fn := func(a generic.PrimitiveType, cancelPending func() bool) generic.Continue {
+						if a.(string) == "A" || a.(string) == "B" {
+							mu.Lock()
+							if a.(string) == "A" {
+								aIsRunning = true
+							} else {
+								bIsRunning = true
+							}
+							mu.Unlock()
+							for cancelPending() == false {
+							}
+							return generic.ContinueYes
+						} else {
+							halt := false
+							for {
+								mu.RLock()
+								if aIsRunning && bIsRunning {
+									halt = true
+								}
+								mu.RUnlock()
+								if halt {
+									return generic.ContinueNo
+								}
+							}
+						}
+					}
+					generic.ForEachC(aa, 3, fn)
+				},
+			},
+			Behavior{
+				Description: `Upon cancellation, active goroutines are allowed
+							  to wind down before the function returns.`,
+				Expectation: func(t *testing.T) {
+					t.Skip()
+				},
+			},
+			Behavior{
+				Description: `Backlogged work is abandoned after cancellation
+							  is requested.`,
+				Expectation: func(t *testing.T) {
+					t.Skip()
+				},
+			},
+		},
 	},
 	Specification{
 		FunctionName: "ForEachR",
