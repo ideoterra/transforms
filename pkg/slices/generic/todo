@@ -16,6 +16,14 @@ package generic
 				t.Skip()
 			},
 		},
+        EdgeCases: []Behavior{
+            Behavior{
+                Description: "",
+                Expectation: func(t *testing.T) {
+                    t.Skip()
+                },
+            },
+        },
 	},
 
 /*
@@ -63,8 +71,6 @@ SplitBeforeS*
 SkipUntil *
 TakeUntil *
 
-Skip
-SkipWhile
 Sort
 SplitAfter
 SplitAt

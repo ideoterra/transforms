@@ -96,6 +96,7 @@ package generic
 import (
 	"fmt"
 	"math/big"
+	"sort"
 	"sync/atomic"
 
 	"github.com/cheekybits/genny/generic"
@@ -821,6 +822,16 @@ func SkipWhile(aa *SliceType, test func(PrimitiveType) bool) {
 	// everything up to that index.
 	findTest := func(a PrimitiveType) bool { return !test(a) }
 	Skip(aa, FindIndex(*aa, findTest))
+}
+
+// Sort sorts aa, using the supplied less function to determine order.
+// Sort is a convenience wrapper around the stdlib sort.SliceStable
+// function.
+func Sort(aa *SliceType, less func(a, b PrimitiveType) bool) {
+	lessI := func(i, j int) bool {
+		return less((*aa)[i], (*aa)[j])
+	}
+	sort.SliceStable(*aa, lessI)
 }
 
 // SwapIndex swaps the elements at the specified indices.

@@ -1533,6 +1533,27 @@ var Specifications = []Specification{
 			},
 		},
 	},
+	Specification{
+		FunctionName: "Sort",
+		StandardPath: Behavior{
+			Description: "Sorts",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{6, 3, 4, 2, 5}
+				less := func(a, b generic.PrimitiveType) bool {
+					return a.(int) < b.(int)
+				}
+				generic.Sort(&aa, less)
+				bb := generic.SliceType{2, 3, 4, 5, 6}
+				assert.ElementsMatch(t, aa, bb)
+			},
+		},
+		AlternativePath: Behavior{
+			Description: "",
+			Expectation: func(t *testing.T) {
+				t.Skip()
+			},
+		},
+	},
 }
 
 func TestTransforms(t *testing.T) {
