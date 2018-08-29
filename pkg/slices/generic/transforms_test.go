@@ -1934,6 +1934,41 @@ var Specifications = []Specification{
 			},
 		},
 	},
+	Specification{
+		FunctionName: "WindowRight",
+		StandardPath: Behavior{
+			Description: "Basic windowing works.",
+			Expectation: func(t *testing.T) {
+				windowFn := func(aa generic.SliceType) generic.PrimitiveType {
+					sum := 0.0
+					for _, a := range aa {
+						sum += float64(a.(float64))
+					}
+					return sum / float64(len(aa))
+				}
+				aa := generic.SliceType{1.0, 2.0, 3.0, 4.0, 5.0}
+				bb := generic.WindowRight(aa, 4, windowFn)
+				cc := generic.SliceType{1.0, 1.5, 2.0, 2.5, 3.5}
+				assert.ElementsMatch(t, bb, cc)
+			},
+		},
+		AlternativePath: Behavior{
+			Description: "Slice order is is respected",
+			Expectation: func(t *testing.T) {
+				windowFn := func(aa generic.SliceType) generic.PrimitiveType {
+					result := ""
+					for _, a := range aa {
+						result = result + a.(string)
+					}
+					return result
+				}
+				aa := generic.SliceType{"1", "2", "3"}
+				bb := generic.WindowRight(aa, 2, windowFn)
+				cc := generic.SliceType{"1", "12", "23"}
+				assert.ElementsMatch(t, bb, cc)
+			},
+		},
+	},
 }
 
 func TestTransforms(t *testing.T) {

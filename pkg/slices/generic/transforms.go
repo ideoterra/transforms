@@ -995,3 +995,26 @@ func WindowLeft(aa SliceType, windowSize int64, windowFn func(window SliceType) 
 	}
 	return bb
 }
+
+// WindowRight applies a windowing function across aa, using a right-sided
+// window of the specified size.
+func WindowRight(aa SliceType, windowSize int64, windowFn func(window SliceType) PrimitiveType) SliceType {
+	aa1 := Clone(aa)
+	defer Clear(&aa1)
+
+	Reverse(&aa1)
+	bb := SliceType{}
+	for i := int64(0); i < int64(len(aa1)); i++ {
+		currentWindow := SliceType{}
+		for n := int64(0); n < windowSize; n++ {
+			if i+n >= int64(len(aa1)) {
+				break
+			}
+			Append(&currentWindow, aa1[i+n])
+		}
+		Reverse(&currentWindow)
+		Append(&bb, windowFn(currentWindow))
+	}
+	Reverse(&bb)
+	return bb
+}
