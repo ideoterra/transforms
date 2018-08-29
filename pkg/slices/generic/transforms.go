@@ -799,6 +799,19 @@ func Reverse(aa *SliceType) {
 	}
 }
 
+// Skip mutates aa, removing the first n elements from the slice.
+//
+// Note that Skip(aa, len(aa)) will remove all items from the list, but does not
+// "clear" the slice, meaning that the list remains allocated in memory.
+// To fully de-pointer the slice, and ensure it is available for garbage
+// collection as soon as possible, consider using Clear().
+func Skip(aa *SliceType, n int64) {
+	if len(*aa) == 0 {
+		return
+	}
+	*aa = (*aa)[n:]
+}
+
 // SwapIndex swaps the elements at the specified indices.
 func SwapIndex(aa SliceType, i, j int64) {
 	aa[i], aa[j] = aa[j], aa[i]

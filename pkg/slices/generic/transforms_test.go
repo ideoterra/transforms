@@ -1454,6 +1454,58 @@ var Specifications = []Specification{
 			},
 		},
 	},
+	Specification{
+		FunctionName: "Skip",
+		StandardPath: Behavior{
+			Description: "Skips the first n elements",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{1, 2, 3, 4}
+				generic.Skip(&aa, 2)
+				bb := generic.SliceType{3, 4}
+				assert.ElementsMatch(t, aa, bb)
+			},
+		},
+		AlternativePath: Behavior{
+			Description: "Empties the list if n >= len(aa)",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{1, 2, 3, 4}
+				generic.Skip(&aa, 4)
+				bb := generic.SliceType{}
+				assert.ElementsMatch(t, aa, bb)
+			},
+		},
+		EdgeCases: []Behavior{
+			Behavior{
+				Description: "Empty list does nothing",
+				Expectation: func(t *testing.T) {
+					aa := generic.SliceType{}
+					generic.Skip(&aa, 4)
+					bb := generic.SliceType{}
+					assert.ElementsMatch(t, aa, bb)
+				},
+			},
+			Behavior{
+				Description: "Nil list does nothing",
+				Expectation: func(t *testing.T) {
+					var aa generic.SliceType
+					generic.Skip(&aa, 4)
+					assert.Nil(t, aa)
+				},
+			},
+			Behavior{
+				Description: "n <= 0 does nothing",
+				Expectation: func(t *testing.T) {
+					nn := []int64{-1, 0}
+					for _, n := range nn {
+						aa := generic.SliceType{}
+						generic.Skip(&aa, n)
+						bb := generic.SliceType{}
+						assert.ElementsMatch(t, aa, bb)
+					}
+				},
+			},
+		},
+	},
 }
 
 func TestTransforms(t *testing.T) {
