@@ -378,13 +378,13 @@ func ForEach(aa SliceType, fn func(PrimitiveType) Continue) {
 }
 
 // ForEachC concurrently applies each element of the list to the given function.
-// The elements of the list are marshalled to a pool of channels where they are
-// supplied to function (fn) concurrently.
+// The elements of the list are marshalled to a pool of goroutines, where each
+// element is passed to fn concurrently.
 //
-// The channel pool is limited to contain no more than c active goroutines at
-// any time. Note that if a channel pool size of 0 is supplied, this method will
-// block indefinitely. This function will panic if a negative value is supplied
-// for c.
+// The concurrency pool is limited to contain no more than c active goroutines
+// at any time. Note that if a pool size of 0 is supplied, this method
+// will block indefinitely. This function will panic if a negative value is
+// supplied for c.
 //
 // If any execution of fn returns ContinueNo, ForEachC will cease marshalling
 // any backlogged work, and will immediately set the cancellation flag to true.
@@ -393,7 +393,7 @@ func ForEach(aa SliceType, fn func(PrimitiveType) Continue) {
 // goroutines exit cleanly.
 func ForEachC(aa SliceType, c int, fn func(a PrimitiveType, cancelPending func() bool) Continue) {
 	if c < 0 {
-		panic("ForEachC: The channel pool size (c) must be non-negative.")
+		panic("ForEachC: The concurrency pool size (c) must be non-negative.")
 	}
 	halt := int64(0)
 	cancelPending := func() bool {
@@ -587,7 +587,7 @@ func Item(aa SliceType, i int64) SliceType {
 }
 
 // ItemFuzzy returns a SliceType containing the element at aa[i].
-// if the supplied index is outside of the bounds of aa, ItemFuzzy will attempt
+// If the supplied index is outside of the bounds of aa, ItemFuzzy will attempt
 // to retrieve the head or end element of aa according to the following rules:
 // If len(aa) == 0 an empty SliceType is returned.
 // If i < 0, the head of aa is returned.
@@ -780,8 +780,13 @@ func Reduce(aa SliceType, reducer func(a, acc PrimitiveType) PrimitiveType) Slic
 // 	}
 // }
 
-//RemoveAt removes the item at the specified index from the slice.
+// RemoveAt removes the item at the specified index from the slice.
+// If len(aa) == 0, aa == nil, i < 0, or i >= len(aa), this function will do
+// nothing.
 func RemoveAt(aa *SliceType, i int64) {
+	if i < 0 {
+		return
+	}
 	if len(*aa) > 0 {
 		*aa = append((*aa)[:i], (*aa)[i+1:]...)
 	}

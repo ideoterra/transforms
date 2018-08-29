@@ -22,11 +22,14 @@ package generic
 
 AnyS*
 AllS*
+AtLeast* (returns true if n or more items meet a condition)
+AtMost* (returns true if no more then n items meet a condition)
 AutoCorrelate *
 CrossCorrelate *
 Convolute *
 CountS *
 DistinctS *
+Exactly * (returns true if n items meet a condition)
 FilterS *
 FindIndexS *
 FindIndices *
@@ -64,7 +67,6 @@ RemoveAt
 Reverse
 Skip
 SkipWhile
-Some
 Sort
 SplitAfter
 SplitAt

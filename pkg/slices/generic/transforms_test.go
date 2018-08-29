@@ -526,7 +526,7 @@ var Specifications = []Specification{
 					return generic.ContinueYes
 				}
 				assert.PanicsWithValue(t,
-					"ForEachC: The channel pool size (c) must be non-negative.",
+					"ForEachC: The concurrency pool size (c) must be non-negative.",
 					func() { generic.ForEachC(aa, -1, fn) })
 			},
 		},
@@ -1343,6 +1343,55 @@ var Specifications = []Specification{
 					bb := generic.Reduce(aa, reducer)
 					cc := generic.SliceType{1}
 					assert.ElementsMatch(t, bb, cc)
+				},
+			},
+		},
+	},
+	Specification{
+		FunctionName: "RemoveAt",
+		StandardPath: Behavior{
+			Description: "Removes the item at the specified index.",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{1, 2, 3, 4}
+				generic.RemoveAt(&aa, 2)
+				bb := generic.SliceType{1, 2, 4}
+				assert.ElementsMatch(t, aa, bb)
+			},
+		},
+		AlternativePath: Behavior{
+			Description: "Does nothing if slice is empty.",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{}
+				generic.RemoveAt(&aa, 2)
+				bb := generic.SliceType{}
+				assert.ElementsMatch(t, aa, bb)
+			},
+		},
+		EdgeCases: []Behavior{
+			Behavior{
+				Description: "Does nothing if slice is nil",
+				Expectation: func(t *testing.T) {
+					var aa generic.SliceType
+					generic.RemoveAt(&aa, 2)
+					assert.NotPanics(t, func() { generic.RemoveAt(&aa, 0) })
+				},
+			},
+			Behavior{
+				Description: "Does nothing if index is negative",
+				Expectation: func(t *testing.T) {
+					aa := generic.SliceType{1, 2, 3, 4}
+					generic.RemoveAt(&aa, -1)
+					bb := generic.SliceType{1, 2, 3, 4}
+					assert.ElementsMatch(t, aa, bb)
+				},
+			},
+			Behavior{
+				Description: "Does nothing if index greater than max",
+				Expectation: func(t *testing.T) {
+					aa := generic.SliceType{1, 2, 3, 4}
+					generic.RemoveAt(&aa, 10)
+					bb := generic.SliceType{1, 2, 3, 4}
+					assert.ElementsMatch(t, aa, bb)
 				},
 			},
 		},
