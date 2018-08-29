@@ -1554,6 +1554,120 @@ var Specifications = []Specification{
 			},
 		},
 	},
+
+	Specification{
+		FunctionName: "SplitAfter",
+		StandardPath: Behavior{
+			Description: "",
+			Expectation: func(t *testing.T) {
+				t.Skip()
+			},
+		},
+		AlternativePath: Behavior{
+			Description: "",
+			Expectation: func(t *testing.T) {
+				t.Skip()
+			},
+		},
+		EdgeCases: []Behavior{
+			Behavior{
+				Description: "",
+				Expectation: func(t *testing.T) {
+					t.Skip()
+				},
+			},
+		},
+	},
+
+	Specification{
+		FunctionName: "SplitAt",
+		StandardPath: Behavior{
+			Description: "The slice is split as expected",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{6, 7, 8, 9}
+				bb := generic.SplitAt(aa, 2)
+				cc := generic.SliceType2{
+					generic.SliceType{6, 7},
+					generic.SliceType{8, 9},
+				}
+				assert.ElementsMatch(t, bb, cc)
+			},
+		},
+		AlternativePath: Behavior{
+			Description: "If the slice is empty, two empty slices are returned",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{}
+				bb := generic.SplitAt(aa, 2)
+				cc := generic.SliceType2{
+					generic.SliceType{},
+					generic.SliceType{},
+				}
+				assert.ElementsMatch(t, bb, cc)
+			},
+		},
+		EdgeCases: []Behavior{
+			Behavior{
+				Description: "If the slice is nil, two empty slices are returned",
+				Expectation: func(t *testing.T) {
+					var aa generic.SliceType
+					bb := generic.SplitAt(aa, 2)
+					cc := generic.SliceType2{
+						generic.SliceType{},
+						generic.SliceType{},
+					}
+					assert.ElementsMatch(t, bb, cc)
+				},
+			},
+			Behavior{
+				Description: "If i < 0, the full slice will be placed in SliceType2[1]",
+				Expectation: func(t *testing.T) {
+					aa := generic.SliceType{6, 7, 8, 9}
+					bb := generic.SplitAt(aa, -1)
+					cc := generic.SliceType2{
+						generic.SliceType{},
+						generic.SliceType{6, 7, 8, 9},
+					}
+					assert.ElementsMatch(t, bb, cc)
+				},
+			},
+			Behavior{
+				Description: "If i >= len(aa), the full slice will be placed in SliceType2[0]",
+				Expectation: func(t *testing.T) {
+					aa := generic.SliceType{6, 7, 8, 9}
+					bb := generic.SplitAt(aa, 4)
+					cc := generic.SliceType2{
+						generic.SliceType{6, 7, 8, 9},
+						generic.SliceType{},
+					}
+					assert.ElementsMatch(t, bb, cc)
+				},
+			},
+		},
+	},
+
+	Specification{
+		FunctionName: "SplitBefore",
+		StandardPath: Behavior{
+			Description: "",
+			Expectation: func(t *testing.T) {
+				t.Skip()
+			},
+		},
+		AlternativePath: Behavior{
+			Description: "",
+			Expectation: func(t *testing.T) {
+				t.Skip()
+			},
+		},
+		EdgeCases: []Behavior{
+			Behavior{
+				Description: "",
+				Expectation: func(t *testing.T) {
+					t.Skip()
+				},
+			},
+		},
+	},
 }
 
 func TestTransforms(t *testing.T) {

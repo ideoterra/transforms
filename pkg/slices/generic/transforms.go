@@ -834,6 +834,44 @@ func Sort(aa *SliceType, less func(a, b PrimitiveType) bool) {
 	sort.SliceStable(*aa, lessI)
 }
 
+// SplitAfter finds the first element b for which a test function returns true,
+// and returns a SliceType2 where SliceType2[0] contains the first half of aa
+// and SliceType2[1] contains the second half of aa. Element b will be included
+// in SliceType2[0].
+func SplitAfter(aa SliceType, test func(PrimitiveType) bool) SliceType2 {
+	panic("not implemented")
+}
+
+// SplitAt splits aa at index i, and returns a SliceType2 which contains the
+// two split halves of aa. aa[i] will be included in SliceType2[1]
+// If i < 0, all of aa will be placed in SliceType2[0], and SliceType2[1] will
+// be empty. Conversly, if i >= len(aa)m all of aa will be placed in
+// SliceType2[1], and SliceType2[0] will be empty. If aa is nil or empty,
+// SliceType2 will contain two empty slices.
+func SplitAt(aa SliceType, i int64) SliceType2 {
+	if len(aa) == 0 {
+		return SliceType2{
+			SliceType{},
+			SliceType{},
+		}
+	}
+	if i < 0 {
+		i = 0
+	}
+	return SliceType2{
+		aa[:i],
+		aa[i:],
+	}
+}
+
+// SplitBefore finds the first element b for which a test function returns true,
+// and returns a SliceType2 where SliceType2[0] contains the first half of aa
+// and SliceType2[1] contains the second half of aa. Element b will be included
+// in SliceType2[1]
+func SplitBefore(aa SliceType, test func(PrimitiveType) bool) SliceType2 {
+	panic("not implemented")
+}
+
 // SwapIndex swaps the elements at the specified indices.
 func SwapIndex(aa SliceType, i, j int64) {
 	aa[i], aa[j] = aa[j], aa[i]

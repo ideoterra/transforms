@@ -71,7 +71,6 @@ SplitBeforeS*
 SkipUntil *
 TakeUntil *
 
-Sort
 SplitAfter
 SplitAt
 SplitBefore
