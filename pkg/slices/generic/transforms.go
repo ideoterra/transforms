@@ -898,3 +898,21 @@ func SwapIndex(aa SliceType, i, j int64) {
 func Tail(aa *SliceType) {
 	RemoveAt(aa, 0)
 }
+
+// Take retains the first n elements of aa, and removes all remaining elements
+// from the slice. If n < 0 or n >= len(aa), Take does nothing. If n == 0, all
+// elements are removed from the slice (but the slice is not de-pointered).
+func Take(aa *SliceType, n int64) {
+	if len(*aa) == 0 || n < 0 || n >= int64(len(*aa)) {
+		return
+	}
+	*aa = (*aa)[:n]
+}
+
+// TakeWhile applies a test function to each element in aa, and retains all
+// elements of aa so long as the test function returns true. As soon as the test
+// function returns false, take stops evaluating any further, and abandons the
+// rest of the slice.
+func TakeWhile(aa *SliceType, test func(PrimitiveType) bool) {
+	panic("Not implemented")
+}

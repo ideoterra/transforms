@@ -1753,6 +1753,37 @@ var Specifications = []Specification{
 			},
 		},
 	},
+	Specification{
+		FunctionName: "Take",
+		StandardPath: Behavior{
+			Description: "Normally retains first n elements",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{1, 2, 3, 4}
+				generic.Take(&aa, 2)
+				bb := generic.SliceType{1, 2}
+				assert.ElementsMatch(t, aa, bb)
+			},
+		},
+		AlternativePath: Behavior{
+			Description: "If slice is empty, Take does nothing",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{}
+				generic.Take(&aa, 2)
+				bb := generic.SliceType{}
+				assert.ElementsMatch(t, aa, bb)
+			},
+		},
+		EdgeCases: []Behavior{
+			Behavior{
+				Description: "If slice is nil, Take does nothing",
+				Expectation: func(t *testing.T) {
+					var aa generic.SliceType
+					generic.Take(&aa, 2)
+					assert.Nil(t, aa)
+				},
+			},
+		},
+	},
 }
 
 func TestTransforms(t *testing.T) {

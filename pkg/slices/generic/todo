@@ -71,8 +71,6 @@ SplitBeforeS*
 SkipUntil *
 TakeUntil *
 
-Tail
-Take
 TakeWhile
 Union
 Unzip
