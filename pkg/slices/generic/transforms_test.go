@@ -1805,6 +1805,26 @@ var Specifications = []Specification{
 			},
 		},
 	},
+	Specification{
+		FunctionName: "Union",
+		StandardPath: Behavior{
+			Description: "Union appends bb to aa",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{1, 2, 3}
+				bb := generic.SliceType{4, 5, 6}
+				generic.Union(&aa, bb)
+				cc := generic.SliceType{1, 2, 3, 4, 5, 6}
+				assert.ElementsMatch(t, aa, cc)
+
+			},
+		},
+		AlternativePath: Behavior{
+			Description: "",
+			Expectation: func(t *testing.T) {
+				t.Skip()
+			},
+		},
+	},
 }
 
 func TestTransforms(t *testing.T) {

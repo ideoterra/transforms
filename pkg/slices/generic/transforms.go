@@ -919,3 +919,8 @@ func TakeWhile(aa *SliceType, test func(PrimitiveType) bool) {
 	}
 	Take(aa, FindIndex(*aa, find))
 }
+
+// Union appends slice bb to slice aa.
+func Union(aa *SliceType, bb SliceType) {
+	Append(aa, bb...)
+}
