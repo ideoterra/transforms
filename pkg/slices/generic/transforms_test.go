@@ -1087,6 +1087,27 @@ var Specifications = []Specification{
 			},
 		},
 	},
+	Specification{
+		FunctionName: "Map",
+		StandardPath: Behavior{
+			Description: "Applies the transform to each element",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{1, 2, 3}
+				mapFn := func(a generic.PrimitiveType) generic.PrimitiveType {
+					return a.(int) * 2
+				}
+				generic.Map(aa, mapFn)
+				bb := generic.SliceType{2, 4, 6}
+				assert.ElementsMatch(t, aa, bb)
+			},
+		},
+		AlternativePath: Behavior{
+			Description: "",
+			Expectation: func(t *testing.T) {
+				t.Skip()
+			},
+		},
+	},
 }
 
 func TestTransforms(t *testing.T) {

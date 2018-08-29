@@ -605,6 +605,13 @@ func Len(aa SliceType) int {
 	return len(aa)
 }
 
+// Map applies a tranform to each element of the list.
+func Map(aa SliceType, mapFn func(a PrimitiveType) PrimitiveType) {
+	for i, a := range aa {
+		aa[i] = mapFn(a)
+	}
+}
+
 //Remove applies a test function to each item in the list, and removes all items
 //for which the test returns true.
 // func Remove(aa *SliceType, test func(PrimitiveType) bool) {
