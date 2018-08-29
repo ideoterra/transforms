@@ -769,22 +769,21 @@ func Reduce(aa SliceType, reducer func(a, acc PrimitiveType) PrimitiveType) Slic
 	return SliceType{accumulator}
 }
 
-//Remove applies a test function to each item in the list, and removes all items
-//for which the test returns true.
-// func Remove(aa *SliceType, test func(PrimitiveType) bool) {
-// 	originalListLength := int64(len(*aa))
-// 	for i := originalListLength - 1; i >= 0; i-- {
-// 		if test((*aa)[i]) {
-// 			RemoveAt(aa, i)
-// 		}
-// 	}
-// }
+// Remove applies a test function to each item in the list, and removes any item
+// for which the test returns true.
+func Remove(aa *SliceType, test func(PrimitiveType) bool) {
+	for i := int64(len(*aa)) - 1; i >= 0; i-- {
+		if test((*aa)[i]) {
+			RemoveAt(aa, i)
+		}
+	}
+}
 
 // RemoveAt removes the item at the specified index from the slice.
 // If len(aa) == 0, aa == nil, i < 0, or i >= len(aa), this function will do
 // nothing.
 func RemoveAt(aa *SliceType, i int64) {
-	if i < 0 {
+	if i < 0 || i >= int64(len(*aa)) {
 		return
 	}
 	if len(*aa) > 0 {

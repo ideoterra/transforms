@@ -1348,6 +1348,33 @@ var Specifications = []Specification{
 		},
 	},
 	Specification{
+		FunctionName: "Remove",
+		StandardPath: Behavior{
+			Description: "Removes the items that pass the test.",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{1, 2, 3, 4, 5, 6}
+				test := func(a generic.PrimitiveType) bool {
+					return a.(int)%2 == 0
+				}
+				generic.Remove(&aa, test)
+				bb := generic.SliceType{1, 3, 5}
+				assert.ElementsMatch(t, aa, bb)
+			},
+		},
+		AlternativePath: Behavior{
+			Description: "Does nothing if no items satisfy test.",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{1, 2, 3, 4, 5, 6}
+				test := func(a generic.PrimitiveType) bool {
+					return a.(int) == 10
+				}
+				generic.Remove(&aa, test)
+				bb := generic.SliceType{1, 2, 3, 4, 5, 6}
+				assert.ElementsMatch(t, aa, bb)
+			},
+		},
+	},
+	Specification{
 		FunctionName: "RemoveAt",
 		StandardPath: Behavior{
 			Description: "Removes the item at the specified index.",
