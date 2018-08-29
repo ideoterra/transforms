@@ -1018,3 +1018,46 @@ func WindowRight(aa SliceType, windowSize int64, windowFn func(window SliceType)
 	Reverse(&bb)
 	return bb
 }
+
+// Zip interleaves the contents of aa with bb, and returns the result as a
+// new SliceType. aa[0] is evaluated first. Thus if aa and bb are the same
+// length, slice aa will occupy the odd indices of the result slice, and bb
+// will occupy the even indices of the result slice. If aa and bb are not
+// the same length, Zip will interleave as many values as possible, and will
+// simply append the remaining values for the longer of the two slices to the
+// end of the result slice.
+func Zip(aa, bb SliceType) SliceType {
+	if len(aa) == 0 {
+		return bb
+	}
+	if len(bb) == 0 {
+		return aa
+	}
+
+	cc := SliceType{}
+	aaEndReached, bbEndReached := false, false
+	for i := 0; aaEndReached == false && bbEndReached == false; i++ {
+		if i >= len(aa) {
+			aaEndReached = true
+		}
+		if i >= len(bb) {
+			bbEndReached = true
+		}
+		if i%2 != 0 {
+			if !aaEndReached {
+				Append(&cc, aa[i])
+			}
+			if !bbEndReached {
+				Append(&cc, bb[i])
+			}
+		} else {
+			if !bbEndReached {
+				Append(&cc, bb[i])
+			}
+			if !aaEndReached {
+				Append(&cc, aa[i])
+			}
+		}
+	}
+	return cc
+}

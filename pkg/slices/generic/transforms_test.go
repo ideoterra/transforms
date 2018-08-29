@@ -1969,6 +1969,63 @@ var Specifications = []Specification{
 			},
 		},
 	},
+	Specification{
+		FunctionName: "Zip",
+		StandardPath: Behavior{
+			Description: "Interleaves aa and bb",
+			Expectation: func(t *testing.T) {
+				type testCase struct {
+					aa generic.SliceType
+					bb generic.SliceType
+					dd generic.SliceType
+				}
+
+				testCases := []testCase{
+					testCase{
+						aa: generic.SliceType{1, 2, 3},
+						bb: generic.SliceType{7, 8, 9},
+						dd: generic.SliceType{1, 7, 2, 8, 3, 9},
+					},
+					testCase{
+						aa: generic.SliceType{1, 2},
+						bb: generic.SliceType{7, 8, 9},
+						dd: generic.SliceType{1, 7, 2, 8, 9},
+					},
+					testCase{
+						aa: generic.SliceType{1, 2, 3},
+						bb: generic.SliceType{7, 8},
+						dd: generic.SliceType{1, 7, 2, 8, 3},
+					},
+					testCase{
+						aa: generic.SliceType{},
+						bb: generic.SliceType{7, 8, 9},
+						dd: generic.SliceType{7, 8, 9},
+					},
+					testCase{
+						aa: generic.SliceType{1, 2, 3},
+						bb: generic.SliceType{},
+						dd: generic.SliceType{1, 2, 3},
+					},
+					testCase{
+						aa: generic.SliceType{},
+						bb: generic.SliceType{},
+						dd: generic.SliceType{},
+					},
+				}
+
+				for _, tc := range testCases {
+					cc := generic.Zip(tc.aa, tc.bb)
+					assert.ElementsMatch(t, cc, tc.dd)
+				}
+			},
+		},
+		AlternativePath: Behavior{
+			Description: "",
+			Expectation: func(t *testing.T) {
+				t.Skip()
+			},
+		},
+	},
 }
 
 func TestTransforms(t *testing.T) {
