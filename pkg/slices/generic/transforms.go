@@ -457,7 +457,8 @@ func GroupI(aa SliceType, grouper func(int64, PrimitiveType) int64) SliceType2 {
 	return group
 }
 
-// Head returns a SliceType containing the first item from the aa.
+// Head returns a SliceType containing the first item from the aa. If aa is
+// empty, the resulting SliceType will be empty.
 func Head(aa SliceType) SliceType {
 	if Empty(aa) {
 		return SliceType{}
@@ -696,7 +697,7 @@ func Permutations(aa SliceType) *big.Int {
 //
 // Permute makes no assumptions about whether or not the elements in aa are
 // distinct. Permutations are created positionally, and do not involve any
-// equality checks. As such, if it import that Permute operate on a set of
+// equality checks. As such, if it important that Permute operate on a set of
 // distinct elements, pass aa through one of the Distinct transforms before
 // passing it to Permute().
 //
@@ -731,6 +732,14 @@ func generate(n int64, aa SliceType, acc *SliceType2) {
 	generate(n-1, aa, acc)
 }
 
+// Pop returns a SliceType containing the head element from aa, and removes the
+// element from aa. If aa is empty, the returned SliceType will also be empty.
+func Pop(aa *SliceType) SliceType {
+	bb := Head(*aa)
+	RemoveAt(aa, 0)
+	return bb
+}
+
 //Remove applies a test function to each item in the list, and removes all items
 //for which the test returns true.
 // func Remove(aa *SliceType, test func(PrimitiveType) bool) {
@@ -744,7 +753,9 @@ func generate(n int64, aa SliceType, acc *SliceType2) {
 
 //RemoveAt removes the item at the specified index from the slice.
 func RemoveAt(aa *SliceType, i int64) {
-	*aa = append((*aa)[:i], (*aa)[i+1:]...)
+	if len(*aa) > 0 {
+		*aa = append((*aa)[:i], (*aa)[i+1:]...)
+	}
 }
 
 // SwapIndex swaps the elements at the specified indices.

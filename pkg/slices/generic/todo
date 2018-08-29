@@ -25,8 +25,8 @@ AllS*
 AutoCorrelate *
 CrossCorrelate *
 Convolute *
-CountSorted *
-DistinctSorted *
+CountS *
+DistinctS *
 FilterS *
 FindIndexS *
 FindIndices *
@@ -52,7 +52,6 @@ MapI
 NoneS*
 NoneC*
 PartitionS*
-Reduce?
 RemoveS *
 RemoveFirst *
 RemoveFirstS *
@@ -61,11 +60,6 @@ SplitBeforeS*
 SkipUntil *
 TakeUntil *
 
-Pairwise
-Partition
-Permutable
-Permutations
-Permute
 Pop
 Push
 Reduce

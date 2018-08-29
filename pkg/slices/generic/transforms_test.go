@@ -1264,6 +1264,30 @@ var Specifications = []Specification{
 			},
 		},
 	},
+	Specification{
+		FunctionName: "Pop",
+		StandardPath: Behavior{
+			Description: "Returns the head element from the slice, removing it from the slice.",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{1, 2, 3}
+				bb := generic.Pop(&aa)
+				cc := generic.SliceType{2, 3}
+				dd := generic.SliceType{1}
+				assert.ElementsMatch(t, aa, cc)
+				assert.ElementsMatch(t, bb, dd)
+			},
+		},
+		AlternativePath: Behavior{
+			Description: "Slice is empty, returns an empty slice.",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{}
+				bb := generic.Pop(&aa)
+				if len(bb) > 0 {
+					t.Error("Expected bb to be empty.")
+				}
+			},
+		},
+	},
 }
 
 func TestSwapIndex(t *testing.T) {
