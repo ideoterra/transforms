@@ -1236,6 +1236,41 @@ var Specifications = []Specification{
 			},
 		},
 	},
+	Specification{
+		FunctionName: "Permute",
+		StandardPath: Behavior{
+			Description: "Creates permutations.",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{"A", "B", "C"}
+				bb := generic.Permute(aa)
+				cc := generic.SliceType2{
+					generic.SliceType{"A", "B", "C"},
+					generic.SliceType{"B", "A", "C"},
+					generic.SliceType{"C", "A", "B"},
+					generic.SliceType{"A", "C", "B"},
+					generic.SliceType{"B", "C", "A"},
+					generic.SliceType{"C", "B", "A"},
+				}
+				assert.ElementsMatch(t, bb, cc)
+			},
+		},
+		AlternativePath: Behavior{
+			Description: "Original slice is unaltered.",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{"A", "B", "C"}
+				generic.Permute(aa)
+				cc := generic.SliceType{"A", "B", "C"}
+				assert.ElementsMatch(t, aa, cc)
+			},
+		},
+	},
+}
+
+func TestSwapIndex(t *testing.T) {
+	aa := generic.SliceType{1, 2, 3, 4, 5}
+	generic.SwapIndex(aa, 2, 4)
+	bb := generic.SliceType{1, 2, 5, 4, 3}
+	assert.ElementsMatch(t, aa, bb)
 }
 
 func TestTransforms(t *testing.T) {

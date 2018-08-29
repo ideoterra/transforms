@@ -94,6 +94,7 @@
 package generic
 
 import (
+	"fmt"
 	"math/big"
 	"sync/atomic"
 
@@ -687,6 +688,49 @@ func Permutations(aa SliceType) *big.Int {
 	return f.MulRange(1, int64(len(aa)))
 }
 
+// Permute returns a SliceType2 which contains a SliceType for each permutation
+// of aa.
+//
+// This function will panic if it determines that the list is not permutable
+// (see Permutable function).
+//
+// Permute makes no assumptions about whether or not the elements in aa are
+// distinct. Permutations are created positionally, and do not involve any
+// equality checks. As such, if it import that Permute operate on a set of
+// distinct elements, pass aa through one of the Distinct transforms before
+// passing it to Permute().
+//
+// Permute is implemented using Heap's algorithm.
+// https://en.wikipedia.org/wiki/Heap%27s_algorithm
+func Permute(aa SliceType) SliceType2 {
+	if !Permutable(aa) {
+		panic(fmt.Sprintf("The number of permutations for this list (%v) exceeeds MaxInt64.", Permutations(aa)))
+	}
+
+	acc := SliceType2{}
+	generate(int64(len(aa)), aa, &acc)
+	return acc
+}
+
+func generate(n int64, aa SliceType, acc *SliceType2) {
+	if n == 1 {
+		*acc = append(*acc, aa)
+		return
+	}
+
+	for i := int64(0); i < n-1; i++ {
+		generate(n-1, aa, acc)
+		aa = Clone(aa)
+		if n%2 != 0 {
+			SwapIndex(aa, i, n-1)
+		} else {
+			SwapIndex(aa, 0, n-1)
+		}
+	}
+
+	generate(n-1, aa, acc)
+}
+
 //Remove applies a test function to each item in the list, and removes all items
 //for which the test returns true.
 // func Remove(aa *SliceType, test func(PrimitiveType) bool) {
@@ -701,4 +745,9 @@ func Permutations(aa SliceType) *big.Int {
 //RemoveAt removes the item at the specified index from the slice.
 func RemoveAt(aa *SliceType, i int64) {
 	*aa = append((*aa)[:i], (*aa)[i+1:]...)
+}
+
+// SwapIndex swaps the elements at the specified indices.
+func SwapIndex(aa SliceType, i, j int64) {
+	aa[i], aa[j] = aa[j], aa[i]
 }
