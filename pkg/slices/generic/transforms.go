@@ -892,3 +892,9 @@ func SwapIndex(aa SliceType, i, j int64) {
 	}
 	aa[i], aa[j] = aa[j], aa[i]
 }
+
+// Tail removes the current head element from aa.
+// This equivelant to RemoveAt(aa, 0)
+func Tail(aa *SliceType) {
+	RemoveAt(aa, 0)
+}

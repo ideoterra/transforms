@@ -1735,6 +1735,24 @@ var Specifications = []Specification{
 			},
 		},
 	},
+	Specification{
+		FunctionName: "Tail",
+		StandardPath: Behavior{
+			Description: "Removes the head from the slice.",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{1, 2, 3}
+				generic.Tail(&aa)
+				bb := generic.SliceType{2, 3}
+				assert.ElementsMatch(t, aa, bb)
+			},
+		},
+		AlternativePath: Behavior{
+			Description: "",
+			Expectation: func(t *testing.T) {
+				t.Skip()
+			},
+		},
+	},
 }
 
 func TestTransforms(t *testing.T) {
@@ -1745,11 +1763,4 @@ func TestTransforms(t *testing.T) {
 			t.Run(fmt.Sprintf("%vEdgeCase%v", specification.FunctionName, i), edgeCase.Expectation)
 		}
 	}
-}
-
-func TestSwapIndex(t *testing.T) {
-	aa := generic.SliceType{1, 2, 3, 4, 5}
-	generic.SwapIndex(aa, 2, 4)
-	bb := generic.SliceType{1, 2, 5, 4, 3}
-	assert.ElementsMatch(t, aa, bb)
 }
