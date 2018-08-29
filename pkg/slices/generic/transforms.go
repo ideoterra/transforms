@@ -600,6 +600,11 @@ func Last(aa SliceType, test func(PrimitiveType) bool) SliceType {
 	return bb
 }
 
+// Len returns the length of aa.
+func Len(aa SliceType) int {
+	return len(aa)
+}
+
 //Remove applies a test function to each item in the list, and removes all items
 //for which the test returns true.
 // func Remove(aa *SliceType, test func(PrimitiveType) bool) {

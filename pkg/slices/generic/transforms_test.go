@@ -1071,6 +1071,22 @@ var Specifications = []Specification{
 			},
 		},
 	},
+	Specification{
+		FunctionName: "Len",
+		StandardPath: Behavior{
+			Description: "Returns the length of the slice",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{1, 2, 3, 4, 5, 6, 7, 8}
+				assert.Equal(t, 8, generic.Len(aa))
+			},
+		},
+		AlternativePath: Behavior{
+			Description: "",
+			Expectation: func(t *testing.T) {
+				t.Skip()
+			},
+		},
+	},
 }
 
 func TestTransforms(t *testing.T) {
