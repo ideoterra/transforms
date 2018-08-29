@@ -1175,6 +1175,27 @@ var Specifications = []Specification{
 			},
 		},
 	},
+	Specification{
+		FunctionName: "Partition",
+		StandardPath: Behavior{
+			Description: "Parition splits the slice as expected",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{1, 2, 3, 4, 5, 6}
+				test := func(a generic.PrimitiveType) bool {
+					return a.(int)%2 == 0
+				}
+				bb := generic.Partition(aa, test)
+				cc := generic.SliceType2{generic.SliceType{2, 4, 6}, generic.SliceType{1, 3, 5}}
+				assert.ElementsMatch(t, bb, cc)
+			},
+		},
+		AlternativePath: Behavior{
+			Description: "",
+			Expectation: func(t *testing.T) {
+				t.Skip()
+			},
+		},
+	},
 }
 
 func TestTransforms(t *testing.T) {

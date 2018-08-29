@@ -657,6 +657,22 @@ func Pairwise(aa SliceType, init PrimitiveType, xform func(a, b PrimitiveType) P
 	return bb
 }
 
+// Partition applies a test function to each element in aa, and returns
+// a SliceType2 where SliceType2[0] contains a SliceType with all elements for
+// whom the test function returned true, and where SliceType2[1] contains a
+// SliceType with all elements for whom the test function returned false.
+//
+// Partition is a special case of the Group function.
+func Partition(aa SliceType, test func(PrimitiveType) bool) SliceType2 {
+	grouper := func(a PrimitiveType) int64 {
+		if test(a) {
+			return 1
+		}
+		return 0
+	}
+	return Group(aa, grouper)
+}
+
 //Remove applies a test function to each item in the list, and removes all items
 //for which the test returns true.
 // func Remove(aa *SliceType, test func(PrimitiveType) bool) {
