@@ -740,6 +740,11 @@ func Pop(aa *SliceType) SliceType {
 	return bb
 }
 
+// Push places a prepends a new element at the head of aa.
+func Push(aa *SliceType, a PrimitiveType) {
+	InsertAt(aa, a, 0)
+}
+
 //Remove applies a test function to each item in the list, and removes all items
 //for which the test returns true.
 // func Remove(aa *SliceType, test func(PrimitiveType) bool) {

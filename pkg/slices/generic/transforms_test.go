@@ -1288,6 +1288,24 @@ var Specifications = []Specification{
 			},
 		},
 	},
+	Specification{
+		FunctionName: "Push",
+		StandardPath: Behavior{
+			Description: "Inserts a new element at the head of the slice.",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{1, 2, 3}
+				generic.Push(&aa, 9)
+				bb := generic.SliceType{9, 1, 2, 3}
+				assert.ElementsMatch(t, aa, bb)
+			},
+		},
+		AlternativePath: Behavior{
+			Description: "",
+			Expectation: func(t *testing.T) {
+				t.Skip()
+			},
+		},
+	},
 }
 
 func TestSwapIndex(t *testing.T) {
