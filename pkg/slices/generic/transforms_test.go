@@ -1506,6 +1506,33 @@ var Specifications = []Specification{
 			},
 		},
 	},
+	Specification{
+		FunctionName: "SkipWhile",
+		StandardPath: Behavior{
+			Description: "",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{1, 2, 3, 4}
+				test := func(a generic.PrimitiveType) bool {
+					return a.(int) < 3
+				}
+				generic.SkipWhile(&aa, test)
+				bb := generic.SliceType{3, 4}
+				assert.ElementsMatch(t, aa, bb)
+			},
+		},
+		AlternativePath: Behavior{
+			Description: "Test never satisfied, does nothing",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{1, 2, 3, 4}
+				test := func(a generic.PrimitiveType) bool {
+					return a.(int) > 10
+				}
+				generic.SkipWhile(&aa, test)
+				bb := generic.SliceType{1, 2, 3, 4}
+				assert.ElementsMatch(t, aa, bb)
+			},
+		},
+	},
 }
 
 func TestTransforms(t *testing.T) {

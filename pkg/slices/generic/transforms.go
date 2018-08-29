@@ -799,7 +799,7 @@ func Reverse(aa *SliceType) {
 	}
 }
 
-// Skip mutates aa, removing the first n elements from the slice.
+// Skip removes the first n elements from aa.
 //
 // Note that Skip(aa, len(aa)) will remove all items from the list, but does not
 // "clear" the slice, meaning that the list remains allocated in memory.
@@ -810,6 +810,17 @@ func Skip(aa *SliceType, n int64) {
 		return
 	}
 	*aa = (*aa)[n:]
+}
+
+// SkipWhile scans through aa starting at the head, and removes all
+// elements from aa while the test function returns true.
+// SkipWhile stops removing any further items from aa after the first test that
+// returns false.
+func SkipWhile(aa *SliceType, test func(PrimitiveType) bool) {
+	// find the first index where the test would evaluate to false and skip
+	// everything up to that index.
+	findTest := func(a PrimitiveType) bool { return !test(a) }
+	Skip(aa, FindIndex(*aa, findTest))
 }
 
 // SwapIndex swaps the elements at the specified indices.
