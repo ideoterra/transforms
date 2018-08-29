@@ -1825,6 +1825,27 @@ var Specifications = []Specification{
 			},
 		},
 	},
+	Specification{
+		FunctionName: "Unzip",
+		StandardPath: Behavior{
+			Description: "Normally unzips.",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{1, 2, 3, 4, 5}
+				bb := generic.Unzip(aa)
+				cc := generic.SliceType2{
+					generic.SliceType{1, 3, 5},
+					generic.SliceType{2, 4},
+				}
+				assert.ElementsMatch(t, bb, cc)
+			},
+		},
+		AlternativePath: Behavior{
+			Description: "",
+			Expectation: func(t *testing.T) {
+				t.Skip()
+			},
+		},
+	},
 }
 
 func TestTransforms(t *testing.T) {

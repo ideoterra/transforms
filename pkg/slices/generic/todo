@@ -71,8 +71,6 @@ SplitBeforeS*
 SkipUntil *
 TakeUntil *
 
-TakeWhile
-Union
 Unzip
 WindowedC
 WindowedL

@@ -924,3 +924,18 @@ func TakeWhile(aa *SliceType, test func(PrimitiveType) bool) {
 func Union(aa *SliceType, bb SliceType) {
 	Append(aa, bb...)
 }
+
+// Unzip splits aa into a SliceType2, such that SliceType2[0] contains all odd
+// indices from aa, and SliceType2[1] contains all even indices from aa.
+func Unzip(aa SliceType) SliceType2 {
+	odds := SliceType{}
+	evens := SliceType{}
+	for i, a := range aa {
+		if i%2 != 0 {
+			odds = append(odds, a)
+		} else {
+			evens = append(evens, a)
+		}
+	}
+	return SliceType2{odds, evens}
+}
