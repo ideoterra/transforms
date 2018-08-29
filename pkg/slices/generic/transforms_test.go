@@ -1196,6 +1196,46 @@ var Specifications = []Specification{
 			},
 		},
 	},
+	Specification{
+		FunctionName: "Permutable",
+		StandardPath: Behavior{
+			Description: "Returns true if the slice has less than MaxInt64 permutations.",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{}
+				for i := 0; i < 20; i++ {
+					generic.Append(&aa, i)
+				}
+				assert.True(t, generic.Permutable(aa))
+			},
+		},
+		AlternativePath: Behavior{
+			Description: "Returns if the slice has more than MaxInt64 permutations.",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{}
+				for i := 0; i < 21; i++ {
+					generic.Append(&aa, i)
+				}
+				assert.False(t, generic.Permutable(aa))
+			},
+		},
+	},
+	Specification{
+		FunctionName: "Permutations",
+		StandardPath: Behavior{
+			Description: "Returns the correct number of possible permutations.",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{1, 2, 3, 4, 5, 6}
+				p := generic.Permutations(aa)
+				assert.Equal(t, int64(720), p.Int64())
+			},
+		},
+		AlternativePath: Behavior{
+			Description: "",
+			Expectation: func(t *testing.T) {
+				t.Skip()
+			},
+		},
+	},
 }
 
 func TestTransforms(t *testing.T) {

@@ -94,6 +94,7 @@
 package generic
 
 import (
+	"math/big"
 	"sync/atomic"
 
 	"github.com/cheekybits/genny/generic"
@@ -671,6 +672,19 @@ func Partition(aa SliceType, test func(PrimitiveType) bool) SliceType2 {
 		return 0
 	}
 	return Group(aa, grouper)
+}
+
+// Permutable returns true if the number of permutations for aa exceeds
+// MaxInt64.
+func Permutable(aa SliceType) bool {
+	return Permutations(aa).IsInt64()
+}
+
+// Permutations returns the number of permutations that exist given the current
+// number of items in the aa.
+func Permutations(aa SliceType) *big.Int {
+	var f big.Int
+	return f.MulRange(1, int64(len(aa)))
 }
 
 //Remove applies a test function to each item in the list, and removes all items
