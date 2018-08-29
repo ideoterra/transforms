@@ -104,7 +104,7 @@ import (
 )
 
 // SliceType2 is a two dimensional slice of PrimitiveType
-type SliceType2 SliceType
+type SliceType2 [][]PrimitiveType
 
 // SliceType is a one dimensional slice of PrimitiveType.
 type SliceType []PrimitiveType
@@ -938,4 +938,43 @@ func Unzip(aa SliceType) SliceType2 {
 		}
 	}
 	return SliceType2{odds, evens}
+}
+
+// WindowCentered applies a windowing function across the aa, using a centered
+// window of the specified size.
+func WindowCentered(aa SliceType, windowSize int64, windowFn func(window SliceType) PrimitiveType) SliceType {
+	cc := SliceType{}
+	fullWindowReached := false
+	for i := int64(0); i < int64(len(aa)); i++ {
+		currentWindow := SliceType{}
+		a := aa[i]
+		for n := int64(1); n <= windowSize; n++ {
+			Append(&currentWindow, a)
+			if !fullWindowReached && n >= windowSize {
+				fullWindowReached = true
+			}
+			if !fullWindowReached {
+				Append(&cc, windowFn(currentWindow))
+			}
+			if i+n >= int64(len(aa)) {
+				break
+			}
+			a = aa[i+n]
+		}
+		Append(&cc, windowFn(currentWindow))
+	}
+	trimSize := windowSize - 1
+	var frontTrim, backTrim int64
+	if trimSize%2 == 0 {
+		frontTrim = trimSize / 2
+		backTrim = frontTrim
+	} else {
+		frontTrim = trimSize / 2
+		backTrim = frontTrim + 1
+	}
+	dd := SliceType(SplitAt(cc, frontTrim)[1])
+	Reverse(&dd)
+	ee := SliceType(SplitAt(dd, backTrim)[1])
+	Reverse(&ee)
+	return ee
 }

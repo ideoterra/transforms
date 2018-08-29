@@ -1846,6 +1846,59 @@ var Specifications = []Specification{
 			},
 		},
 	},
+	Specification{
+		FunctionName: "WindowCentered",
+		StandardPath: Behavior{
+			Description: "Basic windowing works.",
+			Expectation: func(t *testing.T) {
+				windowFn := func(aa generic.SliceType) generic.PrimitiveType {
+					sum := 0.0
+					for _, a := range aa {
+						sum += float64(a.(float64))
+					}
+					return sum / float64(len(aa))
+				}
+				aa := generic.SliceType{1.0, 2.0, 3.0, 4.0, 5.0}
+				bb := generic.WindowCentered(aa, 4, windowFn)
+				cc := generic.SliceType{1.5, 2.0, 2.5, 3.5, 4.0}
+				assert.ElementsMatch(t, bb, cc)
+			},
+		},
+		AlternativePath: Behavior{
+			Description: "Slice order is correct for odd window size",
+			Expectation: func(t *testing.T) {
+				windowFn := func(aa generic.SliceType) generic.PrimitiveType {
+					result := ""
+					for _, a := range aa {
+						result = result + a.(string)
+					}
+					return result
+				}
+				aa := generic.SliceType{"1", "2", "3"}
+				bb := generic.WindowCentered(aa, 3, windowFn)
+				cc := generic.SliceType{"12", "123", "23"}
+				assert.ElementsMatch(t, bb, cc)
+			},
+		},
+		EdgeCases: []Behavior{
+			Behavior{
+				Description: "Slice order is correct for even window size.",
+				Expectation: func(t *testing.T) {
+					windowFn := func(aa generic.SliceType) generic.PrimitiveType {
+						result := ""
+						for _, a := range aa {
+							result = result + a.(string)
+						}
+						return result
+					}
+					aa := generic.SliceType{"1", "2", "3", "4", "5"}
+					bb := generic.WindowCentered(aa, 4, windowFn)
+					cc := generic.SliceType{"12", "123", "1234", "2345", "345"}
+					assert.ElementsMatch(t, bb, cc)
+				},
+			},
+		},
+	},
 }
 
 func TestTransforms(t *testing.T) {
