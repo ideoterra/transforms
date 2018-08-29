@@ -1108,6 +1108,29 @@ var Specifications = []Specification{
 			},
 		},
 	},
+	Specification{
+		FunctionName: "None",
+		StandardPath: Behavior{
+			Description: "Returns true if the test fails for all items",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{1, 2, 3}
+				test := func(a generic.PrimitiveType) bool {
+					return a.(int) == 4
+				}
+				assert.True(t, generic.None(aa, test))
+			},
+		},
+		AlternativePath: Behavior{
+			Description: "Returns false if the test passes for any item",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{1, 2, 3}
+				test := func(a generic.PrimitiveType) bool {
+					return a.(int) == 2
+				}
+				assert.False(t, generic.None(aa, test))
+			},
+		},
+	},
 }
 
 func TestTransforms(t *testing.T) {
