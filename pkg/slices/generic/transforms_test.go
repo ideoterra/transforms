@@ -1784,6 +1784,27 @@ var Specifications = []Specification{
 			},
 		},
 	},
+	Specification{
+		FunctionName: "TakeWhile",
+		StandardPath: Behavior{
+			Description: "Takes while the test is true.",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{1, 2, 3, 4}
+				test := func(a generic.PrimitiveType) bool {
+					return a.(int) < 3
+				}
+				generic.TakeWhile(&aa, test)
+				bb := generic.SliceType{1, 2}
+				assert.ElementsMatch(t, aa, bb)
+			},
+		},
+		AlternativePath: Behavior{
+			Description: "",
+			Expectation: func(t *testing.T) {
+				t.Skip()
+			},
+		},
+	},
 }
 
 func TestTransforms(t *testing.T) {

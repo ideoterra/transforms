@@ -914,5 +914,8 @@ func Take(aa *SliceType, n int64) {
 // function returns false, take stops evaluating any further, and abandons the
 // rest of the slice.
 func TakeWhile(aa *SliceType, test func(PrimitiveType) bool) {
-	panic("Not implemented")
+	find := func(a PrimitiveType) bool {
+		return !test(a)
+	}
+	Take(aa, FindIndex(*aa, find))
 }
