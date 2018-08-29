@@ -1685,6 +1685,23 @@ var Specifications = []Specification{
 			},
 		},
 	},
+	Specification{
+		FunctionName: "String",
+		StandardPath: Behavior{
+			Description: "Returns string representation of slice.",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{1, 2, 3}
+				s := generic.String(aa)
+				assert.Equal(t, "[1,2,3]", s)
+			},
+		},
+		AlternativePath: Behavior{
+			Description: "",
+			Expectation: func(t *testing.T) {
+				t.Skip()
+			},
+		},
+	},
 }
 
 func TestTransforms(t *testing.T) {

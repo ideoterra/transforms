@@ -94,6 +94,7 @@
 package generic
 
 import (
+	"encoding/json"
 	"fmt"
 	"math/big"
 	"sort"
@@ -871,6 +872,13 @@ func SplitAt(aa SliceType, i int64) SliceType2 {
 // in SliceType2[1]
 func SplitBefore(aa SliceType, test func(PrimitiveType) bool) SliceType2 {
 	return SplitAt(aa, FindIndex(aa, test))
+}
+
+// String returns a string representation of the SliceType, suitable for use
+// with fmt.Print, or other similar functions.
+func String(aa SliceType) string {
+	jsonBytes, _ := json.Marshal(aa)
+	return string(jsonBytes)
 }
 
 // SwapIndex swaps the elements at the specified indices.
