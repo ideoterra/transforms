@@ -284,6 +284,21 @@ func Enqueue(aa *SliceType, a PrimitiveType) {
 	(*aa)[0] = a
 }
 
+// Expand applies an expansion function to each element of aa, and flattens
+// the results into a single SliceType.
+//
+//   Illustration (pseudocode):
+//     aa: [AB, CD, EF]
+//     expansion: func(a string) []string { return []string{a[0], a[1]}}
+//     Expand(aa, expansion) -> [A, B, C, D, E, F]
+func Expand(aa SliceType, expansion func(PrimitiveType) SliceType) SliceType {
+	bb := SliceType{}
+	for _, a := range aa {
+		Append(&bb, expansion(a)...)
+	}
+	return bb
+}
+
 // Filter removes all items from the slice for which the supplied test function
 // returns true.
 func Filter(aa *SliceType, test func(PrimitiveType) bool) {

@@ -323,6 +323,29 @@ var Specifications = []Specification{
 		},
 	},
 	Specification{
+		FunctionName: "Expand",
+		StandardPath: Behavior{
+			Description: "Expands the supplied list according to the expansion",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{"AB", "CD", "EF"}
+				expansion := func(a generic.PrimitiveType) generic.SliceType {
+					b := string(a.(string)[0])
+					c := string(a.(string)[1])
+					return generic.SliceType{b, c}
+				}
+				bb := generic.Expand(aa, expansion)
+				cc := generic.SliceType{"A", "B", "C", "D", "E", "F"}
+				assert.ElementsMatch(t, bb, cc)
+			},
+		},
+		AlternativePath: Behavior{
+			Description: "",
+			Expectation: func(t *testing.T) {
+				t.Skip()
+			},
+		},
+	},
+	Specification{
 		FunctionName: "Filter",
 		StandardPath: Behavior{
 			Description: "Items are removed for which the test function returns true.",
