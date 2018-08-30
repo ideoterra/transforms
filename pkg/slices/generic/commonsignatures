@@ -1,0 +1,97 @@
+
+Nullary Methods
+
+func (aa *SliceType) Clear() *SliceType {
+func (aa *SliceType) Clone() *SliceType {
+func (aa *SliceType) Dequeue() *SliceType {
+func (aa *SliceType) Empty() bool {
+func (aa *SliceType) End() *SliceType {
+func (aa *SliceType) Head() *SliceType {
+func (aa *SliceType) Len() int {
+func (aa *SliceType) Permutable() bool {
+func (aa *SliceType) Permutations() *big.Int {
+func (aa *SliceType) Permute() *SliceType2 {
+func (aa *SliceType) Pop() *SliceType {
+func (aa *SliceType) Reverse() *SliceType {
+func (aa *SliceType) String() string {
+func (aa *SliceType) Tail() *SliceType {
+func (aa *SliceType) Unzip() *SliceType2 {
+
+Unary Native Methods
+
+func (aa *SliceType) Item(i int64) *SliceType {
+func (aa *SliceType) ItemFuzzy(i int64) *SliceType {
+func (aa *SliceType) RemoveAt(i int64) *SliceType {
+func (aa *SliceType) Skip(n int64) *SliceType {
+func (aa *SliceType) SplitAt(i int64) *SliceType2 {
+func (aa *SliceType) Take(n int64) *SliceType {
+
+Unary Primitive Methods (yes, Append is variadic, but it can accept a single primitive)
+
+func (aa *SliceType) Append(values ...PrimitiveType) *SliceType {
+func (aa *SliceType) Enqueue(a PrimitiveType) *SliceType {
+func (aa *SliceType) Push(a PrimitiveType) *SliceType {
+
+Unary Slice Methods
+
+func (aa *SliceType) Union(bb *SliceType) *SliceType {
+func (aa *SliceType) Zip(bb *SliceType) *SliceType
+
+Unary Test Methods
+
+func (aa *SliceType) All(test Test) bool {
+func (aa *SliceType) Any(test Test) bool {
+func (aa *SliceType) Count(test Test) int64 {
+func (aa *SliceType) Filter(test Test) *SliceType {
+func (aa *SliceType) FindIndex(test Test) int64 {
+func (aa *SliceType) First(test Test) *SliceType {
+func (aa *SliceType) Last(test Test) *SliceType {
+func (aa *SliceType) None(test Test) bool {
+func (aa *SliceType) Partition(test Test) *SliceType2 {
+func (aa *SliceType) Remove(test Test) *SliceType {
+func (aa *SliceType) SkipWhile(test Test) *SliceType {
+func (aa *SliceType) SplitAfter(test Test) *SliceType2 {
+func (aa *SliceType) SplitBefore(test Test) *SliceType2 {
+func (aa *SliceType) TakeWhile(test Test) *SliceType {
+
+Unary Closure Methods
+
+func (aa *SliceType) Distinct(equality Equality) *SliceType {
+func (aa *SliceType) Expand(expansion func(PrimitiveType) SliceType) *SliceType {
+func (aa *SliceType) ForEach(fn func(PrimitiveType) Continue) *SliceType {
+func (aa *SliceType) ForEachR(fn func(PrimitiveType) Continue) *SliceType {
+func (aa *SliceType) Group(grouper func(PrimitiveType) int64) *SliceType2 {
+func (aa *SliceType) GroupI(grouper func(int64, PrimitiveType) int64) *SliceType2 {
+func (aa *SliceType) Map(mapFn func(PrimitiveType) PrimitiveType) *SliceType {
+func (aa *SliceType) Reduce(reducer func(a, acc PrimitiveType) PrimitiveType) *SliceType {
+func (aa *SliceType) Sort(less func(a, b PrimitiveType) bool) *SliceType {    
+
+Binary Slice-Equality
+
+func (aa *SliceType) Difference(bb SliceType, equality Equality) *SliceType {
+func (aa *SliceType) Intersection(bb *SliceType, equality Equality) *SliceType {
+func (aa *SliceType) IsProperSubset(bb *SliceType, equality Equality) bool {
+func (aa *SliceType) IsProperSuperset(bb *SliceType, equality Equality) bool {
+func (aa *SliceType) IsSubset(bb *SliceType, equality Equality) bool {
+func (aa *SliceType) IsSuperset(bb *SliceType, equality Equality) bool {
+
+Binary Primitive-Test
+
+func (aa *SliceType) InsertAfter(b PrimitiveType, test Test) *SliceType {
+func (aa *SliceType) InsertBefore(b PrimitiveType, test Test) *SliceType {
+
+Binary Int-WindowFn
+
+func (aa *SliceType) WindowCentered(windowSize int64, windowFn func(window SliceType) PrimitiveType) *SliceType {
+func (aa *SliceType) WindowLeft(windowSize int64, windowFn func(window SliceType) PrimitiveType) *SliceType {
+func (aa *SliceType) WindowRight(windowSize int64, windowFn func(window SliceType) PrimitiveType) *SliceType {
+    
+Binary Value-Closure
+
+func (aa *SliceType) Collect(bb SliceType, collector func(a, b PrimitiveType) PrimitiveType) *SliceType {
+func (aa *SliceType) Fold(acc PrimitiveType, folder func(a, acc PrimitiveType) PrimitiveType) *SliceType {
+func (aa *SliceType) FoldI(acc PrimitiveType, folder func(i int64, a, acc PrimitiveType) PrimitiveType) *SliceType {
+func (aa *SliceType) ForEachC(c int, fn func(a PrimitiveType, cancelPending func() bool) Continue) *SliceType {
+func (aa *SliceType) InsertAt(a PrimitiveType, i int64) *SliceType {
+func (aa *SliceType) Pairwise(init PrimitiveType, xform func(a, b PrimitiveType) PrimitiveType) *SliceType {
+func (aa *SliceType) SwapIndex(i, j int64) *SliceType {
