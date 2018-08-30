@@ -229,3 +229,16 @@ func TestBinaryValueClosureHappyPaths(t *testing.T) {
 		t.Run(fmt.Sprintf("BinaryValueClosure test %v", i+1), test)
 	}
 }
+
+func TestBinaryValueValueHappyPaths(t *testing.T) {
+	methodCalls := []func(generic.SliceType){
+		func(aa generic.SliceType) { aa.InsertAt(primitiveZero, 0) },
+		func(aa generic.SliceType) { aa.SwapIndex(0, 0) },
+	}
+	for i, methodCall := range methodCalls {
+		test := func(t *testing.T) {
+			methodCall(generic.SliceType{})
+		}
+		t.Run(fmt.Sprintf("BinaryValueValue test %v", i+1), test)
+	}
+}
