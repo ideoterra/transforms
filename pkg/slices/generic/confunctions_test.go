@@ -7,14 +7,11 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var primitiveAZero = 1
-var primitiveBZero = "1"
-
 func TestAsSliceTypeB(t *testing.T) {
-	aa := generic.SliceTypeA{primitiveAZero}
-	bb := generic.SliceTypeB{primitiveBZero}
+	aa := generic.SliceTypeA{primitiveAValue}
+	bb := generic.SliceTypeB{primitiveBValue}
 	convert := func(a generic.PrimitiveTypeA) generic.PrimitiveTypeB {
-		return primitiveBZero
+		return primitiveBValue
 	}
 	cc := generic.AsSliceTypeB(aa, convert)
 	assert.ElementsMatch(t, bb, cc)

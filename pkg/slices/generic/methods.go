@@ -2,21 +2,6 @@ package generic
 
 import "math/big"
 
-// SliceType2 is a two dimensional slice of PrimitiveType
-type SliceType2 []SliceType
-
-// SliceType is a one dimensional slice of PrimitiveType.
-type SliceType []PrimitiveType
-
-// PrimitiveType is a placeholder for the type underpinning the generic SliceType.
-type PrimitiveType interface{}
-
-// Test is a function that conditionally evaluates a PrimitiveType.
-type Test func(PrimitiveType) bool
-
-// Equality is a function that evalutes if two values share something in common.
-type Equality func(a, b PrimitiveType) bool
-
 func ptr(aa SliceType) *SliceType {
 	return &aa
 }

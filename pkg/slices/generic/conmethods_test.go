@@ -9,7 +9,7 @@ import (
 func TestAsSliceTypeBMethod(t *testing.T) {
 	aa := generic.SliceTypeA{}
 	converter := func(a generic.PrimitiveTypeA) generic.PrimitiveTypeB {
-		return primitiveBZero
+		return primitiveBValue
 	}
 	aa.AsSliceTypeB(converter)
 }

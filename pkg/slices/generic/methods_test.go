@@ -15,8 +15,6 @@ import (
 // Additional tests are added as necessary, but the bulk of the deeper testing
 // is handled in functions_test.go.
 
-var primitiveZero = interface{}(nil)
-
 func TestNullaryMethodHappyPaths(t *testing.T) {
 	methodCalls := []func(generic.SliceType){
 		func(aa generic.SliceType) { aa.Clear() },
