@@ -172,3 +172,23 @@ func TestBinarySliceEqualityHappyPaths(t *testing.T) {
 		t.Run(fmt.Sprintf("BinarySliceEquality test %v", i+1), test)
 	}
 }
+
+func TestBinaryPrimitiveTestHappyPaths(t *testing.T) {
+	methodCalls := []func(generic.SliceType, generic.PrimitiveType, generic.Test){
+		func(aa generic.SliceType, b generic.PrimitiveType, test generic.Test) {
+			aa.InsertAfter(b, test)
+		},
+		func(aa generic.SliceType, b generic.PrimitiveType, test generic.Test) {
+			aa.InsertBefore(b, test)
+		},
+	}
+	for i, methodCall := range methodCalls {
+		test := func(t *testing.T) {
+			testFn := func(generic.PrimitiveType) bool {
+				return false
+			}
+			methodCall(generic.SliceType{}, primitiveZero, testFn)
+		}
+		t.Run(fmt.Sprintf("BinaryPrimitiveTest test %v", i+1), test)
+	}
+}
