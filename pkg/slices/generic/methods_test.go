@@ -44,21 +44,22 @@ func TestNullaryMethodHappyPaths(t *testing.T) {
 	}
 }
 
-func TestUnaryInt64MethodHappyPaths(t *testing.T) {
-	methodCalls := []func(generic.SliceType, int64){
-		func(aa generic.SliceType, i int64) { aa.Item(i) },
-		func(aa generic.SliceType, i int64) { aa.ItemFuzzy(i) },
-		func(aa generic.SliceType, i int64) { aa.RemoveAt(i) },
-		func(aa generic.SliceType, i int64) { aa.Skip(i) },
-		func(aa generic.SliceType, i int64) { aa.SplitAt(i) },
-		func(aa generic.SliceType, i int64) { aa.Take(i) },
+func TestUnaryValueMethodHappyPaths(t *testing.T) {
+	methodCalls := []func(generic.SliceType){
+		func(aa generic.SliceType) { aa.Item(0) },
+		func(aa generic.SliceType) { aa.ItemFuzzy(0) },
+		func(aa generic.SliceType) { aa.RemoveAt(0) },
+		func(aa generic.SliceType) { aa.Skip(0) },
+		func(aa generic.SliceType) { aa.SplitAt(0) },
+		func(aa generic.SliceType) { aa.Take(0) },
+		func(aa generic.SliceType) { aa.Zip(new(generic.SliceType)) },
 	}
 
 	for i, methodCall := range methodCalls {
 		test := func(t *testing.T) {
-			methodCall(generic.SliceType{}, int64(0))
+			methodCall(generic.SliceType{})
 		}
-		t.Run(fmt.Sprintf("UnaryInt64 test %v", i+1), test)
+		t.Run(fmt.Sprintf("UnaryValue test %v", i+1), test)
 	}
 }
 
