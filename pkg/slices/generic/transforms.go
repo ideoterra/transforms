@@ -21,7 +21,7 @@ const (
 
 // All applies a test function to each element in the slice, and returns true if
 // the test function returns true for all items in the slice.
-func All(aa SliceType, test func(PrimitiveType) bool) bool {
+func All(aa SliceType, test Test) bool {
 	for _, s := range aa {
 		if !test(s) {
 			return false
@@ -37,7 +37,7 @@ func All(aa SliceType, test func(PrimitiveType) bool) bool {
 // Any does not require that the source slice be sorted, and merely scans
 // the slice, returning as soon as any element passes the supplied test. For
 // a binary search, consider using sort.Search from the standard library.
-func Any(aa SliceType, test func(PrimitiveType) bool) bool {
+func Any(aa SliceType, test Test) bool {
 	for _, a := range aa {
 		if test(a) {
 			return true
@@ -83,7 +83,7 @@ func Collect(aa SliceType, bb SliceType, collector func(a, b PrimitiveType) Prim
 
 // Count applies the supplied test function to each element of the slice,
 // and returns the count of items for which the test returns true.
-func Count(aa SliceType, test func(PrimitiveType) bool) int64 {
+func Count(aa SliceType, test Test) int64 {
 	matches := int64(0)
 	for _, a := range aa {
 		if test(a) {
@@ -106,7 +106,7 @@ func Dequeue(aa *SliceType) SliceType {
 }
 
 // Difference returns a new slice that contains items that are not common
-// between aa and bb. The supplied equal function is used to compare values
+// between aa and bb. The supplied equality function is used to compare values
 // between each slice. Duplicates are retained through this process. As such,
 // The elements in the slice that results from this transform may not be
 // distinct. Distinct values from aa are listed ahead of those from bb in the
@@ -116,13 +116,13 @@ func Dequeue(aa *SliceType) SliceType {
 //   aa: [1,2,3,3,1,4]
 //   bb: [5,4,3,5]
 //   equal: func(a, b) bool {return a == b}
-//   Difference(aa, bb, equal) -> [1,2,1,5,5]
-func Difference(aa, bb SliceType, equal func(a, b PrimitiveType) bool) SliceType {
+//   Difference(aa, bb, equality) -> [1,2,1,5,5]
+func Difference(aa, bb SliceType, equality Equality) SliceType {
 	ii := make([]bool, len(aa))
 	jj := make([]bool, len(bb))
 	for i, a := range aa {
 		for j, b := range bb {
-			if equal(a, b) {
+			if equality(a, b) {
 				ii[i] = true
 				jj[j] = true
 			}
@@ -145,9 +145,9 @@ func Difference(aa, bb SliceType, equal func(a, b PrimitiveType) bool) SliceType
 	return cc
 }
 
-// Distinct removes all duplicates from the slice, using the supplied equal
+// Distinct removes all duplicates from the slice, using the supplied equality
 // function to determine equality.
-func Distinct(aa *SliceType, equal func(a, b PrimitiveType) bool) {
+func Distinct(aa *SliceType, equality Equality) {
 	bb := SliceType{}
 	dups := make([]bool, len(*aa))
 	for i, a := range *aa {
@@ -155,7 +155,7 @@ func Distinct(aa *SliceType, equal func(a, b PrimitiveType) bool) {
 			bb = append(bb, a)
 		}
 		for j := i + 1; j < len(*aa); j++ {
-			if equal(a, (*aa)[j]) {
+			if equality(a, (*aa)[j]) {
 				dups[j] = true
 			}
 		}
@@ -201,7 +201,7 @@ func Expand(aa SliceType, expansion func(PrimitiveType) SliceType) SliceType {
 
 // Filter removes all items from the slice for which the supplied test function
 // returns true.
-func Filter(aa *SliceType, test func(PrimitiveType) bool) {
+func Filter(aa *SliceType, test Test) {
 	for i := len(*aa) - 1; i >= 0; i-- {
 		if test((*aa)[i]) {
 			RemoveAt(aa, int64(i))
@@ -211,7 +211,7 @@ func Filter(aa *SliceType, test func(PrimitiveType) bool) {
 
 // FindIndex returns the index of the first element in the slice for which the
 // supplied test function returns true. If no matches are found, -1 is returned.
-func FindIndex(aa SliceType, test func(PrimitiveType) bool) int64 {
+func FindIndex(aa SliceType, test Test) int64 {
 	for i, a := range aa {
 		if test(a) {
 			return int64(i)
@@ -222,7 +222,7 @@ func FindIndex(aa SliceType, test func(PrimitiveType) bool) int64 {
 
 // First returns a SliceType containing the first element in the slice for which
 // the supplied test function returns true.
-func First(aa SliceType, test func(PrimitiveType) bool) SliceType {
+func First(aa SliceType, test Test) SliceType {
 	bb := SliceType{}
 	for _, a := range aa {
 		if test(a) {
@@ -377,7 +377,7 @@ func Head(aa SliceType) SliceType {
 // InsertAfter inserts an element in aa after the first element for which the
 // supplied test function returns true. If none of the tests return true, the
 // element is appended to the end of the aa.
-func InsertAfter(aa *SliceType, b PrimitiveType, test func(PrimitiveType) bool) {
+func InsertAfter(aa *SliceType, b PrimitiveType, test Test) {
 	var i int
 	var a PrimitiveType
 	for i, a = range *aa {
@@ -391,7 +391,7 @@ func InsertAfter(aa *SliceType, b PrimitiveType, test func(PrimitiveType) bool) 
 // InsertBefore inserts an element in aa before the first element for which the
 // supplied test function returns true. If none of the tests return true,
 // the element is inserted at the head of aa.
-func InsertBefore(aa *SliceType, b PrimitiveType, test func(PrimitiveType) bool) {
+func InsertBefore(aa *SliceType, b PrimitiveType, test Test) {
 	var i int
 	var a PrimitiveType
 	for i, a = range *aa {
@@ -421,11 +421,11 @@ func InsertAt(aa *SliceType, a PrimitiveType, i int64) {
 // Intersection compares each element of aa to bb using the supplied equal
 // function, and returns a SliceType containing the elements which are common
 // to both aa and bb. Duplicates are removed in this operation.
-func Intersection(aa, bb SliceType, equal func(a, b PrimitiveType) bool) SliceType {
+func Intersection(aa, bb SliceType, equality Equality) SliceType {
 	cc := SliceType{}
 	ForEach(aa, func(a PrimitiveType) Continue {
 		ForEach(bb, func(b PrimitiveType) Continue {
-			if equal(a, b) && !Any(cc, func(c PrimitiveType) bool { return equal(a, c) }) {
+			if equality(a, b) && !Any(cc, func(c PrimitiveType) bool { return equality(a, c) }) {
 				Append(&cc, a)
 			}
 			return ContinueYes
@@ -441,8 +441,8 @@ func Intersection(aa, bb SliceType, equal func(a, b PrimitiveType) bool) SliceTy
 // Note: This operation does not enforce that each element be unique, thus, it
 // is possible for a subset to be larger than its superset. Use the Distinct
 // operations to enforce uniqueness, if that is necessary.
-func IsProperSubset(aa, bb SliceType, equal func(a, b PrimitiveType) bool) bool {
-	aa1, bb1 := removeIntersections(aa, bb, equal)
+func IsProperSubset(aa, bb SliceType, equality Equality) bool {
+	aa1, bb1 := removeIntersections(aa, bb, equality)
 	return len(aa1) == 0 && len(bb1) > 0
 }
 
@@ -452,8 +452,8 @@ func IsProperSubset(aa, bb SliceType, equal func(a, b PrimitiveType) bool) bool 
 // Note: This operation does not enforce that each element be unique, thus, it
 // is possible for a superset to be smaller than its subset. Use the Distinct
 // operations to enforce uniqueness, if that is necessary.
-func IsProperSuperset(aa, bb SliceType, equal func(a, b PrimitiveType) bool) bool {
-	aa1, bb1 := removeIntersections(aa, bb, equal)
+func IsProperSuperset(aa, bb SliceType, equality Equality) bool {
+	aa1, bb1 := removeIntersections(aa, bb, equality)
 	return len(aa1) > 0 && len(bb1) == 0
 }
 
@@ -462,8 +462,8 @@ func IsProperSuperset(aa, bb SliceType, equal func(a, b PrimitiveType) bool) boo
 // Note: This operation does not enforce that each element be unique, thus, it
 // is possible for a subset to be larger than its superset. Use the Distinct
 // operations to enforce uniqueness, if that is necessary.
-func IsSubset(aa, bb SliceType, equal func(a, b PrimitiveType) bool) bool {
-	aa1, bb1 := removeIntersections(aa, bb, equal)
+func IsSubset(aa, bb SliceType, equality Equality) bool {
+	aa1, bb1 := removeIntersections(aa, bb, equality)
 	return len(aa1) == 0 && len(bb1) >= 0
 }
 
@@ -472,18 +472,18 @@ func IsSubset(aa, bb SliceType, equal func(a, b PrimitiveType) bool) bool {
 // Note: This operation does not enforce that each element be unique, thus, it
 // is possible for a superset to be smaller than its subset. Use the Distinct
 // operations to enforce uniqueness, if that is necessary.
-func IsSuperset(aa, bb SliceType, equal func(a, b PrimitiveType) bool) bool {
-	aa1, bb1 := removeIntersections(aa, bb, equal)
+func IsSuperset(aa, bb SliceType, equality Equality) bool {
+	aa1, bb1 := removeIntersections(aa, bb, equality)
 	return len(aa1) >= 0 && len(bb1) == 0
 }
 
-func removeIntersections(aa, bb SliceType, equal func(a, b PrimitiveType) bool) (SliceType, SliceType) {
+func removeIntersections(aa, bb SliceType, equality Equality) (SliceType, SliceType) {
 	aa1 := Clone(aa)
 	bb1 := Clone(bb)
 	for ai := int64(len(aa1)) - 1; ai >= 0; ai-- {
 		intersectionFound := false
 		for bi := int64(len(bb1)) - 1; bi >= 0; bi-- {
-			if equal((aa1)[ai], (bb1)[bi]) {
+			if equality((aa1)[ai], (bb1)[bi]) {
 				intersectionFound = true
 				RemoveAt(&bb1, bi)
 			}
@@ -526,7 +526,7 @@ func ItemFuzzy(aa SliceType, i int64) SliceType {
 // Last applies a test function to each element in aa, and returns a SliceType
 // containing the last element for which the test returned true. If no elements
 // pass the supplied test, the resulting SliceType will be empty.
-func Last(aa SliceType, test func(PrimitiveType) bool) SliceType {
+func Last(aa SliceType, test Test) SliceType {
 	bb := SliceType{}
 	ForEachR(aa, func(a PrimitiveType) Continue {
 		if test(a) {
@@ -552,7 +552,7 @@ func Map(aa *SliceType, mapFn func(PrimitiveType) PrimitiveType) {
 
 // None applies a test function to each element in aa, and returns true if
 // the test function returns false for all items.
-func None(aa SliceType, test func(PrimitiveType) bool) bool {
+func None(aa SliceType, test Test) bool {
 	return !Any(aa, test)
 }
 
@@ -586,7 +586,7 @@ func Pairwise(aa SliceType, init PrimitiveType, xform func(a, b PrimitiveType) P
 // SliceType with all elements for whom the test function returned false.
 //
 // Partition is a special case of the Group function.
-func Partition(aa SliceType, test func(PrimitiveType) bool) SliceType2 {
+func Partition(aa SliceType, test Test) SliceType2 {
 	grouper := func(a PrimitiveType) int64 {
 		if test(a) {
 			return 1
@@ -689,7 +689,7 @@ func Reduce(aa SliceType, reducer func(a, acc PrimitiveType) PrimitiveType) Slic
 
 // Remove applies a test function to each item in the list, and removes any item
 // for which the test returns true.
-func Remove(aa *SliceType, test func(PrimitiveType) bool) {
+func Remove(aa *SliceType, test Test) {
 	for i := int64(len(*aa)) - 1; i >= 0; i-- {
 		if test((*aa)[i]) {
 			RemoveAt(aa, i)
@@ -734,7 +734,7 @@ func Skip(aa *SliceType, n int64) {
 // elements from aa while the test function returns true.
 // SkipWhile stops removing any further items from aa after the first test that
 // returns false.
-func SkipWhile(aa *SliceType, test func(PrimitiveType) bool) {
+func SkipWhile(aa *SliceType, test Test) {
 	// find the first index where the test would evaluate to false and skip
 	// everything up to that index.
 	findTest := func(a PrimitiveType) bool { return !test(a) }
@@ -756,7 +756,7 @@ func Sort(aa *SliceType, less func(a, b PrimitiveType) bool) {
 // and SliceType2[1] contains the second half of aa. Element b will be included
 // in SliceType2[0]. If the no element can be found for which the test returns
 // true, SliceType2[0] will contain aa, and SliceType2[1] will be empty.
-func SplitAfter(aa SliceType, test func(PrimitiveType) bool) SliceType2 {
+func SplitAfter(aa SliceType, test Test) SliceType2 {
 	return SplitAt(aa, FindIndex(aa, test)+1)
 }
 
@@ -786,7 +786,7 @@ func SplitAt(aa SliceType, i int64) SliceType2 {
 // and returns a SliceType2 where SliceType2[0] contains the first half of aa
 // and SliceType2[1] contains the second half of aa. Element b will be included
 // in SliceType2[1]
-func SplitBefore(aa SliceType, test func(PrimitiveType) bool) SliceType2 {
+func SplitBefore(aa SliceType, test Test) SliceType2 {
 	return SplitAt(aa, FindIndex(aa, test))
 }
 
@@ -829,7 +829,7 @@ func Take(aa *SliceType, n int64) {
 // elements of aa so long as the test function returns true. As soon as the test
 // function returns false, take stops evaluating any further, and abandons the
 // rest of the slice.
-func TakeWhile(aa *SliceType, test func(PrimitiveType) bool) {
+func TakeWhile(aa *SliceType, test Test) {
 	find := func(a PrimitiveType) bool {
 		return !test(a)
 	}

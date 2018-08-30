@@ -224,10 +224,10 @@ var Specifications = []Specification{
 			Expectation: func(t *testing.T) {
 				aa := generic.SliceType{1, 2, 3, 4}
 				bb := generic.SliceType{5, 4, 3}
-				equal := func(a, b generic.PrimitiveType) bool {
+				equality := func(a, b generic.PrimitiveType) bool {
 					return a.(int) == b.(int)
 				}
-				cc := generic.Difference(aa, bb, equal)
+				cc := generic.Difference(aa, bb, equality)
 				dd := generic.SliceType{1, 2, 5}
 				assert.ElementsMatch(t, cc, dd)
 			},
@@ -239,10 +239,10 @@ var Specifications = []Specification{
 			Expectation: func(t *testing.T) {
 				aa := generic.SliceType{1, 2, 3, 3, 1, 4}
 				bb := generic.SliceType{5, 4, 3, 5}
-				equal := func(a, b generic.PrimitiveType) bool {
+				equality := func(a, b generic.PrimitiveType) bool {
 					return a.(int) == b.(int)
 				}
-				cc := generic.Difference(aa, bb, equal)
+				cc := generic.Difference(aa, bb, equality)
 				dd := generic.SliceType{1, 2, 1, 5, 5}
 				assert.ElementsMatch(t, cc, dd)
 			},
@@ -254,10 +254,10 @@ var Specifications = []Specification{
 			Description: "Duplicates are removed from the slice, mutating the original",
 			Expectation: func(t *testing.T) {
 				aa := generic.SliceType{"Dani", "Riley", "Dani", "Tori", "Janice"}
-				equal := func(a, b generic.PrimitiveType) bool {
+				equality := func(a, b generic.PrimitiveType) bool {
 					return a.(string) == b.(string)
 				}
-				generic.Distinct(&aa, equal)
+				generic.Distinct(&aa, equality)
 				bb := generic.SliceType{"Dani", "Riley", "Tori", "Janice"}
 				assert.ElementsMatch(t, aa, bb)
 			},
@@ -924,10 +924,10 @@ var Specifications = []Specification{
 			Expectation: func(t *testing.T) {
 				aa := generic.SliceType{1, 4, 2, 5}
 				bb := generic.SliceType{4, 3, 7, 2}
-				equal := func(a, b generic.PrimitiveType) bool {
+				equality := func(a, b generic.PrimitiveType) bool {
 					return a.(int) == b.(int)
 				}
-				cc := generic.Intersection(aa, bb, equal)
+				cc := generic.Intersection(aa, bb, equality)
 				dd := generic.SliceType{4, 2}
 				assert.ElementsMatch(t, cc, dd)
 			},
@@ -937,10 +937,10 @@ var Specifications = []Specification{
 			Expectation: func(t *testing.T) {
 				aa := generic.SliceType{1, 4, 2, 2, 2, 5, 4}
 				bb := generic.SliceType{4, 3, 2, 7, 2}
-				equal := func(a, b generic.PrimitiveType) bool {
+				equality := func(a, b generic.PrimitiveType) bool {
 					return a.(int) == b.(int)
 				}
-				cc := generic.Intersection(aa, bb, equal)
+				cc := generic.Intersection(aa, bb, equality)
 				dd := generic.SliceType{4, 2}
 				assert.ElementsMatch(t, cc, dd)
 			},
@@ -953,10 +953,10 @@ var Specifications = []Specification{
 			Expectation: func(t *testing.T) {
 				aa := generic.SliceType{1, 2, 3, 4}
 				bb := generic.SliceType{1, 2, 3, 4, 5}
-				equal := func(a, b generic.PrimitiveType) bool {
+				equality := func(a, b generic.PrimitiveType) bool {
 					return a.(int) == b.(int)
 				}
-				result := generic.IsProperSubset(aa, bb, equal)
+				result := generic.IsProperSubset(aa, bb, equality)
 				assert.True(t, result)
 			},
 		},
@@ -965,10 +965,10 @@ var Specifications = []Specification{
 			Expectation: func(t *testing.T) {
 				aa := generic.SliceType{1, 2, 3, 4, 5}
 				bb := generic.SliceType{1, 2, 3, 4, 5}
-				equal := func(a, b generic.PrimitiveType) bool {
+				equality := func(a, b generic.PrimitiveType) bool {
 					return a.(int) == b.(int)
 				}
-				result := generic.IsProperSubset(aa, bb, equal)
+				result := generic.IsProperSubset(aa, bb, equality)
 				assert.False(t, result)
 			},
 		},
@@ -980,10 +980,10 @@ var Specifications = []Specification{
 			Expectation: func(t *testing.T) {
 				aa := generic.SliceType{1, 2, 3, 4, 5}
 				bb := generic.SliceType{1, 2, 3, 4}
-				equal := func(a, b generic.PrimitiveType) bool {
+				equality := func(a, b generic.PrimitiveType) bool {
 					return a.(int) == b.(int)
 				}
-				result := generic.IsProperSuperset(aa, bb, equal)
+				result := generic.IsProperSuperset(aa, bb, equality)
 				assert.True(t, result)
 			},
 		},
@@ -992,10 +992,10 @@ var Specifications = []Specification{
 			Expectation: func(t *testing.T) {
 				aa := generic.SliceType{1, 2, 3, 4, 5}
 				bb := generic.SliceType{1, 2, 3, 4, 5}
-				equal := func(a, b generic.PrimitiveType) bool {
+				equality := func(a, b generic.PrimitiveType) bool {
 					return a.(int) == b.(int)
 				}
-				result := generic.IsProperSuperset(aa, bb, equal)
+				result := generic.IsProperSuperset(aa, bb, equality)
 				assert.False(t, result)
 			},
 		},
@@ -1007,10 +1007,10 @@ var Specifications = []Specification{
 			Expectation: func(t *testing.T) {
 				aa := generic.SliceType{1, 2, 3, 4}
 				bb := generic.SliceType{1, 2, 3, 4}
-				equal := func(a, b generic.PrimitiveType) bool {
+				equality := func(a, b generic.PrimitiveType) bool {
 					return a.(int) == b.(int)
 				}
-				result := generic.IsSubset(aa, bb, equal)
+				result := generic.IsSubset(aa, bb, equality)
 				assert.True(t, result)
 			},
 		},
@@ -1019,10 +1019,10 @@ var Specifications = []Specification{
 			Expectation: func(t *testing.T) {
 				aa := generic.SliceType{6, 7, 8, 9, 0}
 				bb := generic.SliceType{1, 2, 3, 4, 5}
-				equal := func(a, b generic.PrimitiveType) bool {
+				equality := func(a, b generic.PrimitiveType) bool {
 					return a.(int) == b.(int)
 				}
-				result := generic.IsSubset(aa, bb, equal)
+				result := generic.IsSubset(aa, bb, equality)
 				assert.False(t, result)
 			},
 		},
@@ -1034,10 +1034,10 @@ var Specifications = []Specification{
 			Expectation: func(t *testing.T) {
 				aa := generic.SliceType{1, 2, 3, 4}
 				bb := generic.SliceType{1, 2, 3, 4}
-				equal := func(a, b generic.PrimitiveType) bool {
+				equality := func(a, b generic.PrimitiveType) bool {
 					return a.(int) == b.(int)
 				}
-				result := generic.IsSuperset(aa, bb, equal)
+				result := generic.IsSuperset(aa, bb, equality)
 				assert.True(t, result)
 			},
 		},
@@ -1046,10 +1046,10 @@ var Specifications = []Specification{
 			Expectation: func(t *testing.T) {
 				aa := generic.SliceType{1, 2, 3, 4, 5}
 				bb := generic.SliceType{6, 7, 8, 9, 0}
-				equal := func(a, b generic.PrimitiveType) bool {
+				equality := func(a, b generic.PrimitiveType) bool {
 					return a.(int) == b.(int)
 				}
-				result := generic.IsSuperset(aa, bb, equal)
+				result := generic.IsSuperset(aa, bb, equality)
 				assert.False(t, result)
 			},
 		},
