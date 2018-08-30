@@ -1236,9 +1236,15 @@ var Specifications = []Specification{
 			},
 		},
 		AlternativePath: Behavior{
-			Description: "",
+			Description: "Returns empty slice if aa is empty",
 			Expectation: func(t *testing.T) {
-				t.Skip()
+				aa := generic.SliceType{}
+				xform := func(a, b generic.PrimitiveType) generic.PrimitiveType {
+					return a.(string) + b.(string)
+				}
+				bb := generic.Pairwise(aa, "V", xform)
+				cc := generic.SliceType{}
+				assert.ElementsMatch(t, bb, cc)
 			},
 		},
 	},

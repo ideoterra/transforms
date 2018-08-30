@@ -566,6 +566,9 @@ func None(aa SliceType, test Test) bool {
 //     init: V
 //     Pairwise(aa, init, xform) -> [VW, WX, XY, YZ]
 func Pairwise(aa SliceType, init PrimitiveType, xform func(a, b PrimitiveType) PrimitiveType) SliceType {
+	if Empty(aa) {
+		return SliceType{}
+	}
 	bb := SliceType{}
 	i := 0
 	a1, a2 := init, aa[i]
