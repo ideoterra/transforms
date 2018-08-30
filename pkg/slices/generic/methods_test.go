@@ -141,3 +141,34 @@ func TestUnaryClosureHappyPaths(t *testing.T) {
 		t.Run(fmt.Sprintf("UnaryClosure test %v", i+1), test)
 	}
 }
+
+func TestBinarySliceEqualityHappyPaths(t *testing.T) {
+	methodCalls := []func(generic.SliceType, generic.Equality){
+		func(aa generic.SliceType, equality generic.Equality) {
+			aa.Difference(&aa, equality)
+		},
+		func(aa generic.SliceType, equality generic.Equality) {
+			aa.Intersection(&aa, equality)
+		},
+		func(aa generic.SliceType, equality generic.Equality) {
+			aa.IsProperSubset(&aa, equality)
+		},
+		func(aa generic.SliceType, equality generic.Equality) {
+			aa.IsProperSuperset(&aa, equality)
+		},
+		func(aa generic.SliceType, equality generic.Equality) {
+			aa.IsSubset(&aa, equality)
+		},
+		func(aa generic.SliceType, equality generic.Equality) {
+			aa.IsSuperset(&aa, equality)
+		}}
+	for i, methodCall := range methodCalls {
+		test := func(t *testing.T) {
+			equality := func(a, b generic.PrimitiveType) bool {
+				return false
+			}
+			methodCall(generic.SliceType{}, equality)
+		}
+		t.Run(fmt.Sprintf("BinarySliceEquality test %v", i+1), test)
+	}
+}

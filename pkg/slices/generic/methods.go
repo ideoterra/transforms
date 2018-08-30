@@ -86,8 +86,8 @@ func (aa *SliceType) Dequeue() *SliceType {
 // The elements in the slice that results from this transform may not be
 // distinct. Distinct values from aa are listed ahead of those from bb in the
 // resulting slice.
-func (aa *SliceType) Difference(bb SliceType, equality Equality) *SliceType {
-	return ptr(Difference(*aa, bb, equality))
+func (aa *SliceType) Difference(bb *SliceType, equality Equality) *SliceType {
+	return ptr(Difference(*aa, *bb, equality))
 }
 
 // Distinct removes all duplicates from the slice, using the supplied equality
