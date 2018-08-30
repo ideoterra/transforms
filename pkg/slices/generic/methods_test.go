@@ -74,3 +74,31 @@ func TestUnaryPrimitiveMethodHappyPaths(t *testing.T) {
 		t.Run(fmt.Sprintf("UnaryPrimitive test %v", i+1), test)
 	}
 }
+
+func TestUnaryTestMethodHappyPaths(t *testing.T) {
+	methodCalls := []func(generic.SliceType, generic.Test){
+		func(aa generic.SliceType, test generic.Test) { aa.All(test) },
+		func(aa generic.SliceType, test generic.Test) { aa.Any(test) },
+		func(aa generic.SliceType, test generic.Test) { aa.Count(test) },
+		func(aa generic.SliceType, test generic.Test) { aa.Filter(test) },
+		func(aa generic.SliceType, test generic.Test) { aa.FindIndex(test) },
+		func(aa generic.SliceType, test generic.Test) { aa.First(test) },
+		func(aa generic.SliceType, test generic.Test) { aa.Last(test) },
+		func(aa generic.SliceType, test generic.Test) { aa.None(test) },
+		func(aa generic.SliceType, test generic.Test) { aa.Partition(test) },
+		func(aa generic.SliceType, test generic.Test) { aa.Remove(test) },
+		func(aa generic.SliceType, test generic.Test) { aa.SkipWhile(test) },
+		func(aa generic.SliceType, test generic.Test) { aa.SplitAfter(test) },
+		func(aa generic.SliceType, test generic.Test) { aa.SplitBefore(test) },
+		func(aa generic.SliceType, test generic.Test) { aa.TakeWhile(test) },
+	}
+	for i, methodCall := range methodCalls {
+		test := func(t *testing.T) {
+			testFn := func(_ generic.PrimitiveType) bool {
+				return true
+			}
+			methodCall(generic.SliceType{}, testFn)
+		}
+		t.Run(fmt.Sprintf("UnaryPrimitive test %v", i+1), test)
+	}
+}
