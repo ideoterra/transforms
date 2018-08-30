@@ -192,3 +192,28 @@ func TestBinaryPrimitiveTestHappyPaths(t *testing.T) {
 		t.Run(fmt.Sprintf("BinaryPrimitiveTest test %v", i+1), test)
 	}
 }
+
+func TestBinaryIntClosureHappyPaths(t *testing.T) {
+	methodCalls := []func(generic.SliceType){
+		func(aa generic.SliceType) {
+			aa.ForEachC(0, func(generic.PrimitiveType, func() bool) generic.Continue {
+				return generic.ContinueNo
+			})
+		},
+		func(aa generic.SliceType) {
+			aa.WindowCentered(0, func(generic.SliceType) generic.PrimitiveType { return primitiveZero })
+		},
+		func(aa generic.SliceType) {
+			aa.WindowLeft(0, func(generic.SliceType) generic.PrimitiveType { return primitiveZero })
+		},
+		func(aa generic.SliceType) {
+			aa.WindowRight(0, func(generic.SliceType) generic.PrimitiveType { return primitiveZero })
+		},
+	}
+	for i, methodCall := range methodCalls {
+		test := func(t *testing.T) {
+			methodCall(generic.SliceType{})
+		}
+		t.Run(fmt.Sprintf("BinaryIntClosure test %v", i+1), test)
+	}
+}
