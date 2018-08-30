@@ -8,7 +8,7 @@ import (
 )
 
 func TestNullaryMethods(t *testing.T) {
-	nullaryMethodCalls := []func(generic.SliceType){
+	methodCalls := []func(generic.SliceType){
 		func(aa generic.SliceType) { aa.Clear() },
 		func(aa generic.SliceType) { aa.Clone() },
 		func(aa generic.SliceType) { aa.Dequeue() },
@@ -26,10 +26,28 @@ func TestNullaryMethods(t *testing.T) {
 		func(aa generic.SliceType) { aa.Unzip() },
 	}
 
-	for i, nullaryMethodCall := range nullaryMethodCalls {
+	for i, methodCall := range methodCalls {
 		test := func(t *testing.T) {
-			nullaryMethodCall(generic.SliceType{})
+			methodCall(generic.SliceType{})
 		}
 		t.Run(fmt.Sprintf("Nullary test %v", i+1), test)
+	}
+}
+
+func TestUnaryInt64Methods(t *testing.T) {
+	methodCalls := []func(generic.SliceType, int64){
+		func(aa generic.SliceType, i int64) { aa.Item(i) },
+		func(aa generic.SliceType, i int64) { aa.ItemFuzzy(i) },
+		func(aa generic.SliceType, i int64) { aa.RemoveAt(i) },
+		func(aa generic.SliceType, i int64) { aa.Skip(i) },
+		func(aa generic.SliceType, i int64) { aa.SplitAt(i) },
+		func(aa generic.SliceType, i int64) { aa.Take(i) },
+	}
+
+	for i, methodCall := range methodCalls {
+		test := func(t *testing.T) {
+			methodCall(generic.SliceType{}, int64(0))
+		}
+		t.Run(fmt.Sprintf("UnaryInt64 test %v", i+1), test)
 	}
 }
