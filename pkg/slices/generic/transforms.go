@@ -101,7 +101,7 @@ import (
 	"fmt"
 	"math/big"
 	"sort"
-	"sync/atomic"
+	"sync"
 
 	"github.com/cheekybits/genny/generic"
 )
@@ -400,21 +400,29 @@ func ForEachC(aa SliceType, c int, fn func(a PrimitiveType, cancelPending func()
 	if c < 0 {
 		panic("ForEachC: The concurrency pool size (c) must be non-negative.")
 	}
+	mu := new(sync.RWMutex)
 	halt := int64(0)
 	cancelPending := func() bool {
-		return atomic.LoadInt64(&halt) > 0
+		mu.RLock()
+		defer mu.RUnlock()
+		return halt > 0
 	}
 	sem := make(chan struct{}, c)
 	defer close(sem)
 	for _, a := range aa {
-		if halt > 0 {
+		mu.RLock()
+		stop := halt > 0
+		mu.RUnlock()
+		if stop {
 			break
 		}
 		sem <- struct{}{}
 		go func(a PrimitiveType) {
 			defer func() { <-sem }()
 			if !fn(a, cancelPending) {
-				atomic.AddInt64(&halt, 1)
+				mu.Lock()
+				halt++
+				mu.Unlock()
 			}
 		}(a)
 	}
@@ -643,9 +651,9 @@ func Len(aa SliceType) int {
 }
 
 // Map applies a tranform to each element of the list.
-func Map(aa SliceType, mapFn func(PrimitiveType) PrimitiveType) {
-	for i, a := range aa {
-		aa[i] = mapFn(a)
+func Map(aa *SliceType, mapFn func(PrimitiveType) PrimitiveType) {
+	for i, a := range *aa {
+		(*aa)[i] = mapFn(a)
 	}
 }
 

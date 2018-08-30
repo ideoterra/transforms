@@ -1186,7 +1186,7 @@ var Specifications = []Specification{
 				mapFn := func(a generic.PrimitiveType) generic.PrimitiveType {
 					return a.(int) * 2
 				}
-				generic.Map(aa, mapFn)
+				generic.Map(&aa, mapFn)
 				bb := generic.SliceType{2, 4, 6}
 				assert.ElementsMatch(t, aa, bb)
 			},
