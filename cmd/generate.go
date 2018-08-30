@@ -2,6 +2,8 @@ package main
 
 import (
 	"log"
+	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -12,37 +14,49 @@ type primitiveType struct {
 
 var primitiveTypes = []primitiveType{
 	primitiveType{"int", int(0)},
-	primitiveType{"string", ""},
 }
 
 type typeNames struct {
-	FileName      string
+	DirName       string
 	PrimitiveType string
 	SliceType     string
 	SliceType2    string
 }
 
-func generateTypeNames() []typeNames {
-	result := []typeNames{}
-	for _, primitiveType := range primitiveTypes {
-		oneDimensionalSliceType := typeNames{
-			FileName:      primitiveType.TypeName + "slice.go",
-			PrimitiveType: primitiveType.TypeName,
-			SliceType:     strings.Title(primitiveType.TypeName) + "Slice",
-			SliceType2:    strings.Title(primitiveType.TypeName) + "Slice2",
-		}
+const basePath = `/Users/joe/workspace/go/src/github.com/jecolasurdo/transforms/pkg/slices`
 
-		twoDimensionalSliceType := typeNames{
-			FileName:      primitiveType.TypeName + "slice2.go",
-			PrimitiveType: strings.Title(primitiveType.TypeName) + "Slice",
-			SliceType:     strings.Title(primitiveType.TypeName) + "Slice2",
-			SliceType2:    "[]" + strings.Title(primitiveType.TypeName) + "Slice2",
+func main() {
+	for _, p := range primitiveTypes {
+		typeNames := generateTypeNames(p)
+		for _, t := range typeNames {
+			newDirName := filepath.Join(basePath, t.DirName)
+			err := os.MkdirAll(newDirName, os.ModeDir)
+			if err != nil {
+				log.Fatal(err)
+			}
 		}
-
-		result = append(result, oneDimensionalSliceType, twoDimensionalSliceType)
-		log.Println(oneDimensionalSliceType)
-		log.Println(twoDimensionalSliceType)
 	}
+}
+
+func generateTypeNames(p primitiveType) []typeNames {
+	result := []typeNames{}
+	oneDimensionalSliceType := typeNames{
+		DirName:       p.TypeName + "slice",
+		PrimitiveType: p.TypeName,
+		SliceType:     strings.Title(p.TypeName) + "Slice",
+		SliceType2:    strings.Title(p.TypeName) + "Slice2",
+	}
+
+	twoDimensionalSliceType := typeNames{
+		DirName:       p.TypeName + "slice2",
+		PrimitiveType: strings.Title(p.TypeName) + "Slice",
+		SliceType:     strings.Title(p.TypeName) + "Slice2",
+		SliceType2:    "[]" + strings.Title(p.TypeName) + "Slice2",
+	}
+
+	result = append(result, oneDimensionalSliceType, twoDimensionalSliceType)
+	log.Println(oneDimensionalSliceType)
+	log.Println(twoDimensionalSliceType)
 	return result
 }
 
@@ -84,9 +98,4 @@ func generateConversionNames() []conversionNames {
 		}
 	}
 	return result
-}
-
-func main() {
-	generateTypeNames()
-	generateConversionNames()
 }
