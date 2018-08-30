@@ -6,9 +6,16 @@ import (
 	"math/big"
 	"sort"
 	"sync"
-
-	"github.com/jecolasurdo/transforms/pkg/slices/types"
 )
+
+// SliceType2 is a two dimensional slice of PrimitiveType
+type SliceType2 []SliceType
+
+// SliceType is a one dimensional slice of PrimitiveType.
+type SliceType []PrimitiveType
+
+// PrimitiveType is a placeholder for the type underpinning the generic SliceType.
+type PrimitiveType interface{}
 
 // Continue instructs iterators about whether or not to keep iterating.
 type Continue bool
@@ -23,7 +30,7 @@ const (
 
 // All applies a test function to each element in the slice, and returns true if
 // the test function returns true for all items in the slice.
-func All(aa types.SliceType, test func(types.PrimitiveType) bool) bool {
+func All(aa SliceType, test func(PrimitiveType) bool) bool {
 	for _, s := range aa {
 		if !test(s) {
 			return false
@@ -39,7 +46,7 @@ func All(aa types.SliceType, test func(types.PrimitiveType) bool) bool {
 // Any does not require that the source slice be sorted, and merely scans
 // the slice, returning as soon as any element passes the supplied test. For
 // a binary search, consider using sort.Search from the standard library.
-func Any(aa types.SliceType, test func(types.PrimitiveType) bool) bool {
+func Any(aa SliceType, test func(PrimitiveType) bool) bool {
 	for _, a := range aa {
 		if test(a) {
 			return true
@@ -49,20 +56,20 @@ func Any(aa types.SliceType, test func(types.PrimitiveType) bool) bool {
 }
 
 //Append adds the supplied values to the end of the slice.
-func Append(aa *types.SliceType, values ...types.PrimitiveType) {
+func Append(aa *SliceType, values ...PrimitiveType) {
 	*aa = append(*aa, values...)
 }
 
 // Clear removes all of the items from the slice, setting the slice to nil
 // such that any memory previously allocated to the slice can be garbage
 // collected.
-func Clear(aa *types.SliceType) {
+func Clear(aa *SliceType) {
 	*aa = nil
 }
 
 // Clone returns a copy of the slice.
-func Clone(aa types.SliceType) types.SliceType {
-	return append(types.SliceType{}, aa...)
+func Clone(aa SliceType) SliceType {
+	return append(SliceType{}, aa...)
 }
 
 // Collect applies a given function against each item in slice aa and
@@ -73,8 +80,8 @@ func Clone(aa types.SliceType) types.SliceType {
 //     bb: 			[X, Y, Z]
 //     collector:   func(a, b) { return a + b }
 //     Collect(aa, bb, collector) -> [AX, AY, AZ, BX, BY, BZ, CX, XY, CZ]
-func Collect(aa types.SliceType, bb types.SliceType, collector func(a, b types.PrimitiveType) types.PrimitiveType) types.SliceType {
-	cc := types.SliceType{}
+func Collect(aa SliceType, bb SliceType, collector func(a, b PrimitiveType) PrimitiveType) SliceType {
+	cc := SliceType{}
 	for _, a := range aa {
 		for _, b := range bb {
 			cc = append(cc, collector(a, b))
@@ -85,7 +92,7 @@ func Collect(aa types.SliceType, bb types.SliceType, collector func(a, b types.P
 
 // Count applies the supplied test function to each element of the slice,
 // and returns the count of items for which the test returns true.
-func Count(aa types.SliceType, test func(types.PrimitiveType) bool) int64 {
+func Count(aa SliceType, test func(PrimitiveType) bool) int64 {
 	matches := int64(0)
 	for _, a := range aa {
 		if test(a) {
@@ -95,16 +102,16 @@ func Count(aa types.SliceType, test func(types.PrimitiveType) bool) int64 {
 	return matches
 }
 
-// Dequeue returns a types.SliceType containing the head item from the source slice.
+// Dequeue returns a SliceType containing the head item from the source slice.
 // The head item is removed from the source slice in this operation. If the
 // source slice is initially empty, the resulting slice will also be empty.
-func Dequeue(aa *types.SliceType) types.SliceType {
+func Dequeue(aa *SliceType) SliceType {
 	if len(*aa) == 0 {
-		return types.SliceType{}
+		return SliceType{}
 	}
 	head := (*aa)[0]
 	RemoveAt(aa, 0)
-	return types.SliceType{head}
+	return SliceType{head}
 }
 
 // Difference returns a new slice that contains items that are not common
@@ -119,7 +126,7 @@ func Dequeue(aa *types.SliceType) types.SliceType {
 //   bb: [5,4,3,5]
 //   equal: func(a, b) bool {return a == b}
 //   Difference(aa, bb, equal) -> [1,2,1,5,5]
-func Difference(aa, bb types.SliceType, equal func(a, b types.PrimitiveType) bool) types.SliceType {
+func Difference(aa, bb SliceType, equal func(a, b PrimitiveType) bool) SliceType {
 	ii := make([]bool, len(aa))
 	jj := make([]bool, len(bb))
 	for i, a := range aa {
@@ -131,7 +138,7 @@ func Difference(aa, bb types.SliceType, equal func(a, b types.PrimitiveType) boo
 		}
 	}
 
-	cc := types.SliceType{}
+	cc := SliceType{}
 	for i, a := range aa {
 		if !ii[i] {
 			cc = append(cc, a)
@@ -149,8 +156,8 @@ func Difference(aa, bb types.SliceType, equal func(a, b types.PrimitiveType) boo
 
 // Distinct removes all duplicates from the slice, using the supplied equal
 // function to determine equality.
-func Distinct(aa *types.SliceType, equal func(a, b types.PrimitiveType) bool) {
-	bb := types.SliceType{}
+func Distinct(aa *SliceType, equal func(a, b PrimitiveType) bool) {
+	bb := SliceType{}
 	dups := make([]bool, len(*aa))
 	for i, a := range *aa {
 		if !dups[i] {
@@ -167,34 +174,34 @@ func Distinct(aa *types.SliceType, equal func(a, b types.PrimitiveType) bool) {
 }
 
 // Empty returns true if the length of the slice is zero.
-func Empty(aa types.SliceType) bool {
+func Empty(aa SliceType) bool {
 	return len(aa) == 0
 }
 
-// End returns the a types.SliceType containing only the last element from aa.
-func End(aa types.SliceType) types.SliceType {
+// End returns the a SliceType containing only the last element from aa.
+func End(aa SliceType) SliceType {
 	if Empty(aa) {
-		return types.SliceType{}
+		return SliceType{}
 	}
-	return types.SliceType{aa[len(aa)-1]}
+	return SliceType{aa[len(aa)-1]}
 }
 
 // Enqueue places an item at the head of the slice.
-func Enqueue(aa *types.SliceType, a types.PrimitiveType) {
+func Enqueue(aa *SliceType, a PrimitiveType) {
 	*aa = append(*aa, a)
 	copy((*aa)[1:], (*aa)[:len(*aa)-1])
 	(*aa)[0] = a
 }
 
 // Expand applies an expansion function to each element of aa, and flattens
-// the results into a single types.SliceType.
+// the results into a single SliceType.
 //
 //   Illustration (pseudocode):
 //     aa: [AB, CD, EF]
 //     expansion: func(a string) []string { return []string{a[0], a[1]}}
 //     Expand(aa, expansion) -> [A, B, C, D, E, F]
-func Expand(aa types.SliceType, expansion func(types.PrimitiveType) types.SliceType) types.SliceType {
-	bb := types.SliceType{}
+func Expand(aa SliceType, expansion func(PrimitiveType) SliceType) SliceType {
+	bb := SliceType{}
 	for _, a := range aa {
 		Append(&bb, expansion(a)...)
 	}
@@ -203,7 +210,7 @@ func Expand(aa types.SliceType, expansion func(types.PrimitiveType) types.SliceT
 
 // Filter removes all items from the slice for which the supplied test function
 // returns true.
-func Filter(aa *types.SliceType, test func(types.PrimitiveType) bool) {
+func Filter(aa *SliceType, test func(PrimitiveType) bool) {
 	for i := len(*aa) - 1; i >= 0; i-- {
 		if test((*aa)[i]) {
 			RemoveAt(aa, int64(i))
@@ -213,7 +220,7 @@ func Filter(aa *types.SliceType, test func(types.PrimitiveType) bool) {
 
 // FindIndex returns the index of the first element in the slice for which the
 // supplied test function returns true. If no matches are found, -1 is returned.
-func FindIndex(aa types.SliceType, test func(types.PrimitiveType) bool) int64 {
+func FindIndex(aa SliceType, test func(PrimitiveType) bool) int64 {
 	for i, a := range aa {
 		if test(a) {
 			return int64(i)
@@ -222,10 +229,10 @@ func FindIndex(aa types.SliceType, test func(types.PrimitiveType) bool) int64 {
 	return -1
 }
 
-// First returns a types.SliceType containing the first element in the slice for which
+// First returns a SliceType containing the first element in the slice for which
 // the supplied test function returns true.
-func First(aa types.SliceType, test func(types.PrimitiveType) bool) types.SliceType {
-	bb := types.SliceType{}
+func First(aa SliceType, test func(PrimitiveType) bool) SliceType {
+	bb := SliceType{}
 	for _, a := range aa {
 		if test(a) {
 			Append(&bb, a)
@@ -236,40 +243,40 @@ func First(aa types.SliceType, test func(types.PrimitiveType) bool) types.SliceT
 }
 
 // Fold applies a function to each item in slice aa, threading an accumulator
-// through each iteration. The accumulated value is returned in a new types.SliceType
-// once aa is fully scanned. Fold returns a types.SliceType rather than a
-// types.PrimitiveType to be consistent with this package's Reduce implementation.
+// through each iteration. The accumulated value is returned in a new SliceType
+// once aa is fully scanned. Fold returns a SliceType rather than a
+// PrimitiveType to be consistent with this package's Reduce implementation.
 //
 //  Illustration:
 //    aa: [1,2,3,4]
 //    acc:    1
 //    folder: acc + sourceNode
 //    Fold(aa, acc, folder) -> [11]
-func Fold(aa types.SliceType, acc types.PrimitiveType, folder func(a, acc types.PrimitiveType) types.PrimitiveType) types.SliceType {
-	return FoldI(aa, acc, func(_ int64, a, acc types.PrimitiveType) types.PrimitiveType { return folder(a, acc) })
+func Fold(aa SliceType, acc PrimitiveType, folder func(a, acc PrimitiveType) PrimitiveType) SliceType {
+	return FoldI(aa, acc, func(_ int64, a, acc PrimitiveType) PrimitiveType { return folder(a, acc) })
 }
 
 // FoldI applies a function to each item in slice aa, threading an accumulator
 // and an index value through each iteration. The accumulated value is returned
-// once aa is fully scanned. Foldi returns a types.SliceType rather than a
-// types.PrimitiveType to be consistent with this package's Reduce implementation.
+// once aa is fully scanned. Foldi returns a SliceType rather than a
+// PrimitiveType to be consistent with this package's Reduce implementation.
 //
 //  Illustration:
 //    aa: [1,2,3,4]
 //    acc:    1
 //    folder: acc + sourceNode
 //    Fold(aa, acc, folder) -> [11]
-func FoldI(aa types.SliceType, acc types.PrimitiveType, folder func(i int64, a, acc types.PrimitiveType) types.PrimitiveType) types.SliceType {
+func FoldI(aa SliceType, acc PrimitiveType, folder func(i int64, a, acc PrimitiveType) PrimitiveType) SliceType {
 	accumulation := acc
 	for i, a := range aa {
 		accumulation = folder(int64(i), a, accumulation)
 	}
-	return types.SliceType{accumulation}
+	return SliceType{accumulation}
 }
 
 // ForEach applies each element of the list to the given function.
 // ForEach will stop iterating if fn return false.
-func ForEach(aa types.SliceType, fn func(types.PrimitiveType) Continue) {
+func ForEach(aa SliceType, fn func(PrimitiveType) Continue) {
 	for _, a := range aa {
 		if !fn(a) {
 			return
@@ -291,7 +298,7 @@ func ForEach(aa types.SliceType, fn func(types.PrimitiveType) Continue) {
 // Any goroutines monitoring the cancelPending closure can wind down their
 // activities as necessary. ForEachC will continue to block until all active
 // goroutines exit cleanly.
-func ForEachC(aa types.SliceType, c int, fn func(a types.PrimitiveType, cancelPending func() bool) Continue) {
+func ForEachC(aa SliceType, c int, fn func(a PrimitiveType, cancelPending func() bool) Continue) {
 	if c < 0 {
 		panic("ForEachC: The concurrency pool size (c) must be non-negative.")
 	}
@@ -312,7 +319,7 @@ func ForEachC(aa types.SliceType, c int, fn func(a types.PrimitiveType, cancelPe
 			break
 		}
 		sem <- struct{}{}
-		go func(a types.PrimitiveType) {
+		go func(a PrimitiveType) {
 			defer func() { <-sem }()
 			if !fn(a, cancelPending) {
 				mu.Lock()
@@ -329,7 +336,7 @@ func ForEachC(aa types.SliceType, c int, fn func(a types.PrimitiveType, cancelPe
 // ForEachR applies each element of aa to a given function, scanning
 // through the slice in reverse order, starting from the end and working towards
 // the head.
-func ForEachR(aa types.SliceType, fn func(types.PrimitiveType) Continue) {
+func ForEachR(aa SliceType, fn func(PrimitiveType) Continue) {
 	for i := len(aa) - 1; i >= 0; i-- {
 		if !fn(aa[i]) {
 			return
@@ -338,50 +345,50 @@ func ForEachR(aa types.SliceType, fn func(types.PrimitiveType) Continue) {
 }
 
 // Group consolidates like-items into groups according to the supplied grouper
-// function, and returns them as a types.SliceType2.
+// function, and returns them as a SliceType2.
 // The grouper function is expected to return a hash value which Group will use
 // to determine into which bucket each element wil be placed.
-func Group(aa types.SliceType, grouper func(types.PrimitiveType) int64) types.SliceType2 {
-	return GroupI(aa, func(_ int64, a types.PrimitiveType) int64 { return grouper(a) })
+func Group(aa SliceType, grouper func(PrimitiveType) int64) SliceType2 {
+	return GroupI(aa, func(_ int64, a PrimitiveType) int64 { return grouper(a) })
 }
 
 // GroupI consolidates like-items into groups according to the supplied grouper
-// function, and returns them as a types.SliceType2.
+// function, and returns them as a SliceType2.
 // The grouper function is expected to return a hash value which Group will use
 // to determine into which bucket each element wil be placed. For convenience
 // the index value from aa is also passed into the grouper function.
-func GroupI(aa types.SliceType, grouper func(int64, types.PrimitiveType) int64) types.SliceType2 {
-	groupMap := map[int64]types.SliceType{}
+func GroupI(aa SliceType, grouper func(int64, PrimitiveType) int64) SliceType2 {
+	groupMap := map[int64]SliceType{}
 	for i, a := range aa {
 		hash := grouper(int64(i), a)
 		if _, exists := groupMap[hash]; exists {
 			groupMap[hash] = append(groupMap[hash], a)
 		} else {
-			groupMap[hash] = types.SliceType{a}
+			groupMap[hash] = SliceType{a}
 		}
 	}
-	group := types.SliceType2{}
+	group := SliceType2{}
 	for _, bb := range groupMap {
 		group = append(group, bb)
 	}
 	return group
 }
 
-// Head returns a types.SliceType containing the first item from the aa. If aa is
-// empty, the resulting types.SliceType will be empty.
-func Head(aa types.SliceType) types.SliceType {
+// Head returns a SliceType containing the first item from the aa. If aa is
+// empty, the resulting SliceType will be empty.
+func Head(aa SliceType) SliceType {
 	if Empty(aa) {
-		return types.SliceType{}
+		return SliceType{}
 	}
-	return types.SliceType{aa[0]}
+	return SliceType{aa[0]}
 }
 
 // InsertAfter inserts an element in aa after the first element for which the
 // supplied test function returns true. If none of the tests return true, the
 // element is appended to the end of the aa.
-func InsertAfter(aa *types.SliceType, b types.PrimitiveType, test func(types.PrimitiveType) bool) {
+func InsertAfter(aa *SliceType, b PrimitiveType, test func(PrimitiveType) bool) {
 	var i int
-	var a types.PrimitiveType
+	var a PrimitiveType
 	for i, a = range *aa {
 		if test(a) {
 			break
@@ -393,9 +400,9 @@ func InsertAfter(aa *types.SliceType, b types.PrimitiveType, test func(types.Pri
 // InsertBefore inserts an element in aa before the first element for which the
 // supplied test function returns true. If none of the tests return true,
 // the element is inserted at the head of aa.
-func InsertBefore(aa *types.SliceType, b types.PrimitiveType, test func(types.PrimitiveType) bool) {
+func InsertBefore(aa *SliceType, b PrimitiveType, test func(PrimitiveType) bool) {
 	var i int
-	var a types.PrimitiveType
+	var a PrimitiveType
 	for i, a = range *aa {
 		if test(a) {
 			break
@@ -408,7 +415,7 @@ func InsertBefore(aa *types.SliceType, b types.PrimitiveType, test func(types.Pr
 // element originally at index i (and all subsequent elements) one position
 // to the right. If i < 0, the element is inserted at index 0. If
 // i >= len(aa), the value is appended to the end of aa.
-func InsertAt(aa *types.SliceType, a types.PrimitiveType, i int64) {
+func InsertAt(aa *SliceType, a PrimitiveType, i int64) {
 	*aa = append(*aa, a)
 	if i >= int64(len(*aa)) {
 		return
@@ -421,13 +428,13 @@ func InsertAt(aa *types.SliceType, a types.PrimitiveType, i int64) {
 }
 
 // Intersection compares each element of aa to bb using the supplied equal
-// function, and returns a types.SliceType containing the elements which are common
+// function, and returns a SliceType containing the elements which are common
 // to both aa and bb. Duplicates are removed in this operation.
-func Intersection(aa, bb types.SliceType, equal func(a, b types.PrimitiveType) bool) types.SliceType {
-	cc := types.SliceType{}
-	ForEach(aa, func(a types.PrimitiveType) Continue {
-		ForEach(bb, func(b types.PrimitiveType) Continue {
-			if equal(a, b) && !Any(cc, func(c types.PrimitiveType) bool { return equal(a, c) }) {
+func Intersection(aa, bb SliceType, equal func(a, b PrimitiveType) bool) SliceType {
+	cc := SliceType{}
+	ForEach(aa, func(a PrimitiveType) Continue {
+		ForEach(bb, func(b PrimitiveType) Continue {
+			if equal(a, b) && !Any(cc, func(c PrimitiveType) bool { return equal(a, c) }) {
 				Append(&cc, a)
 			}
 			return ContinueYes
@@ -443,7 +450,7 @@ func Intersection(aa, bb types.SliceType, equal func(a, b types.PrimitiveType) b
 // Note: This operation does not enforce that each element be unique, thus, it
 // is possible for a subset to be larger than its superset. Use the Distinct
 // operations to enforce uniqueness, if that is necessary.
-func IsProperSubset(aa, bb types.SliceType, equal func(a, b types.PrimitiveType) bool) bool {
+func IsProperSubset(aa, bb SliceType, equal func(a, b PrimitiveType) bool) bool {
 	aa1, bb1 := removeIntersections(aa, bb, equal)
 	return len(aa1) == 0 && len(bb1) > 0
 }
@@ -454,7 +461,7 @@ func IsProperSubset(aa, bb types.SliceType, equal func(a, b types.PrimitiveType)
 // Note: This operation does not enforce that each element be unique, thus, it
 // is possible for a superset to be smaller than its subset. Use the Distinct
 // operations to enforce uniqueness, if that is necessary.
-func IsProperSuperset(aa, bb types.SliceType, equal func(a, b types.PrimitiveType) bool) bool {
+func IsProperSuperset(aa, bb SliceType, equal func(a, b PrimitiveType) bool) bool {
 	aa1, bb1 := removeIntersections(aa, bb, equal)
 	return len(aa1) > 0 && len(bb1) == 0
 }
@@ -464,7 +471,7 @@ func IsProperSuperset(aa, bb types.SliceType, equal func(a, b types.PrimitiveTyp
 // Note: This operation does not enforce that each element be unique, thus, it
 // is possible for a subset to be larger than its superset. Use the Distinct
 // operations to enforce uniqueness, if that is necessary.
-func IsSubset(aa, bb types.SliceType, equal func(a, b types.PrimitiveType) bool) bool {
+func IsSubset(aa, bb SliceType, equal func(a, b PrimitiveType) bool) bool {
 	aa1, bb1 := removeIntersections(aa, bb, equal)
 	return len(aa1) == 0 && len(bb1) >= 0
 }
@@ -474,12 +481,12 @@ func IsSubset(aa, bb types.SliceType, equal func(a, b types.PrimitiveType) bool)
 // Note: This operation does not enforce that each element be unique, thus, it
 // is possible for a superset to be smaller than its subset. Use the Distinct
 // operations to enforce uniqueness, if that is necessary.
-func IsSuperset(aa, bb types.SliceType, equal func(a, b types.PrimitiveType) bool) bool {
+func IsSuperset(aa, bb SliceType, equal func(a, b PrimitiveType) bool) bool {
 	aa1, bb1 := removeIntersections(aa, bb, equal)
 	return len(aa1) >= 0 && len(bb1) == 0
 }
 
-func removeIntersections(aa, bb types.SliceType, equal func(a, b types.PrimitiveType) bool) (types.SliceType, types.SliceType) {
+func removeIntersections(aa, bb SliceType, equal func(a, b PrimitiveType) bool) (SliceType, SliceType) {
 	aa1 := Clone(aa)
 	bb1 := Clone(bb)
 	for ai := int64(len(aa1)) - 1; ai >= 0; ai-- {
@@ -497,24 +504,24 @@ func removeIntersections(aa, bb types.SliceType, equal func(a, b types.Primitive
 	return aa1, bb1
 }
 
-// Item returns a types.SliceType containing the element at aa[i].
+// Item returns a SliceType containing the element at aa[i].
 // If len(aa) == 0, i < 0, or, i >= len(aa), the resulting slice will be empty.
-func Item(aa types.SliceType, i int64) types.SliceType {
+func Item(aa SliceType, i int64) SliceType {
 	if Empty(aa) || i < 0 || i >= int64(len(aa)) {
-		return types.SliceType{}
+		return SliceType{}
 	}
-	return types.SliceType{aa[i]}
+	return SliceType{aa[i]}
 }
 
-// ItemFuzzy returns a types.SliceType containing the element at aa[i].
+// ItemFuzzy returns a SliceType containing the element at aa[i].
 // If the supplied index is outside of the bounds of aa, ItemFuzzy will attempt
 // to retrieve the head or end element of aa according to the following rules:
-// If len(aa) == 0 an empty types.SliceType is returned.
+// If len(aa) == 0 an empty SliceType is returned.
 // If i < 0, the head of aa is returned.
 // If i >= len(aa), the end of the aa is returned.
-func ItemFuzzy(aa types.SliceType, i int64) types.SliceType {
+func ItemFuzzy(aa SliceType, i int64) SliceType {
 	if Empty(aa) {
-		return types.SliceType{}
+		return SliceType{}
 	}
 	if i < 0 {
 		return Head(aa)
@@ -522,15 +529,15 @@ func ItemFuzzy(aa types.SliceType, i int64) types.SliceType {
 	if i >= int64(len(aa)) {
 		return End(aa)
 	}
-	return types.SliceType{aa[i]}
+	return SliceType{aa[i]}
 }
 
-// Last applies a test function to each element in aa, and returns a types.SliceType
+// Last applies a test function to each element in aa, and returns a SliceType
 // containing the last element for which the test returned true. If no elements
-// pass the supplied test, the resulting types.SliceType will be empty.
-func Last(aa types.SliceType, test func(types.PrimitiveType) bool) types.SliceType {
-	bb := types.SliceType{}
-	ForEachR(aa, func(a types.PrimitiveType) Continue {
+// pass the supplied test, the resulting SliceType will be empty.
+func Last(aa SliceType, test func(PrimitiveType) bool) SliceType {
+	bb := SliceType{}
+	ForEachR(aa, func(a PrimitiveType) Continue {
 		if test(a) {
 			Append(&bb, a)
 			return ContinueNo
@@ -541,12 +548,12 @@ func Last(aa types.SliceType, test func(types.PrimitiveType) bool) types.SliceTy
 }
 
 // Len returns the length of aa.
-func Len(aa types.SliceType) int {
+func Len(aa SliceType) int {
 	return len(aa)
 }
 
 // Map applies a tranform to each element of the list.
-func Map(aa *types.SliceType, mapFn func(types.PrimitiveType) types.PrimitiveType) {
+func Map(aa *SliceType, mapFn func(PrimitiveType) PrimitiveType) {
 	for i, a := range *aa {
 		(*aa)[i] = mapFn(a)
 	}
@@ -554,7 +561,7 @@ func Map(aa *types.SliceType, mapFn func(types.PrimitiveType) types.PrimitiveTyp
 
 // None applies a test function to each element in aa, and returns true if
 // the test function returns false for all items.
-func None(aa types.SliceType, test func(types.PrimitiveType) bool) bool {
+func None(aa SliceType, test func(PrimitiveType) bool) bool {
 	return !Any(aa, test)
 }
 
@@ -567,8 +574,8 @@ func None(aa types.SliceType, test func(types.PrimitiveType) bool) bool {
 //     xform: func(a, b string) string { return a + b }
 //     init: V
 //     Pairwise(aa, init, xform) -> [VW, WX, XY, YZ]
-func Pairwise(aa types.SliceType, init types.PrimitiveType, xform func(a, b types.PrimitiveType) types.PrimitiveType) types.SliceType {
-	bb := types.SliceType{}
+func Pairwise(aa SliceType, init PrimitiveType, xform func(a, b PrimitiveType) PrimitiveType) SliceType {
+	bb := SliceType{}
 	i := 0
 	a1, a2 := init, aa[i]
 	for {
@@ -583,13 +590,13 @@ func Pairwise(aa types.SliceType, init types.PrimitiveType, xform func(a, b type
 }
 
 // Partition applies a test function to each element in aa, and returns
-// a types.SliceType2 where types.SliceType2[0] contains a types.SliceType with all elements for
-// whom the test function returned true, and where types.SliceType2[1] contains a
-// types.SliceType with all elements for whom the test function returned false.
+// a SliceType2 where SliceType2[0] contains a SliceType with all elements for
+// whom the test function returned true, and where SliceType2[1] contains a
+// SliceType with all elements for whom the test function returned false.
 //
 // Partition is a special case of the Group function.
-func Partition(aa types.SliceType, test func(types.PrimitiveType) bool) types.SliceType2 {
-	grouper := func(a types.PrimitiveType) int64 {
+func Partition(aa SliceType, test func(PrimitiveType) bool) SliceType2 {
+	grouper := func(a PrimitiveType) int64 {
 		if test(a) {
 			return 1
 		}
@@ -600,18 +607,18 @@ func Partition(aa types.SliceType, test func(types.PrimitiveType) bool) types.Sl
 
 // Permutable returns true if the number of permutations for aa exceeds
 // MaxInt64.
-func Permutable(aa types.SliceType) bool {
+func Permutable(aa SliceType) bool {
 	return Permutations(aa).IsInt64()
 }
 
 // Permutations returns the number of permutations that exist given the current
 // number of items in the aa.
-func Permutations(aa types.SliceType) *big.Int {
+func Permutations(aa SliceType) *big.Int {
 	var f big.Int
 	return f.MulRange(1, int64(len(aa)))
 }
 
-// Permute returns a types.SliceType2 which contains a types.SliceType for each permutation
+// Permute returns a SliceType2 which contains a SliceType for each permutation
 // of aa.
 //
 // This function will panic if it determines that the list is not permutable
@@ -625,17 +632,17 @@ func Permutations(aa types.SliceType) *big.Int {
 //
 // Permute is implemented using Heap's algorithm.
 // https://en.wikipedia.org/wiki/Heap%27s_algorithm
-func Permute(aa types.SliceType) types.SliceType2 {
+func Permute(aa SliceType) SliceType2 {
 	if !Permutable(aa) {
 		panic(fmt.Sprintf("The number of permutations for this list (%v) exceeeds MaxInt64.", Permutations(aa)))
 	}
 
-	acc := types.SliceType2{}
+	acc := SliceType2{}
 	generate(int64(len(aa)), aa, &acc)
 	return acc
 }
 
-func generate(n int64, aa types.SliceType, acc *types.SliceType2) {
+func generate(n int64, aa SliceType, acc *SliceType2) {
 	if n == 1 {
 		*acc = append(*acc, aa)
 		return
@@ -654,31 +661,31 @@ func generate(n int64, aa types.SliceType, acc *types.SliceType2) {
 	generate(n-1, aa, acc)
 }
 
-// Pop returns a types.SliceType containing the head element from aa, and removes the
-// element from aa. If aa is empty, the returned types.SliceType will also be empty.
-func Pop(aa *types.SliceType) types.SliceType {
+// Pop returns a SliceType containing the head element from aa, and removes the
+// element from aa. If aa is empty, the returned SliceType will also be empty.
+func Pop(aa *SliceType) SliceType {
 	bb := Head(*aa)
 	RemoveAt(aa, 0)
 	return bb
 }
 
 // Push places a prepends a new element at the head of aa.
-func Push(aa *types.SliceType, a types.PrimitiveType) {
+func Push(aa *SliceType, a PrimitiveType) {
 	InsertAt(aa, a, 0)
 }
 
 // Reduce applies a reducer function to each element in aa, threading an
 // accumulator through each iteration. The resulting accumulation is returned
-// as an element of a new types.SliceType. If aa is empty, the resulting types.SliceType
+// as an element of a new SliceType. If aa is empty, the resulting SliceType
 // will also be empty.
 //
 //  Illustration:
 //    aa: [1,2,3,4]
 //    reducer: acc + sourceNode
 //    Fold(aa, reducer) -> [10]
-func Reduce(aa types.SliceType, reducer func(a, acc types.PrimitiveType) types.PrimitiveType) types.SliceType {
+func Reduce(aa SliceType, reducer func(a, acc PrimitiveType) PrimitiveType) SliceType {
 	if len(aa) == 0 {
-		return types.SliceType{}
+		return SliceType{}
 	}
 	accumulator := aa[0]
 	if len(aa) > 1 {
@@ -686,12 +693,12 @@ func Reduce(aa types.SliceType, reducer func(a, acc types.PrimitiveType) types.P
 			accumulator = reducer(aa[i], accumulator)
 		}
 	}
-	return types.SliceType{accumulator}
+	return SliceType{accumulator}
 }
 
 // Remove applies a test function to each item in the list, and removes any item
 // for which the test returns true.
-func Remove(aa *types.SliceType, test func(types.PrimitiveType) bool) {
+func Remove(aa *SliceType, test func(PrimitiveType) bool) {
 	for i := int64(len(*aa)) - 1; i >= 0; i-- {
 		if test((*aa)[i]) {
 			RemoveAt(aa, i)
@@ -702,7 +709,7 @@ func Remove(aa *types.SliceType, test func(types.PrimitiveType) bool) {
 // RemoveAt removes the item at the specified index from the slice.
 // If len(aa) == 0, aa == nil, i < 0, or i >= len(aa), this function will do
 // nothing.
-func RemoveAt(aa *types.SliceType, i int64) {
+func RemoveAt(aa *SliceType, i int64) {
 	if i < 0 || i >= int64(len(*aa)) {
 		return
 	}
@@ -712,7 +719,7 @@ func RemoveAt(aa *types.SliceType, i int64) {
 }
 
 // Reverse reverses the order of aa.
-func Reverse(aa *types.SliceType) {
+func Reverse(aa *SliceType) {
 	for i := len(*aa)/2 - 1; i >= 0; i-- {
 		j := len(*aa) - 1 - i
 		(*aa)[i], (*aa)[j] = (*aa)[j], (*aa)[i]
@@ -725,7 +732,7 @@ func Reverse(aa *types.SliceType) {
 // "clear" the slice, meaning that the list remains allocated in memory.
 // To fully de-pointer the slice, and ensure it is available for garbage
 // collection as soon as possible, consider using Clear().
-func Skip(aa *types.SliceType, n int64) {
+func Skip(aa *SliceType, n int64) {
 	if len(*aa) == 0 {
 		return
 	}
@@ -736,17 +743,17 @@ func Skip(aa *types.SliceType, n int64) {
 // elements from aa while the test function returns true.
 // SkipWhile stops removing any further items from aa after the first test that
 // returns false.
-func SkipWhile(aa *types.SliceType, test func(types.PrimitiveType) bool) {
+func SkipWhile(aa *SliceType, test func(PrimitiveType) bool) {
 	// find the first index where the test would evaluate to false and skip
 	// everything up to that index.
-	findTest := func(a types.PrimitiveType) bool { return !test(a) }
+	findTest := func(a PrimitiveType) bool { return !test(a) }
 	Skip(aa, FindIndex(*aa, findTest))
 }
 
 // Sort sorts aa, using the supplied less function to determine order.
 // Sort is a convenience wrapper around the stdlib sort.SliceStable
 // function.
-func Sort(aa *types.SliceType, less func(a, b types.PrimitiveType) bool) {
+func Sort(aa *SliceType, less func(a, b PrimitiveType) bool) {
 	lessI := func(i, j int) bool {
 		return less((*aa)[i], (*aa)[j])
 	}
@@ -754,56 +761,56 @@ func Sort(aa *types.SliceType, less func(a, b types.PrimitiveType) bool) {
 }
 
 // SplitAfter finds the first element b for which a test function returns true,
-// and returns a types.SliceType2 where types.SliceType2[0] contains the first half of aa
-// and types.SliceType2[1] contains the second half of aa. Element b will be included
-// in types.SliceType2[0]. If the no element can be found for which the test returns
-// true, types.SliceType2[0] will contain aa, and types.SliceType2[1] will be empty.
-func SplitAfter(aa types.SliceType, test func(types.PrimitiveType) bool) types.SliceType2 {
+// and returns a SliceType2 where SliceType2[0] contains the first half of aa
+// and SliceType2[1] contains the second half of aa. Element b will be included
+// in SliceType2[0]. If the no element can be found for which the test returns
+// true, SliceType2[0] will contain aa, and SliceType2[1] will be empty.
+func SplitAfter(aa SliceType, test func(PrimitiveType) bool) SliceType2 {
 	return SplitAt(aa, FindIndex(aa, test)+1)
 }
 
-// SplitAt splits aa at index i, and returns a types.SliceType2 which contains the
-// two split halves of aa. aa[i] will be included in types.SliceType2[1].
-// If i < 0, all of aa will be placed in types.SliceType2[0] and types.SliceType2[1] will
+// SplitAt splits aa at index i, and returns a SliceType2 which contains the
+// two split halves of aa. aa[i] will be included in SliceType2[1].
+// If i < 0, all of aa will be placed in SliceType2[0] and SliceType2[1] will
 // be empty. Conversly, if i >= len(aa), all of aa will be placed in
-// types.SliceType2[1] and types.SliceType2[0] will be empty. If aa is nil or empty,
-// types.SliceType2 will contain two empty slices.
-func SplitAt(aa types.SliceType, i int64) types.SliceType2 {
+// SliceType2[1] and SliceType2[0] will be empty. If aa is nil or empty,
+// SliceType2 will contain two empty slices.
+func SplitAt(aa SliceType, i int64) SliceType2 {
 	if len(aa) == 0 {
-		return types.SliceType2{
-			types.SliceType{},
-			types.SliceType{},
+		return SliceType2{
+			SliceType{},
+			SliceType{},
 		}
 	}
 	if i < 0 {
 		i = 0
 	}
-	return types.SliceType2{
+	return SliceType2{
 		aa[:i],
 		aa[i:],
 	}
 }
 
 // SplitBefore finds the first element b for which a test function returns true,
-// and returns a types.SliceType2 where types.SliceType2[0] contains the first half of aa
-// and types.SliceType2[1] contains the second half of aa. Element b will be included
-// in types.SliceType2[1]
-func SplitBefore(aa types.SliceType, test func(types.PrimitiveType) bool) types.SliceType2 {
+// and returns a SliceType2 where SliceType2[0] contains the first half of aa
+// and SliceType2[1] contains the second half of aa. Element b will be included
+// in SliceType2[1]
+func SplitBefore(aa SliceType, test func(PrimitiveType) bool) SliceType2 {
 	return SplitAt(aa, FindIndex(aa, test))
 }
 
 // String returns a string representation of aa, suitable for use
 // with fmt.Print, or other similar functions. String should be regarded as
 // informational, and should not be relied upon to formally serialize a
-// types.SliceType.
-func String(aa types.SliceType) string {
+// SliceType.
+func String(aa SliceType) string {
 	jsonBytes, _ := json.Marshal(aa)
 	return string(jsonBytes)
 }
 
 // SwapIndex swaps the elements at the specified indices. If either i or j is
 // out of the bounds of aa, SwapIndex does nothing.
-func SwapIndex(aa types.SliceType, i, j int64) {
+func SwapIndex(aa SliceType, i, j int64) {
 	l := int64(len(aa))
 	if i < 0 || j < 0 || i >= l || j >= l {
 		return
@@ -813,14 +820,14 @@ func SwapIndex(aa types.SliceType, i, j int64) {
 
 // Tail removes the current head element from aa.
 // This equivelant to RemoveAt(aa, 0)
-func Tail(aa *types.SliceType) {
+func Tail(aa *SliceType) {
 	RemoveAt(aa, 0)
 }
 
 // Take retains the first n elements of aa, and removes all remaining elements
 // from the slice. If n < 0 or n >= len(aa), Take does nothing. If n == 0, all
 // elements are removed from the slice (but the slice is not de-pointered).
-func Take(aa *types.SliceType, n int64) {
+func Take(aa *SliceType, n int64) {
 	if len(*aa) == 0 || n < 0 || n >= int64(len(*aa)) {
 		return
 	}
@@ -831,8 +838,8 @@ func Take(aa *types.SliceType, n int64) {
 // elements of aa so long as the test function returns true. As soon as the test
 // function returns false, take stops evaluating any further, and abandons the
 // rest of the slice.
-func TakeWhile(aa *types.SliceType, test func(types.PrimitiveType) bool) {
-	find := func(a types.PrimitiveType) bool {
+func TakeWhile(aa *SliceType, test func(PrimitiveType) bool) {
+	find := func(a PrimitiveType) bool {
 		return !test(a)
 	}
 	Take(aa, FindIndex(*aa, find))
@@ -841,15 +848,15 @@ func TakeWhile(aa *types.SliceType, test func(types.PrimitiveType) bool) {
 // Union appends slice bb to slice aa.
 // Note: This operation does not remove any duplicates from the slice, as a
 // similar operation would when operating on a formal Set.
-func Union(aa *types.SliceType, bb types.SliceType) {
+func Union(aa *SliceType, bb SliceType) {
 	Append(aa, bb...)
 }
 
-// Unzip splits aa into a types.SliceType2, such that types.SliceType2[0] contains all odd
-// indices from aa, and types.SliceType2[1] contains all even indices from aa.
-func Unzip(aa types.SliceType) types.SliceType2 {
-	odds := types.SliceType{}
-	evens := types.SliceType{}
+// Unzip splits aa into a SliceType2, such that SliceType2[0] contains all odd
+// indices from aa, and SliceType2[1] contains all even indices from aa.
+func Unzip(aa SliceType) SliceType2 {
+	odds := SliceType{}
+	evens := SliceType{}
 	for i, a := range aa {
 		if i%2 != 0 {
 			odds = append(odds, a)
@@ -857,16 +864,16 @@ func Unzip(aa types.SliceType) types.SliceType2 {
 			evens = append(evens, a)
 		}
 	}
-	return types.SliceType2{odds, evens}
+	return SliceType2{odds, evens}
 }
 
 // WindowCentered applies a windowing function across the aa, using a centered
 // window of the specified size.
-func WindowCentered(aa types.SliceType, windowSize int64, windowFn func(window types.SliceType) types.PrimitiveType) types.SliceType {
-	cc := types.SliceType{}
+func WindowCentered(aa SliceType, windowSize int64, windowFn func(window SliceType) PrimitiveType) SliceType {
+	cc := SliceType{}
 	fullWindowReached := false
 	for i := int64(0); i < int64(len(aa)); i++ {
-		currentWindow := types.SliceType{}
+		currentWindow := SliceType{}
 		a := aa[i]
 		for n := int64(1); n <= windowSize; n++ {
 			Append(&currentWindow, a)
@@ -892,19 +899,19 @@ func WindowCentered(aa types.SliceType, windowSize int64, windowFn func(window t
 		frontTrim = trimSize / 2
 		backTrim = frontTrim + 1
 	}
-	dd := types.SliceType(SplitAt(cc, frontTrim)[1])
+	dd := SliceType(SplitAt(cc, frontTrim)[1])
 	Reverse(&dd)
-	ee := types.SliceType(SplitAt(dd, backTrim)[1])
+	ee := SliceType(SplitAt(dd, backTrim)[1])
 	Reverse(&ee)
 	return ee
 }
 
 // WindowLeft applies a windowing function across aa, using a left-sided window
 // of the specified size.
-func WindowLeft(aa types.SliceType, windowSize int64, windowFn func(window types.SliceType) types.PrimitiveType) types.SliceType {
-	bb := types.SliceType{}
+func WindowLeft(aa SliceType, windowSize int64, windowFn func(window SliceType) PrimitiveType) SliceType {
+	bb := SliceType{}
 	for i := int64(0); i < int64(len(aa)); i++ {
-		currentWindow := types.SliceType{}
+		currentWindow := SliceType{}
 		for n := int64(0); n < windowSize; n++ {
 			if i+n >= int64(len(aa)) {
 				break
@@ -918,14 +925,14 @@ func WindowLeft(aa types.SliceType, windowSize int64, windowFn func(window types
 
 // WindowRight applies a windowing function across aa, using a right-sided
 // window of the specified size.
-func WindowRight(aa types.SliceType, windowSize int64, windowFn func(window types.SliceType) types.PrimitiveType) types.SliceType {
+func WindowRight(aa SliceType, windowSize int64, windowFn func(window SliceType) PrimitiveType) SliceType {
 	aa1 := Clone(aa)
 	defer Clear(&aa1)
 
 	Reverse(&aa1)
-	bb := types.SliceType{}
+	bb := SliceType{}
 	for i := int64(0); i < int64(len(aa1)); i++ {
-		currentWindow := types.SliceType{}
+		currentWindow := SliceType{}
 		for n := int64(0); n < windowSize; n++ {
 			if i+n >= int64(len(aa1)) {
 				break
@@ -940,13 +947,13 @@ func WindowRight(aa types.SliceType, windowSize int64, windowFn func(window type
 }
 
 // Zip interleaves the contents of aa with bb, and returns the result as a
-// new types.SliceType. aa[0] is evaluated first. Thus if aa and bb are the same
+// new SliceType. aa[0] is evaluated first. Thus if aa and bb are the same
 // length, slice aa will occupy the odd indices of the result slice, and bb
 // will occupy the even indices of the result slice. If aa and bb are not
 // the same length, Zip will interleave as many values as possible, and will
 // simply append the remaining values for the longer of the two slices to the
 // end of the result slice.
-func Zip(aa, bb types.SliceType) types.SliceType {
+func Zip(aa, bb SliceType) SliceType {
 	if len(aa) == 0 {
 		return bb
 	}
@@ -954,7 +961,7 @@ func Zip(aa, bb types.SliceType) types.SliceType {
 		return aa
 	}
 
-	cc := types.SliceType{}
+	cc := SliceType{}
 	aaEndReached, bbEndReached := false, false
 	for i := 0; aaEndReached == false && bbEndReached == false; i++ {
 		if i >= len(aa) {

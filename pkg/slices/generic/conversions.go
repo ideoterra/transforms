@@ -3,7 +3,6 @@ package generic
 // import (
 // 	"math/big"
 
-// 	"github.com/cheekybits/genny/generic"
 // 	"github.com/jecolasurdo/transforms/pkg/slices/types"
 // )
 
