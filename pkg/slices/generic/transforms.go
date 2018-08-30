@@ -4,8 +4,8 @@
 // Often the same conceptual function can be implemented in more than one way.
 // When multiple variants of a function are implemented in this package, each
 // variant will start with the same base name, and the name will be suffixed
-// with 0 or more flags that indicate details about the implementation. Such
-// suffixes are as follows:
+// with 0 or more characters that indicate details about the implementation.
+// Such suffixes are as follows:
 //
 //   C: Functions with this suffix use concurrent operations internally, and
 //		will typically require that a concurrency pool size be specified as an
@@ -37,7 +37,7 @@
 // as a pointer. Thus, if a function requires that a slice be passed
 // as a pointer, it can be expected that the function is mutating the
 // underlaying slice. Conversly, functions that require slices be passed as
-// values, can be expected to be immutable.
+// values can be expected to be immutable.
 //
 // Null result handling:
 // Transforms that reduce a result to a single value (such as Dequeue, or Fold)
@@ -62,35 +62,38 @@
 // make no assumptions about the order or orderability of the dataset. For
 // instance, the algorithms for `Any()` and `Difference()` are intentionally
 // naive, so as to make as few assumptions about the nature of the data as
-// possible. In cases where performance can be improved using a sorted dataset
-// alternative functions are provided, such as in `AnyS()`, and
-// `DifferenceS())`. By convention all functions that expect the inbound data
-// to be sorted are suffixed with an 'S'. Such methods assume the data is sorted
-// and may return unexpected results if the data is not, in fact, sorted.
+// possible. In cases where performance can be improved using a sorted dataset,
+// alternate function variants are provided, such as in `AnyS()`, and
+// `DifferenceS())`. Bear in mind that passing unsorted data to a function
+// variant that expects sorted data, will likely result in an incorrect result.
 //
-// Equality (and Less) functions:
+// Equality functions:
 // Transforms that need to test the equality of slice elements are intentionaly
 // left naive, and do not make any assumptions about how to test for equality.
 // As a result, functions such as `Difference()` require an equality function
-// to be supplied. For primitive types, typical equality (and `Less()`)
-// functions are provided in the `eq` and `less` packages. It is encouraged to
-// use the supplied equality (and less) functions for primitive types.
+// to be supplied. For primitive types, typical equality functions are provided
+// in the `eq` and `less` packages. It is encouraged to use the supplied
+// equality functions for primitive types.
 //
-// Slice, Set, Stack, and other "non-native" Slice Functions:
+// Inclusion of non-native slice operations:
 // This package provides functions independent of the underlaying data
-// structure. That is, even though the underlaying data type for all operations
-// in this package is a slice, operations for other common data structures are
+// structure. That is, even though the base data structure for all operations in
+// this package is the slice, operations for other common data structures are
 // provided for convenience. For example, several common set operations such as
-// Intersection() are provided, even though this package operates on slices.
-// While the implementations of these "non-native" functions are provided for
-// convinience, that can come at the cost of performance because the underlaying
+// Intersection() are provided. Stack and queue operations such as Push() and
+// Dequeue() are also provided, as well as many others.
+// While the implementations of these "non-native" operations are provided for
+// convenience, that can come at the cost of performance because the underlaying
 // datastructure simply may not be optimized for the operation being performed.
 // With that said, efforts are made to provide reasonably performant
-// algorythmic implementations for non-native operations. Other admissions are
-// made to accomodate for the application of non-native functions to a slice.
-// For instance, Sets, by definition, do not contain duplicates. However, there
-// is no such requirement in a slice. As such, the set-type operations provided
-// in this package are tollerant to duplicates.
+// implementations for all operations. Similarly, because a slice structure is
+// fundamentally different from other data structures, some behavior for
+// non-native operations (such as the set operations) are implemented more
+// loosely than they would be for their native types. For instance, Sets, by
+// definition, do not contain duplicates. However, there is no such requirement
+// in a slice. As such, the set-type operations provided in this package are
+// allowed to be tollerant to duplicates. These differences are noted in the
+// description for each method, as warranted.
 package generic
 
 import (
@@ -516,7 +519,7 @@ func InsertAt(aa *SliceType, a PrimitiveType, i int64) {
 
 // Intersection compares each element of aa to bb using the supplied equal
 // function, and returns a SliceType containing the elements which are common
-// to both aa and bb. Duplicates are removed in this process.
+// to both aa and bb. Duplicates are removed in this operation.
 func Intersection(aa, bb SliceType, equal func(a, b PrimitiveType) bool) SliceType {
 	cc := SliceType{}
 	ForEach(aa, func(a PrimitiveType) Continue {
@@ -534,6 +537,9 @@ func Intersection(aa, bb SliceType, equal func(a, b PrimitiveType) bool) SliceTy
 // IsProperSubset returns true if aa is a proper subset of bb.
 // aa is considered a proper subset if all of its elements exist within bb, but
 // bb also contains some elements that do not exist within aa.
+// Note: This operation does not enforce that each element be unique, thus, it
+// is possible for a subset to be larger than its superset. Use the Distinct
+// operations to enforce uniqueness, if that is necessary.
 func IsProperSubset(aa, bb SliceType, equal func(a, b PrimitiveType) bool) bool {
 	aa1, bb1 := removeIntersections(aa, bb, equal)
 	return len(aa1) == 0 && len(bb1) > 0
@@ -542,6 +548,9 @@ func IsProperSubset(aa, bb SliceType, equal func(a, b PrimitiveType) bool) bool 
 // IsProperSuperset returns true if aa is a proper superset of bb.
 // aa is considered a proper superset if it contains all of bb's elements, but
 // aa also contains some elements that do not exist within bb.
+// Note: This operation does not enforce that each element be unique, thus, it
+// is possible for a superset to be smaller than its subset. Use the Distinct
+// operations to enforce uniqueness, if that is necessary.
 func IsProperSuperset(aa, bb SliceType, equal func(a, b PrimitiveType) bool) bool {
 	aa1, bb1 := removeIntersections(aa, bb, equal)
 	return len(aa1) > 0 && len(bb1) == 0
@@ -549,6 +558,9 @@ func IsProperSuperset(aa, bb SliceType, equal func(a, b PrimitiveType) bool) boo
 
 // IsSubset returns true if aa is a subset of bb.
 // aa is considered a subset if all of its elements exist within bb.
+// Note: This operation does not enforce that each element be unique, thus, it
+// is possible for a subset to be larger than its superset. Use the Distinct
+// operations to enforce uniqueness, if that is necessary.
 func IsSubset(aa, bb SliceType, equal func(a, b PrimitiveType) bool) bool {
 	aa1, bb1 := removeIntersections(aa, bb, equal)
 	return len(aa1) == 0 && len(bb1) >= 0
@@ -556,6 +568,9 @@ func IsSubset(aa, bb SliceType, equal func(a, b PrimitiveType) bool) bool {
 
 // IsSuperset returns true if aa is a superset of bb.
 // aa is considered a superset if all of bb's elements exist within aa.
+// Note: This operation does not enforce that each element be unique, thus, it
+// is possible for a superset to be smaller than its subset. Use the Distinct
+// operations to enforce uniqueness, if that is necessary.
 func IsSuperset(aa, bb SliceType, equal func(a, b PrimitiveType) bool) bool {
 	aa1, bb1 := removeIntersections(aa, bb, equal)
 	return len(aa1) >= 0 && len(bb1) == 0
@@ -845,10 +860,10 @@ func SplitAfter(aa SliceType, test func(PrimitiveType) bool) SliceType2 {
 }
 
 // SplitAt splits aa at index i, and returns a SliceType2 which contains the
-// two split halves of aa. aa[i] will be included in SliceType2[1]
-// If i < 0, all of aa will be placed in SliceType2[0], and SliceType2[1] will
-// be empty. Conversly, if i >= len(aa)m all of aa will be placed in
-// SliceType2[1], and SliceType2[0] will be empty. If aa is nil or empty,
+// two split halves of aa. aa[i] will be included in SliceType2[1].
+// If i < 0, all of aa will be placed in SliceType2[0] and SliceType2[1] will
+// be empty. Conversly, if i >= len(aa), all of aa will be placed in
+// SliceType2[1] and SliceType2[0] will be empty. If aa is nil or empty,
 // SliceType2 will contain two empty slices.
 func SplitAt(aa SliceType, i int64) SliceType2 {
 	if len(aa) == 0 {
@@ -921,6 +936,8 @@ func TakeWhile(aa *SliceType, test func(PrimitiveType) bool) {
 }
 
 // Union appends slice bb to slice aa.
+// Note: This operation does not remove any duplicates from the slice, as a
+// similar operation would when operating on a formal Set.
 func Union(aa *SliceType, bb SliceType) {
 	Append(aa, bb...)
 }
