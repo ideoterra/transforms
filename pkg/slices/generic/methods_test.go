@@ -7,7 +7,16 @@ import (
 	"github.com/jecolasurdo/transforms/pkg/slices/generic"
 )
 
-func TestNullaryMethods(t *testing.T) {
+// As a rule, all methods in this package are just wrappers around a set of
+// base functions. We want to keep a high level of test coverage, so method
+// sets are tested in bulk where possible for simple happy-path operation.
+//
+// Additional tests are added as necessary, but the bulk of the deeper testing
+// is handled in functions_test.go.
+
+var primitiveZero = interface{}(nil)
+
+func TestNullaryMethodHappyPaths(t *testing.T) {
 	methodCalls := []func(generic.SliceType){
 		func(aa generic.SliceType) { aa.Clear() },
 		func(aa generic.SliceType) { aa.Clone() },
@@ -34,7 +43,7 @@ func TestNullaryMethods(t *testing.T) {
 	}
 }
 
-func TestUnaryInt64Methods(t *testing.T) {
+func TestUnaryInt64MethodHappyPaths(t *testing.T) {
 	methodCalls := []func(generic.SliceType, int64){
 		func(aa generic.SliceType, i int64) { aa.Item(i) },
 		func(aa generic.SliceType, i int64) { aa.ItemFuzzy(i) },
@@ -49,5 +58,19 @@ func TestUnaryInt64Methods(t *testing.T) {
 			methodCall(generic.SliceType{}, int64(0))
 		}
 		t.Run(fmt.Sprintf("UnaryInt64 test %v", i+1), test)
+	}
+}
+
+func TestUnaryPrimitiveMethodHappyPaths(t *testing.T) {
+	methodCalls := []func(generic.SliceType, generic.PrimitiveType){
+		func(aa generic.SliceType, b generic.PrimitiveType) { aa.Append(b) },
+		func(aa generic.SliceType, b generic.PrimitiveType) { aa.Enqueue(b) },
+		func(aa generic.SliceType, b generic.PrimitiveType) { aa.Push(b) },
+	}
+	for i, methodCall := range methodCalls {
+		test := func(t *testing.T) {
+			methodCall(generic.SliceType{}, primitiveZero)
+		}
+		t.Run(fmt.Sprintf("UnaryPrimitive test %v", i+1), test)
 	}
 }
