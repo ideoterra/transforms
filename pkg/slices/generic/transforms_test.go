@@ -1342,6 +1342,16 @@ var Specifications = []Specification{
 					assert.Panics(t, func() { generic.Permute(aa) })
 				},
 			},
+			Behavior{
+				Description: `If source is empty, empty slice should be returned.`,
+				Expectation: func(t *testing.T) {
+					aa := generic.SliceType{}
+					bb := generic.Permute(aa)
+					if len(bb) != 0 {
+						t.Error("Expected bb to be empty, but it was not.")
+					}
+				},
+			},
 		},
 	},
 	Specification{

@@ -624,6 +624,10 @@ func Permutations(aa SliceType) *big.Int {
 // Permute is implemented using Heap's algorithm.
 // https://en.wikipedia.org/wiki/Heap%27s_algorithm
 func Permute(aa SliceType) SliceType2 {
+	if Empty(aa) {
+		return SliceType2{}
+	}
+
 	if !Permutable(aa) {
 		panic(fmt.Sprintf("The number of permutations for this list (%v) exceeeds MaxInt64.", Permutations(aa)))
 	}
