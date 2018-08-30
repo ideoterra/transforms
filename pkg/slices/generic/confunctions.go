@@ -12,7 +12,7 @@ type SliceTypeA []PrimitiveTypeA
 // SliceTypeB is a two dimensional slice of PrimitiveTypeB
 type SliceTypeB []PrimitiveTypeB
 
-// AsSliceTypeB applies a converst function to each element in aa and returns a
+// AsSliceTypeB applies a convert function to each element in aa and returns a
 // new SliceTypeB.
 func AsSliceTypeB(aa SliceTypeA, convert func(PrimitiveTypeA) PrimitiveTypeB) SliceTypeB {
 	bb := SliceTypeB{}

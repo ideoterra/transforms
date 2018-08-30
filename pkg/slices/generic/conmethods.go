@@ -1,6 +1,6 @@
 package generic
 
-// AsSliceTypeB applies a converst function to each element in aa and returns a
+// AsSliceTypeB applies a convert function to each element in aa and returns a
 // new SliceTypeB.
 func (aa *SliceTypeA) AsSliceTypeB(convert func(PrimitiveTypeA) PrimitiveTypeB) *SliceTypeB {
 	return ptrB(AsSliceTypeB(*aa, convert))
