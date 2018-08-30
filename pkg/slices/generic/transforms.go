@@ -8,15 +8,6 @@ import (
 	"sync"
 )
 
-// SliceType2 is a two dimensional slice of PrimitiveType
-type SliceType2 []SliceType
-
-// SliceType is a one dimensional slice of PrimitiveType.
-type SliceType []PrimitiveType
-
-// PrimitiveType is a placeholder for the type underpinning the generic SliceType.
-type PrimitiveType interface{}
-
 // Continue instructs iterators about whether or not to keep iterating.
 type Continue bool
 
@@ -67,7 +58,7 @@ func Clear(aa *SliceType) {
 	*aa = nil
 }
 
-// Clone returns a copy of the slice.
+// Clone returns a copy of aa.
 func Clone(aa SliceType) SliceType {
 	return append(SliceType{}, aa...)
 }
