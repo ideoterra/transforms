@@ -7,9 +7,10 @@ import (
 	"github.com/jecolasurdo/transforms/pkg/slices/generic"
 )
 
-// As a rule, all methods in this package are just wrappers around a set of
-// base functions. We want to keep a high level of test coverage, so method
-// sets are tested in bulk where possible for simple happy-path operation.
+// As a rule, all methods in this package (methods.go) are just wrappers around
+// a set of base functions (see functions.go). We want to keep a high level of
+// test coverage while minimizing test-effort, so method sets are tested in bulk
+// where possible for simple happy-path operation.
 //
 // Additional tests are added as necessary, but the bulk of the deeper testing
 // is handled in functions_test.go.
@@ -99,6 +100,44 @@ func TestUnaryTestMethodHappyPaths(t *testing.T) {
 			}
 			methodCall(generic.SliceType{}, testFn)
 		}
-		t.Run(fmt.Sprintf("UnaryPrimitive test %v", i+1), test)
+		t.Run(fmt.Sprintf("UnaryTest test %v", i+1), test)
+	}
+}
+
+func TestUnaryClosureHappyPaths(t *testing.T) {
+	methodCalls := []func(generic.SliceType){
+		func(aa generic.SliceType) {
+			aa.Distinct(func(a, b generic.PrimitiveType) bool { return true })
+		},
+		func(aa generic.SliceType) {
+			aa.Expand(func(generic.PrimitiveType) generic.SliceType { return nil })
+		},
+		func(aa generic.SliceType) {
+			aa.ForEach(func(generic.PrimitiveType) generic.Continue { return generic.ContinueNo })
+		},
+		func(aa generic.SliceType) {
+			aa.ForEachR(func(generic.PrimitiveType) generic.Continue { return generic.ContinueNo })
+		},
+		func(aa generic.SliceType) {
+			aa.Group(func(generic.PrimitiveType) int64 { return 0 })
+		},
+		func(aa generic.SliceType) {
+			aa.GroupI(func(int64, generic.PrimitiveType) int64 { return 0 })
+		},
+		func(aa generic.SliceType) {
+			aa.Map(func(generic.PrimitiveType) generic.PrimitiveType { return primitiveZero })
+		},
+		func(aa generic.SliceType) {
+			aa.Reduce(func(a, b generic.PrimitiveType) generic.PrimitiveType { return primitiveZero })
+		},
+		func(aa generic.SliceType) {
+			aa.Sort(func(a, b generic.PrimitiveType) bool { return false })
+		},
+	}
+	for i, methodCall := range methodCalls {
+		test := func(t *testing.T) {
+			methodCall(generic.SliceType{})
+		}
+		t.Run(fmt.Sprintf("UnaryClosure test %v", i+1), test)
 	}
 }
