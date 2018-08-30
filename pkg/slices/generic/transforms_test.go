@@ -1330,6 +1330,19 @@ var Specifications = []Specification{
 				assert.ElementsMatch(t, aa, cc)
 			},
 		},
+		EdgeCases: []Behavior{
+			Behavior{
+				Description: `Permute should panic if the number of permutations
+						  would exceed MaxInt64`,
+				Expectation: func(t *testing.T) {
+					aa := generic.SliceType{}
+					for n := 0; n < 21; n++ {
+						generic.Append(&aa, n)
+					}
+					assert.Panics(t, func() { generic.Permute(aa) })
+				},
+			},
+		},
 	},
 	Specification{
 		FunctionName: "Pop",
@@ -2100,7 +2113,7 @@ func TestTransforms(t *testing.T) {
 		t.Run(specification.FunctionName+"StandardPath", specification.StandardPath.Expectation)
 		t.Run(specification.FunctionName+"AlternativePath", specification.AlternativePath.Expectation)
 		for i, edgeCase := range specification.EdgeCases {
-			t.Run(fmt.Sprintf("%vEdgeCase%v", specification.FunctionName, i), edgeCase.Expectation)
+			t.Run(fmt.Sprintf("%vEdgeCase%v", specification.FunctionName, i+1), edgeCase.Expectation)
 		}
 	}
 }
