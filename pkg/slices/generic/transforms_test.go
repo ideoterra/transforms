@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"sync"
 	"testing"
+	"time"
 
 	"github.com/jecolasurdo/transforms/pkg/slices/generic"
 	"github.com/stretchr/testify/assert"
@@ -637,6 +638,72 @@ var Specifications = []Specification{
 					generic.ForEachC(aa, 3, fn)
 					assert.True(t, aExitedCleanly)
 					assert.True(t, bExitedCleanly)
+				},
+			},
+			Behavior{
+				Description: `Upon cancellation, no previously backlogged work
+							  will be scheduled.`,
+				Expectation: func(t *testing.T) {
+					// Elements "A" and "B" will spawn loops, which
+					// check for pending cancellation on each iteration.
+					//
+					// Element "C" will spawn an operation that will wait until
+					// "A" and "B" are both running, at which point "C" will
+					// cancel further iterations. In response "A" and "B" will
+					// then identify the cancellation, and will halt.
+					//
+					// Element "D" spawns an operation that will wait a couple
+					// seconds, ensuring that the goroutine pool stays maxed
+					// at 3 while A, B, and C wind down.
+					//
+					// "E" will write out a value upon initialization, but
+					// because the pool size is only 3, A, B, C, and D will fill
+					// the pool, causing E to be backlogged. As such, E should
+					// never be marshalled to a goroutine if C requests a
+					// cancellation.
+					aa := generic.SliceType{"A", "B", "C", "D", "E"}
+					mu := new(sync.RWMutex)
+					aIsRunning := false
+					bIsRunning := false
+					eStarted := false
+					fn := func(a generic.PrimitiveType, cancelPending func() bool) generic.Continue {
+						if a.(string) == "A" || a.(string) == "B" {
+							mu.Lock()
+							if a.(string) == "A" {
+								aIsRunning = true
+							} else {
+								bIsRunning = true
+							}
+							mu.Unlock()
+							for cancelPending() == false {
+							}
+							return generic.ContinueYes
+						} else if a.(string) == "C" {
+							halt := false
+							for {
+								mu.RLock()
+								if aIsRunning && bIsRunning {
+									halt = true
+								}
+								mu.RUnlock()
+								if halt {
+									return generic.ContinueNo
+								}
+							}
+						} else if a.(string) == "D" {
+							time.Sleep(2 * time.Second)
+							for cancelPending() == false {
+							}
+							return generic.ContinueNo
+						} else if a.(string) == "E" {
+							mu.Lock()
+							eStarted = true
+							mu.Unlock()
+						}
+						return generic.ContinueYes
+					}
+					generic.ForEachC(aa, 3, fn)
+					assert.False(t, eStarted)
 				},
 			},
 		},
