@@ -63,8 +63,8 @@ func (aa *SliceType) Clone() *SliceType {
 
 // Collect applies a given function against each item in slice aa and
 // each item of a slice bb, and returns the concatenation of each result.
-func (aa *SliceType) Collect(bb SliceType, collector func(a, b PrimitiveType) PrimitiveType) *SliceType {
-	return ptr(Collect(*aa, bb, collector))
+func (aa *SliceType) Collect(bb *SliceType, collector func(a, b PrimitiveType) PrimitiveType) *SliceType {
+	return ptr(Collect(*aa, *bb, collector))
 }
 
 // Count applies the supplied test function to each element of the slice,

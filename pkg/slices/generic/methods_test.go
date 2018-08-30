@@ -218,6 +218,9 @@ func TestBinaryValueClosureHappyPaths(t *testing.T) {
 		func(aa generic.SliceType) {
 			aa.Pairwise(primitiveZero, func(a, b generic.PrimitiveType) generic.PrimitiveType { return primitiveZero })
 		},
+		func(aa generic.SliceType) {
+			aa.Collect(new(generic.SliceType), func(a, b generic.PrimitiveType) generic.PrimitiveType { return primitiveZero })
+		},
 	}
 	for i, methodCall := range methodCalls {
 		test := func(t *testing.T) {
