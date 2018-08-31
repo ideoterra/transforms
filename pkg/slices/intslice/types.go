@@ -1,13 +1,13 @@
-package generic
+package intslice
 
 // Equality is a function that evalutes if two values share something in common.
-type Equality func(a, b PrimitiveType) bool
+type Equality func(a, b int) bool
 
-// SliceType is a one dimensional slice of PrimitiveType.
-type SliceType []PrimitiveType
+// IntSlice is a one dimensional slice of int.
+type IntSlice []int
 
-// SliceType2 is a two dimensional slice of PrimitiveType
-type SliceType2 []SliceType
+// IntSlice2 is a two dimensional slice of int
+type IntSlice2 []IntSlice
 
-// Test is a function that conditionally evaluates a PrimitiveType.
-type Test func(PrimitiveType) bool
+// Test is a function that conditionally evaluates a int.
+type Test func(int) bool

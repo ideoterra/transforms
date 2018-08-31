@@ -1,4 +1,4 @@
-// Package generic contains transform functions for SliceTypes.
+// Package intslice contains transform functions for IntSlices.
 //
 // Function Naming Conventions:
 // Often the same conceptual function can be implemented in more than one way.
@@ -41,8 +41,8 @@
 //
 // Null result handling:
 // Transforms that reduce a result to a single value (such as Dequeue, or Fold)
-// return a SliceType containing a single element rather than return a
-// PrimitiveType. This is done to avoid edge cases associated with
+// return a IntSlice containing a single element rather than return a
+// int. This is done to avoid edge cases associated with
 // transformations that result in an null value. There are generally three
 // options for how to handle an empty result. 1) Have the result be a pointer
 // rather than a 'value', and set the result to nil if there is no result.
@@ -93,5 +93,5 @@
 // definition, do not contain duplicates. However, there is no such requirement
 // in a slice. As such, the set-type operations provided in this package are
 // allowed to be tollerant to duplicates. These differences are noted in the
-// description for each method, as warranted.package generic
-package generic
+// description for each method, as warranted.package intslice
+package intslice

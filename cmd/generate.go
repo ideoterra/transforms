@@ -75,6 +75,31 @@ func main() {
 					log.Fatal(err)
 				}
 			}
+
+			basicReplacementFiles := []string{
+				"doc.go",
+				"functions.go",
+				"methods.go",
+				"types.go",
+			}
+			for _, basicFile := range basicReplacementFiles {
+				fileName := filepath.Join(newDirName, basicFile)
+				if err = replaceTextInFile(fileName, "PrimitiveType", t.PrimitiveType); err == nil {
+					if err = replaceTextInFile(fileName, "SliceType2", t.SliceType2); err == nil {
+						if err = replaceTextInFile(fileName, "SliceType", t.SliceType); err == nil {
+							err = replaceTextInFile(fileName, "generic", t.DirName)
+						}
+					}
+				}
+				if err != nil {
+					log.Fatal(err)
+				}
+			}
+			// Non-testfile replacements (using int64 as example)
+			// PrimitiveType -> int64
+			// SliceType -> Int64Slice
+			// SliceType2 -> Int64Slice2
+
 		}
 	}
 }
@@ -88,16 +113,14 @@ func generateTypeNames(p primitiveType) []typeNames {
 		SliceType2:    strings.Title(p.TypeName) + "Slice2",
 	}
 
-	twoDimensionalSliceType := typeNames{
-		DirName:       p.TypeName + "slice2",
-		PrimitiveType: strings.Title(p.TypeName) + "Slice",
-		SliceType:     strings.Title(p.TypeName) + "Slice2",
-		SliceType2:    "[]" + strings.Title(p.TypeName) + "Slice2",
-	}
+	// twoDimensionalSliceType := typeNames{
+	// 	DirName:       p.TypeName + "slice2",
+	// 	PrimitiveType: strings.Title(p.TypeName) + "Slice",
+	// 	SliceType:     strings.Title(p.TypeName) + "Slice2",
+	// 	SliceType2:    "[]" + strings.Title(p.TypeName) + "Slice2",
+	// }
 
-	result = append(result, oneDimensionalSliceType, twoDimensionalSliceType)
-	log.Println(oneDimensionalSliceType)
-	log.Println(twoDimensionalSliceType)
+	result = append(result, oneDimensionalSliceType) //, twoDimensionalSliceType)
 	return result
 }
 
@@ -160,4 +183,17 @@ func copyFile(src, dst string) error {
 		return err
 	}
 	return out.Close()
+}
+
+func replaceTextInFile(fileName, old, new string) error {
+	// https://stackoverflow.com/a/26153102/3434541
+
+	input, err := ioutil.ReadFile(fileName)
+	if err != nil {
+		return err
+	}
+	oldContent := string(input)
+	newContent := strings.Replace(oldContent, old, new, -1)
+	err = ioutil.WriteFile(fileName, []byte(newContent), 0644)
+	return err
 }
