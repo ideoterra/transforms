@@ -1,6 +1,8 @@
 package main
 
 import (
+	"io"
+	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -23,16 +25,36 @@ type typeNames struct {
 	SliceType2    string
 }
 
-const basePath = `/Users/joe/workspace/go/src/github.com/jecolasurdo/transforms/pkg/slices`
+const (
+	basePath    = `/Users/joe/workspace/go/src/github.com/jecolasurdo/transforms/pkg/slices`
+	genericPath = basePath + "/generic"
+)
 
 func main() {
 	for _, p := range primitiveTypes {
 		typeNames := generateTypeNames(p)
 		for _, t := range typeNames {
 			newDirName := filepath.Join(basePath, t.DirName)
-			err := os.MkdirAll(newDirName, os.ModeDir)
+			log.Printf("Creating new path %v\n", newDirName)
+			err := os.MkdirAll(newDirName, os.ModePerm)
 			if err != nil {
 				log.Fatal(err)
+			}
+
+			log.Println("Retrieving list of source files...")
+			fileInfos, err := ioutil.ReadDir(genericPath)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			log.Printf("Copying source files from generic to %v...\n", t.DirName)
+			for _, fileInfo := range fileInfos {
+				oldName := filepath.Join(genericPath, fileInfo.Name())
+				newName := filepath.Join(newDirName, fileInfo.Name())
+				err := copyFile(oldName, newName)
+				if err != nil {
+					log.Fatal(err)
+				}
 			}
 		}
 	}
@@ -98,4 +120,25 @@ func generateConversionNames() []conversionNames {
 		}
 	}
 	return result
+}
+
+func copyFile(src, dst string) error {
+	// https://stackoverflow.com/a/21061062/3434541
+	in, err := os.Open(src)
+	if err != nil {
+		return err
+	}
+	defer in.Close()
+
+	out, err := os.Create(dst)
+	if err != nil {
+		return err
+	}
+	defer out.Close()
+
+	_, err = io.Copy(out, in)
+	if err != nil {
+		return err
+	}
+	return out.Close()
 }
