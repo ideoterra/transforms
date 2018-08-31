@@ -19,10 +19,11 @@ var primitiveTypes = []primitiveType{
 }
 
 type typeNames struct {
-	DirName       string
-	PrimitiveType string
-	SliceType     string
-	SliceType2    string
+	IsLastGeneration bool // tells the generator to fix up the []SliceType2 values in types.go
+	PackageName      string
+	PrimitiveType    string
+	SliceType        string
+	SliceType2       string
 }
 
 const (
@@ -53,7 +54,7 @@ func main() {
 		}
 
 		for _, t := range typeNames {
-			newDirName := filepath.Join(basePath, t.DirName)
+			newDirName := filepath.Join(basePath, t.PackageName)
 			log.Printf("Creating new path %v\n", newDirName)
 			err := os.MkdirAll(newDirName, os.ModePerm)
 			if err != nil {
@@ -66,7 +67,7 @@ func main() {
 				log.Fatal(err)
 			}
 
-			log.Printf("Copying source files from generic to %v...\n", t.DirName)
+			log.Printf("Copying source files from generic to %v...\n", t.PackageName)
 			for _, fileInfo := range fileInfos {
 				oldName := filepath.Join(genericPath, fileInfo.Name())
 				newName := filepath.Join(newDirName, fileInfo.Name())
@@ -84,22 +85,14 @@ func main() {
 			}
 			for _, basicFile := range basicReplacementFiles {
 				fileName := filepath.Join(newDirName, basicFile)
-				if err = replaceTextInFile(fileName, "PrimitiveType", t.PrimitiveType); err == nil {
-					if err = replaceTextInFile(fileName, "SliceType2", t.SliceType2); err == nil {
-						if err = replaceTextInFile(fileName, "SliceType", t.SliceType); err == nil {
-							err = replaceTextInFile(fileName, "generic", t.DirName)
-						}
-					}
-				}
-				if err != nil {
-					log.Fatal(err)
+				replaceTextInFile(fileName, "PrimitiveType", t.PrimitiveType)
+				replaceTextInFile(fileName, "SliceType2", t.SliceType2)
+				replaceTextInFile(fileName, "SliceType", t.SliceType)
+				replaceTextInFile(fileName, "generic", t.PackageName)
+				if basicFile == "types.go" && t.IsLastGeneration {
+					removeLinesContainingValue(fileName, "[]"+t.SliceType)
 				}
 			}
-			// Non-testfile replacements (using int64 as example)
-			// PrimitiveType -> int64
-			// SliceType -> Int64Slice
-			// SliceType2 -> Int64Slice2
-
 		}
 	}
 }
@@ -107,20 +100,22 @@ func main() {
 func generateTypeNames(p primitiveType) []typeNames {
 	result := []typeNames{}
 	oneDimensionalSliceType := typeNames{
-		DirName:       p.TypeName + "slice",
-		PrimitiveType: p.TypeName,
-		SliceType:     strings.Title(p.TypeName) + "Slice",
-		SliceType2:    strings.Title(p.TypeName) + "Slice2",
+		IsLastGeneration: false,
+		PackageName:      p.TypeName + "slice",
+		PrimitiveType:    p.TypeName,
+		SliceType:        strings.Title(p.TypeName) + "Slice",
+		SliceType2:       p.TypeName + "slice2." + strings.Title(p.TypeName) + "Slice2",
 	}
 
-	// twoDimensionalSliceType := typeNames{
-	// 	DirName:       p.TypeName + "slice2",
-	// 	PrimitiveType: strings.Title(p.TypeName) + "Slice",
-	// 	SliceType:     strings.Title(p.TypeName) + "Slice2",
-	// 	SliceType2:    "[]" + strings.Title(p.TypeName) + "Slice2",
-	// }
+	twoDimensionalSliceType := typeNames{
+		IsLastGeneration: true,
+		PackageName:      p.TypeName + "slice2",
+		PrimitiveType:    oneDimensionalSliceType.PackageName + "." + strings.Title(p.TypeName) + "Slice",
+		SliceType:        strings.Title(p.TypeName) + "Slice2",
+		SliceType2:       "[]" + strings.Title(p.TypeName) + "Slice2",
+	}
 
-	result = append(result, oneDimensionalSliceType) //, twoDimensionalSliceType)
+	result = append(result, oneDimensionalSliceType, twoDimensionalSliceType)
 	return result
 }
 
@@ -185,15 +180,35 @@ func copyFile(src, dst string) error {
 	return out.Close()
 }
 
-func replaceTextInFile(fileName, old, new string) error {
-	// https://stackoverflow.com/a/26153102/3434541
-
+func replaceTextInFile(fileName, old, new string) {
 	input, err := ioutil.ReadFile(fileName)
 	if err != nil {
-		return err
+		log.Fatalln(err)
 	}
 	oldContent := string(input)
 	newContent := strings.Replace(oldContent, old, new, -1)
 	err = ioutil.WriteFile(fileName, []byte(newContent), 0644)
-	return err
+	if err != nil {
+		log.Fatalln(err)
+	}
+}
+
+func removeLinesContainingValue(fileName, value string) {
+	input, err := ioutil.ReadFile(fileName)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	lines := strings.Split(string(input), "\n")
+
+	for i, line := range lines {
+		if strings.Contains(line, value) {
+			lines[i] = ""
+		}
+	}
+	output := strings.Join(lines, "\n")
+	err = ioutil.WriteFile(fileName, []byte(output), 0644)
+	if err != nil {
+		log.Fatalln(err)
+	}
 }
