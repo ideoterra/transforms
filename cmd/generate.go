@@ -33,6 +33,25 @@ const (
 func main() {
 	for _, p := range primitiveTypes {
 		typeNames := generateTypeNames(p)
+
+		log.Println("Purging generated type directories...")
+		fileInfos, err := ioutil.ReadDir(basePath)
+		if err != nil {
+			log.Fatal(err)
+		}
+		for _, fileInfo := range fileInfos {
+			if fileInfo.Name() == "generic" {
+				continue
+			}
+
+			fileToRemove := filepath.Join(basePath, fileInfo.Name())
+			log.Printf("Purging %v...", fileToRemove)
+			err := os.RemoveAll(fileToRemove)
+			if err != nil {
+				log.Fatal(err)
+			}
+		}
+
 		for _, t := range typeNames {
 			newDirName := filepath.Join(basePath, t.DirName)
 			log.Printf("Creating new path %v\n", newDirName)
