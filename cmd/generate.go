@@ -41,7 +41,7 @@ func main() {
 			log.Fatal(err)
 		}
 		for _, fileInfo := range fileInfos {
-			if fileInfo.Name() == "generic" {
+			if fileInfo.Name() == "generic" || fileInfo.Name() == "shared" {
 				continue
 			}
 
@@ -54,13 +54,6 @@ func main() {
 		}
 
 		for _, t := range typeNames {
-			newDirName := filepath.Join(basePath, t.PackageName)
-			log.Printf("Creating new path %v\n", newDirName)
-			err := os.MkdirAll(newDirName, os.ModePerm)
-			if err != nil {
-				log.Fatal(err)
-			}
-
 			log.Println("Retrieving list of source files...")
 			fileInfos, err := ioutil.ReadDir(genericPath)
 			if err != nil {
@@ -68,9 +61,13 @@ func main() {
 			}
 
 			log.Printf("Copying source files from generic to %v...\n", t.PackageName)
+			newBaseName := filepath.Join(basePath, t.PackageName)
 			for _, fileInfo := range fileInfos {
+				if strings.Contains(fileInfo.Name(), "_test") || fileInfo.Name() == "doc.go" {
+					continue
+				}
 				oldName := filepath.Join(genericPath, fileInfo.Name())
-				newName := filepath.Join(newDirName, fileInfo.Name())
+				newName := newBaseName + fileInfo.Name()
 				err := copyFile(oldName, newName)
 				if err != nil {
 					log.Fatal(err)
@@ -78,19 +75,21 @@ func main() {
 			}
 
 			basicReplacementFiles := []string{
-				"doc.go",
 				"functions.go",
 				"methods.go",
 				"types.go",
 			}
 			for _, basicFile := range basicReplacementFiles {
-				fileName := filepath.Join(newDirName, basicFile)
+				fileName := newBaseName + basicFile
 				replaceTextInFile(fileName, "PrimitiveType", t.PrimitiveType)
 				replaceTextInFile(fileName, "SliceType2", t.SliceType2)
 				replaceTextInFile(fileName, "SliceType", t.SliceType)
-				replaceTextInFile(fileName, "generic", t.PackageName)
-				if basicFile == "types.go" && t.IsLastGeneration {
+				replaceTextInFile(fileName, "generic", "slicexform")
+				if strings.Contains(fileName, "types.go") && t.IsLastGeneration {
 					removeLinesContainingValue(fileName, "[]"+t.SliceType)
+				}
+				if strings.Contains(fileName, "functions.go") {
+					replaceTextInFile(fileName, "func ", "func "+t.SliceType)
 				}
 			}
 		}
@@ -104,13 +103,13 @@ func generateTypeNames(p primitiveType) []typeNames {
 		PackageName:      p.TypeName + "slice",
 		PrimitiveType:    p.TypeName,
 		SliceType:        strings.Title(p.TypeName) + "Slice",
-		SliceType2:       p.TypeName + "slice2." + strings.Title(p.TypeName) + "Slice2",
+		SliceType2:       strings.Title(p.TypeName) + "Slice2",
 	}
 
 	twoDimensionalSliceType := typeNames{
 		IsLastGeneration: true,
 		PackageName:      p.TypeName + "slice2",
-		PrimitiveType:    oneDimensionalSliceType.PackageName + "." + strings.Title(p.TypeName) + "Slice",
+		PrimitiveType:    strings.Title(p.TypeName) + "Slice",
 		SliceType:        strings.Title(p.TypeName) + "Slice2",
 		SliceType2:       "[]" + strings.Title(p.TypeName) + "Slice2",
 	}

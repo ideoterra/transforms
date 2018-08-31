@@ -6,17 +6,8 @@ import (
 	"math/big"
 	"sort"
 	"sync"
-)
 
-// Continue instructs iterators about whether or not to keep iterating.
-type Continue bool
-
-const (
-	// ContinueYes signals to an iterator that it should continue iterating.
-	ContinueYes Continue = true
-
-	// ContinueNo signals to an iterator that it should stop iterating.
-	ContinueNo Continue = false
+	"github.com/jecolasurdo/transforms/pkg/slices/shared"
 )
 
 // All applies a test function to each element in the slice, and returns true if
@@ -267,7 +258,7 @@ func FoldI(aa SliceType, acc PrimitiveType, folder func(i int64, a, acc Primitiv
 
 // ForEach applies each element of the list to the given function.
 // ForEach will stop iterating if fn return false.
-func ForEach(aa SliceType, fn func(PrimitiveType) Continue) {
+func ForEach(aa SliceType, fn func(PrimitiveType) shared.Continue) {
 	for _, a := range aa {
 		if !fn(a) {
 			return
@@ -284,12 +275,12 @@ func ForEach(aa SliceType, fn func(PrimitiveType) Continue) {
 // will block indefinitely. This function will panic if a negative value is
 // supplied for c.
 //
-// If any execution of fn returns ContinueNo, ForEachC will cease marshalling
+// If any execution of fn returns shared.ContinueNo, ForEachC will cease marshalling
 // any backlogged work, and will immediately set the cancellation flag to true.
 // Any goroutines monitoring the cancelPending closure can wind down their
 // activities as necessary. ForEachC will continue to block until all active
 // goroutines exit cleanly.
-func ForEachC(aa SliceType, c int, fn func(a PrimitiveType, cancelPending func() bool) Continue) {
+func ForEachC(aa SliceType, c int, fn func(a PrimitiveType, cancelPending func() bool) shared.Continue) {
 	if c < 0 {
 		panic("ForEachC: The concurrency pool size (c) must be non-negative.")
 	}
@@ -327,7 +318,7 @@ func ForEachC(aa SliceType, c int, fn func(a PrimitiveType, cancelPending func()
 // ForEachR applies each element of aa to a given function, scanning
 // through the slice in reverse order, starting from the end and working towards
 // the head.
-func ForEachR(aa SliceType, fn func(PrimitiveType) Continue) {
+func ForEachR(aa SliceType, fn func(PrimitiveType) shared.Continue) {
 	for i := len(aa) - 1; i >= 0; i-- {
 		if !fn(aa[i]) {
 			return
@@ -423,14 +414,14 @@ func InsertAt(aa *SliceType, a PrimitiveType, i int64) {
 // to both aa and bb. Duplicates are removed in this operation.
 func Intersection(aa, bb SliceType, equality Equality) SliceType {
 	cc := SliceType{}
-	ForEach(aa, func(a PrimitiveType) Continue {
-		ForEach(bb, func(b PrimitiveType) Continue {
+	ForEach(aa, func(a PrimitiveType) shared.Continue {
+		ForEach(bb, func(b PrimitiveType) shared.Continue {
 			if equality(a, b) && !Any(cc, func(c PrimitiveType) bool { return equality(a, c) }) {
 				Append(&cc, a)
 			}
-			return ContinueYes
+			return shared.ContinueYes
 		})
-		return ContinueYes
+		return shared.ContinueYes
 	})
 	return cc
 }
@@ -528,12 +519,12 @@ func ItemFuzzy(aa SliceType, i int64) SliceType {
 // pass the supplied test, the resulting SliceType will be empty.
 func Last(aa SliceType, test Test) SliceType {
 	bb := SliceType{}
-	ForEachR(aa, func(a PrimitiveType) Continue {
+	ForEachR(aa, func(a PrimitiveType) shared.Continue {
 		if test(a) {
 			Append(&bb, a)
-			return ContinueNo
+			return shared.ContinueNo
 		}
-		return ContinueYes
+		return shared.ContinueYes
 	})
 	return bb
 }

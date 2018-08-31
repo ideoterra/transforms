@@ -1,6 +1,10 @@
 package generic
 
-import "math/big"
+import (
+	"math/big"
+
+	"github.com/jecolasurdo/transforms/pkg/slices/shared"
+)
 
 func ptr(aa SliceType) *SliceType {
 	return &aa
@@ -141,7 +145,7 @@ func (aa *SliceType) FoldI(acc PrimitiveType, folder func(i int64, a, acc Primit
 
 // ForEach applies each element of the list to the given function.
 // ForEach will stop iterating if fn return false.
-func (aa *SliceType) ForEach(fn func(PrimitiveType) Continue) *SliceType {
+func (aa *SliceType) ForEach(fn func(PrimitiveType) shared.Continue) *SliceType {
 	ForEach(*aa, fn)
 	return aa
 }
@@ -155,12 +159,12 @@ func (aa *SliceType) ForEach(fn func(PrimitiveType) Continue) *SliceType {
 // will block indefinitely. This function will panic if a negative value is
 // supplied for c.
 //
-// If any execution of fn returns ContinueNo, ForEachC will cease marshalling
+// If any execution of fn returns shared.ContinueNo, ForEachC will cease marshalling
 // any backlogged work, and will immediately set the cancellation flag to true.
 // Any goroutines monitoring the cancelPending closure can wind down their
 // activities as necessary. ForEachC will continue to block until all active
 // goroutines exit cleanly.
-func (aa *SliceType) ForEachC(c int, fn func(a PrimitiveType, cancelPending func() bool) Continue) *SliceType {
+func (aa *SliceType) ForEachC(c int, fn func(a PrimitiveType, cancelPending func() bool) shared.Continue) *SliceType {
 	ForEachC(*aa, c, fn)
 	return aa
 }
@@ -168,7 +172,7 @@ func (aa *SliceType) ForEachC(c int, fn func(a PrimitiveType, cancelPending func
 // ForEachR applies each element of aa to a given function, scanning
 // through the slice in reverse order, starting from the end and working towards
 // the head.
-func (aa *SliceType) ForEachR(fn func(PrimitiveType) Continue) *SliceType {
+func (aa *SliceType) ForEachR(fn func(PrimitiveType) shared.Continue) *SliceType {
 	ForEachR(*aa, fn)
 	return aa
 }

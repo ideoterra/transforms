@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/jecolasurdo/transforms/pkg/slices/generic"
+	"github.com/jecolasurdo/transforms/pkg/slices/shared"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -469,9 +470,9 @@ var Specifications = []Specification{
 			Expectation: func(t *testing.T) {
 				aa := generic.SliceType{"A", "B", "C"}
 				result := ""
-				fn := func(a generic.PrimitiveType) generic.Continue {
+				fn := func(a generic.PrimitiveType) shared.Continue {
 					result = result + a.(string)
-					return generic.ContinueYes
+					return shared.ContinueYes
 				}
 				generic.ForEach(aa, fn)
 				assert.Equal(t, "ABC", result)
@@ -482,7 +483,7 @@ var Specifications = []Specification{
 			Expectation: func(t *testing.T) {
 				aa := generic.SliceType{"A", "B", "C"}
 				result := ""
-				fn := func(a generic.PrimitiveType) generic.Continue {
+				fn := func(a generic.PrimitiveType) shared.Continue {
 					result = result + a.(string)
 					return a.(string) != "B"
 				}
@@ -499,11 +500,11 @@ var Specifications = []Specification{
 				aa := generic.SliceType{"A", "B", "C"}
 				mu := new(sync.Mutex)
 				result := ""
-				fn := func(a generic.PrimitiveType, cancelPending func() bool) generic.Continue {
+				fn := func(a generic.PrimitiveType, cancelPending func() bool) shared.Continue {
 					mu.Lock()
 					defer mu.Unlock()
 					result = result + a.(string)
-					return generic.ContinueYes
+					return shared.ContinueYes
 				}
 				generic.ForEachC(aa, 1, fn)
 				bb := generic.SliceType{"ABC", "BAC", "CAB", "ACB", "BCA", "CBA"}
@@ -520,11 +521,11 @@ var Specifications = []Specification{
 				aa := generic.SliceType{"A", "B", "C"}
 				mu := new(sync.Mutex)
 				result := ""
-				fn := func(a generic.PrimitiveType, cancelPending func() bool) generic.Continue {
+				fn := func(a generic.PrimitiveType, cancelPending func() bool) shared.Continue {
 					mu.Lock()
 					defer mu.Unlock()
 					result = result + a.(string)
-					return generic.ContinueYes
+					return shared.ContinueYes
 				}
 				assert.PanicsWithValue(t,
 					"ForEachC: The concurrency pool size (c) must be non-negative.",
@@ -552,7 +553,7 @@ var Specifications = []Specification{
 					mu := new(sync.RWMutex)
 					aIsRunning := false
 					bIsRunning := false
-					fn := func(a generic.PrimitiveType, cancelPending func() bool) generic.Continue {
+					fn := func(a generic.PrimitiveType, cancelPending func() bool) shared.Continue {
 						if a.(string) == "A" || a.(string) == "B" {
 							mu.Lock()
 							if a.(string) == "A" {
@@ -563,7 +564,7 @@ var Specifications = []Specification{
 							mu.Unlock()
 							for cancelPending() == false {
 							}
-							return generic.ContinueYes
+							return shared.ContinueYes
 						} else {
 							halt := false
 							for {
@@ -573,7 +574,7 @@ var Specifications = []Specification{
 								}
 								mu.RUnlock()
 								if halt {
-									return generic.ContinueNo
+									return shared.ContinueNo
 								}
 							}
 						}
@@ -602,7 +603,7 @@ var Specifications = []Specification{
 					bIsRunning := false
 					aExitedCleanly := false
 					bExitedCleanly := false
-					fn := func(a generic.PrimitiveType, cancelPending func() bool) generic.Continue {
+					fn := func(a generic.PrimitiveType, cancelPending func() bool) shared.Continue {
 						if a.(string) == "A" || a.(string) == "B" {
 							mu.Lock()
 							if a.(string) == "A" {
@@ -620,7 +621,7 @@ var Specifications = []Specification{
 								bExitedCleanly = true
 							}
 							mu.Unlock()
-							return generic.ContinueYes
+							return shared.ContinueYes
 						} else {
 							halt := false
 							for {
@@ -630,7 +631,7 @@ var Specifications = []Specification{
 								}
 								mu.RUnlock()
 								if halt {
-									return generic.ContinueNo
+									return shared.ContinueNo
 								}
 							}
 						}
@@ -666,7 +667,7 @@ var Specifications = []Specification{
 					aIsRunning := false
 					bIsRunning := false
 					eStarted := false
-					fn := func(a generic.PrimitiveType, cancelPending func() bool) generic.Continue {
+					fn := func(a generic.PrimitiveType, cancelPending func() bool) shared.Continue {
 						if a.(string) == "A" || a.(string) == "B" {
 							mu.Lock()
 							if a.(string) == "A" {
@@ -677,7 +678,7 @@ var Specifications = []Specification{
 							mu.Unlock()
 							for cancelPending() == false {
 							}
-							return generic.ContinueYes
+							return shared.ContinueYes
 						} else if a.(string) == "C" {
 							halt := false
 							for {
@@ -687,20 +688,20 @@ var Specifications = []Specification{
 								}
 								mu.RUnlock()
 								if halt {
-									return generic.ContinueNo
+									return shared.ContinueNo
 								}
 							}
 						} else if a.(string) == "D" {
 							time.Sleep(2 * time.Second)
 							for cancelPending() == false {
 							}
-							return generic.ContinueNo
+							return shared.ContinueNo
 						} else if a.(string) == "E" {
 							mu.Lock()
 							eStarted = true
 							mu.Unlock()
 						}
-						return generic.ContinueYes
+						return shared.ContinueYes
 					}
 					generic.ForEachC(aa, 3, fn)
 					assert.False(t, eStarted)
@@ -716,7 +717,7 @@ var Specifications = []Specification{
 			Expectation: func(t *testing.T) {
 				aa := generic.SliceType{"A", "B", "C"}
 				result := ""
-				fn := func(a generic.PrimitiveType) generic.Continue {
+				fn := func(a generic.PrimitiveType) shared.Continue {
 					result = result + a.(string)
 					return true
 				}
@@ -729,7 +730,7 @@ var Specifications = []Specification{
 			Expectation: func(t *testing.T) {
 				aa := generic.SliceType{"A", "B", "C"}
 				result := ""
-				fn := func(a generic.PrimitiveType) generic.Continue {
+				fn := func(a generic.PrimitiveType) shared.Continue {
 					result = result + a.(string)
 					return a.(string) != "B"
 				}

@@ -1,6 +1,10 @@
-package intslice2
+package slicexform
 
-import "math/big"
+import (
+	"math/big"
+
+	"github.com/jecolasurdo/transforms/pkg/slices/shared"
+)
 
 func ptr(aa IntSlice2) *IntSlice2 {
 	return &aa
@@ -28,7 +32,7 @@ func (aa *IntSlice2) Any(test Test) bool {
 }
 
 //Append adds the supplied values to the end of the slice.
-func (aa *IntSlice2) Append(values ...intslice.IntSlice) *IntSlice2 {
+func (aa *IntSlice2) Append(values ...IntSlice) *IntSlice2 {
 	Append(aa, values...)
 	return aa
 }
@@ -48,7 +52,7 @@ func (aa *IntSlice2) Clone() *IntSlice2 {
 
 // Collect applies a given function against each item in slice aa and
 // each item of a slice bb, and returns the concatenation of each result.
-func (aa *IntSlice2) Collect(bb *IntSlice2, collector func(a, b intslice.IntSlice) intslice.IntSlice) *IntSlice2 {
+func (aa *IntSlice2) Collect(bb *IntSlice2, collector func(a, b IntSlice) IntSlice) *IntSlice2 {
 	return ptr(Collect(*aa, *bb, collector))
 }
 
@@ -93,14 +97,14 @@ func (aa *IntSlice2) End() *IntSlice2 {
 }
 
 // Enqueue places an item at the head of the slice.
-func (aa *IntSlice2) Enqueue(a intslice.IntSlice) *IntSlice2 {
+func (aa *IntSlice2) Enqueue(a IntSlice) *IntSlice2 {
 	Enqueue(aa, a)
 	return aa
 }
 
 // Expand applies an expansion function to each element of aa, and flattens
 // the results into a single IntSlice2.
-func (aa *IntSlice2) Expand(expansion func(intslice.IntSlice) IntSlice2) *IntSlice2 {
+func (aa *IntSlice2) Expand(expansion func(IntSlice) IntSlice2) *IntSlice2 {
 	return ptr(Expand(*aa, expansion))
 }
 
@@ -126,22 +130,22 @@ func (aa *IntSlice2) First(test Test) *IntSlice2 {
 // Fold applies a function to each item in slice aa, threading an accumulator
 // through each iteration. The accumulated value is returned in a new IntSlice2
 // once aa is fully scanned. Fold returns a IntSlice2 rather than a
-// intslice.IntSlice to be consistent with this package's Reduce implementation.
-func (aa *IntSlice2) Fold(acc intslice.IntSlice, folder func(a, acc intslice.IntSlice) intslice.IntSlice) *IntSlice2 {
+// IntSlice to be consistent with this package's Reduce implementation.
+func (aa *IntSlice2) Fold(acc IntSlice, folder func(a, acc IntSlice) IntSlice) *IntSlice2 {
 	return ptr(Fold(*aa, acc, folder))
 }
 
 // FoldI applies a function to each item in slice aa, threading an accumulator
 // and an index value through each iteration. The accumulated value is returned
 // once aa is fully scanned. Foldi returns a IntSlice2 rather than a
-// intslice.IntSlice to be consistent with this package's Reduce implementation.
-func (aa *IntSlice2) FoldI(acc intslice.IntSlice, folder func(i int64, a, acc intslice.IntSlice) intslice.IntSlice) *IntSlice2 {
+// IntSlice to be consistent with this package's Reduce implementation.
+func (aa *IntSlice2) FoldI(acc IntSlice, folder func(i int64, a, acc IntSlice) IntSlice) *IntSlice2 {
 	return ptr(FoldI(*aa, acc, folder))
 }
 
 // ForEach applies each element of the list to the given function.
 // ForEach will stop iterating if fn return false.
-func (aa *IntSlice2) ForEach(fn func(intslice.IntSlice) Continue) *IntSlice2 {
+func (aa *IntSlice2) ForEach(fn func(IntSlice) shared.Continue) *IntSlice2 {
 	ForEach(*aa, fn)
 	return aa
 }
@@ -155,12 +159,12 @@ func (aa *IntSlice2) ForEach(fn func(intslice.IntSlice) Continue) *IntSlice2 {
 // will block indefinitely. This function will panic if a negative value is
 // supplied for c.
 //
-// If any execution of fn returns ContinueNo, ForEachC will cease marshalling
+// If any execution of fn returns shared.ContinueNo, ForEachC will cease marshalling
 // any backlogged work, and will immediately set the cancellation flag to true.
 // Any goroutines monitoring the cancelPending closure can wind down their
 // activities as necessary. ForEachC will continue to block until all active
 // goroutines exit cleanly.
-func (aa *IntSlice2) ForEachC(c int, fn func(a intslice.IntSlice, cancelPending func() bool) Continue) *IntSlice2 {
+func (aa *IntSlice2) ForEachC(c int, fn func(a IntSlice, cancelPending func() bool) shared.Continue) *IntSlice2 {
 	ForEachC(*aa, c, fn)
 	return aa
 }
@@ -168,7 +172,7 @@ func (aa *IntSlice2) ForEachC(c int, fn func(a intslice.IntSlice, cancelPending 
 // ForEachR applies each element of aa to a given function, scanning
 // through the slice in reverse order, starting from the end and working towards
 // the head.
-func (aa *IntSlice2) ForEachR(fn func(intslice.IntSlice) Continue) *IntSlice2 {
+func (aa *IntSlice2) ForEachR(fn func(IntSlice) shared.Continue) *IntSlice2 {
 	ForEachR(*aa, fn)
 	return aa
 }
@@ -177,7 +181,7 @@ func (aa *IntSlice2) ForEachR(fn func(intslice.IntSlice) Continue) *IntSlice2 {
 // function, and returns them as a []IntSlice2.
 // The grouper function is expected to return a hash value which Group will use
 // to determine into which bucket each element wil be placed.
-func (aa *IntSlice2) Group(grouper func(intslice.IntSlice) int64) *[]IntSlice2 {
+func (aa *IntSlice2) Group(grouper func(IntSlice) int64) *[]IntSlice2 {
 	return ptr2(Group(*aa, grouper))
 }
 
@@ -186,7 +190,7 @@ func (aa *IntSlice2) Group(grouper func(intslice.IntSlice) int64) *[]IntSlice2 {
 // The grouper function is expected to return a hash value which Group will use
 // to determine into which bucket each element wil be placed. For convenience
 // the index value from aa is also passed into the grouper function.
-func (aa *IntSlice2) GroupI(grouper func(int64, intslice.IntSlice) int64) *[]IntSlice2 {
+func (aa *IntSlice2) GroupI(grouper func(int64, IntSlice) int64) *[]IntSlice2 {
 	return ptr2(GroupI(*aa, grouper))
 }
 
@@ -199,7 +203,7 @@ func (aa *IntSlice2) Head() *IntSlice2 {
 // InsertAfter inserts an element in aa after the first element for which the
 // supplied test function returns true. If none of the tests return true, the
 // element is appended to the end of the aa.
-func (aa *IntSlice2) InsertAfter(b intslice.IntSlice, test Test) *IntSlice2 {
+func (aa *IntSlice2) InsertAfter(b IntSlice, test Test) *IntSlice2 {
 	InsertAfter(aa, b, test)
 	return aa
 }
@@ -207,7 +211,7 @@ func (aa *IntSlice2) InsertAfter(b intslice.IntSlice, test Test) *IntSlice2 {
 // InsertBefore inserts an element in aa before the first element for which the
 // supplied test function returns true. If none of the tests return true,
 // the element is inserted at the head of aa.
-func (aa *IntSlice2) InsertBefore(b intslice.IntSlice, test Test) *IntSlice2 {
+func (aa *IntSlice2) InsertBefore(b IntSlice, test Test) *IntSlice2 {
 	InsertBefore(aa, b, test)
 	return aa
 }
@@ -216,7 +220,7 @@ func (aa *IntSlice2) InsertBefore(b intslice.IntSlice, test Test) *IntSlice2 {
 // element originally at index i (and all subsequent elements) one position
 // to the right. If i < 0, the element is inserted at index 0. If
 // i >= len(aa), the value is appended to the end of aa.
-func (aa *IntSlice2) InsertAt(a intslice.IntSlice, i int64) *IntSlice2 {
+func (aa *IntSlice2) InsertAt(a IntSlice, i int64) *IntSlice2 {
 	InsertAt(aa, a, i)
 	return aa
 }
@@ -295,7 +299,7 @@ func (aa *IntSlice2) Len() int {
 }
 
 // Map applies a tranform to each element of the list.
-func (aa *IntSlice2) Map(mapFn func(intslice.IntSlice) intslice.IntSlice) *IntSlice2 {
+func (aa *IntSlice2) Map(mapFn func(IntSlice) IntSlice) *IntSlice2 {
 	Map(aa, mapFn)
 	return aa
 }
@@ -309,7 +313,7 @@ func (aa *IntSlice2) None(test Test) bool {
 // Pairwise threads a transform function through passing to the transform
 // successive two-element pairs, aa[i-1] && aa[i]. For the first pairing
 // the supplied init value is supplied as the initial element in the pair.
-func (aa *IntSlice2) Pairwise(init intslice.IntSlice, xform func(a, b intslice.IntSlice) intslice.IntSlice) *IntSlice2 {
+func (aa *IntSlice2) Pairwise(init IntSlice, xform func(a, b IntSlice) IntSlice) *IntSlice2 {
 	return ptr(Pairwise(*aa, init, xform))
 }
 
@@ -361,7 +365,7 @@ func (aa *IntSlice2) Pop() *IntSlice2 {
 }
 
 // Push places a prepends a new element at the head of aa.
-func (aa *IntSlice2) Push(a intslice.IntSlice) *IntSlice2 {
+func (aa *IntSlice2) Push(a IntSlice) *IntSlice2 {
 	Push(aa, a)
 	return aa
 }
@@ -370,7 +374,7 @@ func (aa *IntSlice2) Push(a intslice.IntSlice) *IntSlice2 {
 // accumulator through each iteration. The resulting accumulation is returned
 // as an element of a new IntSlice2. If aa is empty, the resulting IntSlice2
 // will also be empty.
-func (aa *IntSlice2) Reduce(reducer func(a, acc intslice.IntSlice) intslice.IntSlice) *IntSlice2 {
+func (aa *IntSlice2) Reduce(reducer func(a, acc IntSlice) IntSlice) *IntSlice2 {
 	return ptr(Reduce(*aa, reducer))
 
 }
@@ -419,7 +423,7 @@ func (aa *IntSlice2) SkipWhile(test Test) *IntSlice2 {
 // Sort sorts using the supplied less function to determine order.
 // Sort is a convenience wrapper around the stdlib sort.SliceStable
 // function.
-func (aa *IntSlice2) Sort(less func(a, b intslice.IntSlice) bool) *IntSlice2 {
+func (aa *IntSlice2) Sort(less func(a, b IntSlice) bool) *IntSlice2 {
 	Sort(aa, less)
 	return aa
 }
@@ -506,19 +510,19 @@ func (aa *IntSlice2) Unzip() *[]IntSlice2 {
 
 // WindowCentered applies a windowing function across the using a centered
 // window of the specified size.
-func (aa *IntSlice2) WindowCentered(windowSize int64, windowFn func(window IntSlice2) intslice.IntSlice) *IntSlice2 {
+func (aa *IntSlice2) WindowCentered(windowSize int64, windowFn func(window IntSlice2) IntSlice) *IntSlice2 {
 	return ptr(WindowCentered(*aa, windowSize, windowFn))
 }
 
 // WindowLeft applies a windowing function across using a left-sided window
 // of the specified size.
-func (aa *IntSlice2) WindowLeft(windowSize int64, windowFn func(window IntSlice2) intslice.IntSlice) *IntSlice2 {
+func (aa *IntSlice2) WindowLeft(windowSize int64, windowFn func(window IntSlice2) IntSlice) *IntSlice2 {
 	return ptr(WindowLeft(*aa, windowSize, windowFn))
 }
 
 // WindowRight applies a windowing function across using a right-sided
 // window of the specified size.
-func (aa *IntSlice2) WindowRight(windowSize int64, windowFn func(window IntSlice2) intslice.IntSlice) *IntSlice2 {
+func (aa *IntSlice2) WindowRight(windowSize int64, windowFn func(window IntSlice2) IntSlice) *IntSlice2 {
 	return ptr(WindowRight(*aa, windowSize, windowFn))
 }
 

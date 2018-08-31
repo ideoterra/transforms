@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/jecolasurdo/transforms/pkg/slices/generic"
+	"github.com/jecolasurdo/transforms/pkg/slices/shared"
 )
 
 // As a rule, all methods in this package (methods.go) are just wrappers around
@@ -113,10 +114,10 @@ func TestUnaryClosureHappyPaths(t *testing.T) {
 			aa.Expand(func(generic.PrimitiveType) generic.SliceType { return nil })
 		},
 		func(aa generic.SliceType) {
-			aa.ForEach(func(generic.PrimitiveType) generic.Continue { return generic.ContinueNo })
+			aa.ForEach(func(generic.PrimitiveType) shared.Continue { return shared.ContinueNo })
 		},
 		func(aa generic.SliceType) {
-			aa.ForEachR(func(generic.PrimitiveType) generic.Continue { return generic.ContinueNo })
+			aa.ForEachR(func(generic.PrimitiveType) shared.Continue { return shared.ContinueNo })
 		},
 		func(aa generic.SliceType) {
 			aa.Group(func(generic.PrimitiveType) int64 { return 0 })
@@ -196,8 +197,8 @@ func TestBinaryPrimitiveTestHappyPaths(t *testing.T) {
 func TestBinaryValueClosureHappyPaths(t *testing.T) {
 	methodCalls := []func(generic.SliceType){
 		func(aa generic.SliceType) {
-			aa.ForEachC(0, func(generic.PrimitiveType, func() bool) generic.Continue {
-				return generic.ContinueNo
+			aa.ForEachC(0, func(generic.PrimitiveType, func() bool) shared.Continue {
+				return shared.ContinueNo
 			})
 		},
 		func(aa generic.SliceType) {

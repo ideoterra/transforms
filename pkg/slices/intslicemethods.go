@@ -1,16 +1,16 @@
-package intslice
+package slicexform
 
 import (
 	"math/big"
 
-	"github.com/jecolasurdo/transforms/pkg/slices/intslice2"
+	"github.com/jecolasurdo/transforms/pkg/slices/shared"
 )
 
 func ptr(aa IntSlice) *IntSlice {
 	return &aa
 }
 
-func ptr2(aa intslice2.IntSlice2) *intslice2.IntSlice2 {
+func ptr2(aa IntSlice2) *IntSlice2 {
 	return &aa
 }
 
@@ -145,7 +145,7 @@ func (aa *IntSlice) FoldI(acc int, folder func(i int64, a, acc int) int) *IntSli
 
 // ForEach applies each element of the list to the given function.
 // ForEach will stop iterating if fn return false.
-func (aa *IntSlice) ForEach(fn func(int) Continue) *IntSlice {
+func (aa *IntSlice) ForEach(fn func(int) shared.Continue) *IntSlice {
 	ForEach(*aa, fn)
 	return aa
 }
@@ -159,12 +159,12 @@ func (aa *IntSlice) ForEach(fn func(int) Continue) *IntSlice {
 // will block indefinitely. This function will panic if a negative value is
 // supplied for c.
 //
-// If any execution of fn returns ContinueNo, ForEachC will cease marshalling
+// If any execution of fn returns shared.ContinueNo, ForEachC will cease marshalling
 // any backlogged work, and will immediately set the cancellation flag to true.
 // Any goroutines monitoring the cancelPending closure can wind down their
 // activities as necessary. ForEachC will continue to block until all active
 // goroutines exit cleanly.
-func (aa *IntSlice) ForEachC(c int, fn func(a int, cancelPending func() bool) Continue) *IntSlice {
+func (aa *IntSlice) ForEachC(c int, fn func(a int, cancelPending func() bool) shared.Continue) *IntSlice {
 	ForEachC(*aa, c, fn)
 	return aa
 }
@@ -172,25 +172,25 @@ func (aa *IntSlice) ForEachC(c int, fn func(a int, cancelPending func() bool) Co
 // ForEachR applies each element of aa to a given function, scanning
 // through the slice in reverse order, starting from the end and working towards
 // the head.
-func (aa *IntSlice) ForEachR(fn func(int) Continue) *IntSlice {
+func (aa *IntSlice) ForEachR(fn func(int) shared.Continue) *IntSlice {
 	ForEachR(*aa, fn)
 	return aa
 }
 
 // Group consolidates like-items into groups according to the supplied grouper
-// function, and returns them as a intslice2.IntSlice2.
+// function, and returns them as a IntSlice2.
 // The grouper function is expected to return a hash value which Group will use
 // to determine into which bucket each element wil be placed.
-func (aa *IntSlice) Group(grouper func(int) int64) *intslice2.IntSlice2 {
+func (aa *IntSlice) Group(grouper func(int) int64) *IntSlice2 {
 	return ptr2(Group(*aa, grouper))
 }
 
 // GroupI consolidates like-items into groups according to the supplied grouper
-// function, and returns them as a intslice2.IntSlice2.
+// function, and returns them as a IntSlice2.
 // The grouper function is expected to return a hash value which Group will use
 // to determine into which bucket each element wil be placed. For convenience
 // the index value from aa is also passed into the grouper function.
-func (aa *IntSlice) GroupI(grouper func(int64, int) int64) *intslice2.IntSlice2 {
+func (aa *IntSlice) GroupI(grouper func(int64, int) int64) *IntSlice2 {
 	return ptr2(GroupI(*aa, grouper))
 }
 
@@ -318,12 +318,12 @@ func (aa *IntSlice) Pairwise(init int, xform func(a, b int) int) *IntSlice {
 }
 
 // Partition applies a test function to each element in and returns
-// a intslice2.IntSlice2 where intslice2.IntSlice2[0] contains a IntSlice with all elements for
-// whom the test function returned true, and where intslice2.IntSlice2[1] contains a
+// a IntSlice2 where IntSlice2[0] contains a IntSlice with all elements for
+// whom the test function returned true, and where IntSlice2[1] contains a
 // IntSlice with all elements for whom the test function returned false.
 //
 // Partition is a special case of the Group function.
-func (aa *IntSlice) Partition(test Test) *intslice2.IntSlice2 {
+func (aa *IntSlice) Partition(test Test) *IntSlice2 {
 	return ptr2(Partition(*aa, test))
 }
 
@@ -339,7 +339,7 @@ func (aa *IntSlice) Permutations() *big.Int {
 	return Permutations(*aa)
 }
 
-// Permute returns a intslice2.IntSlice2 which contains a IntSlice for each permutation
+// Permute returns a IntSlice2 which contains a IntSlice for each permutation
 // of aa.
 //
 // This function will panic if it determines that the list is not permutable
@@ -353,7 +353,7 @@ func (aa *IntSlice) Permutations() *big.Int {
 //
 // Permute is implemented using Heap's algorithm.
 // https://en.wikipedia.org/wiki/Heap%27s_algorithm
-func (aa *IntSlice) Permute() *intslice2.IntSlice2 {
+func (aa *IntSlice) Permute() *IntSlice2 {
 	return ptr2(Permute(*aa))
 }
 
@@ -429,29 +429,29 @@ func (aa *IntSlice) Sort(less func(a, b int) bool) *IntSlice {
 }
 
 // SplitAfter finds the first element b for which a test function returns true,
-// and returns a intslice2.IntSlice2 where intslice2.IntSlice2[0] contains the first half of aa
-// and intslice2.IntSlice2[1] contains the second half of aa. Element b will be included
-// in intslice2.IntSlice2[0]. If the no element can be found for which the test returns
-// true, intslice2.IntSlice2[0] will contain and intslice2.IntSlice2[1] will be empty.
-func (aa *IntSlice) SplitAfter(test Test) *intslice2.IntSlice2 {
+// and returns a IntSlice2 where IntSlice2[0] contains the first half of aa
+// and IntSlice2[1] contains the second half of aa. Element b will be included
+// in IntSlice2[0]. If the no element can be found for which the test returns
+// true, IntSlice2[0] will contain and IntSlice2[1] will be empty.
+func (aa *IntSlice) SplitAfter(test Test) *IntSlice2 {
 	return ptr2(SplitAfter(*aa, test))
 }
 
-// SplitAt splits aa at index i, and returns a intslice2.IntSlice2 which contains the
-// two split halves of aa. aa[i] will be included in intslice2.IntSlice2[1].
-// If i < 0, all of aa will be placed in intslice2.IntSlice2[0] and intslice2.IntSlice2[1] will
+// SplitAt splits aa at index i, and returns a IntSlice2 which contains the
+// two split halves of aa. aa[i] will be included in IntSlice2[1].
+// If i < 0, all of aa will be placed in IntSlice2[0] and IntSlice2[1] will
 // be empty. Conversly, if i >= len(aa), all of aa will be placed in
-// intslice2.IntSlice2[1] and intslice2.IntSlice2[0] will be empty. If aa is nil or empty,
-// intslice2.IntSlice2 will contain two empty slices.
-func (aa *IntSlice) SplitAt(i int64) *intslice2.IntSlice2 {
+// IntSlice2[1] and IntSlice2[0] will be empty. If aa is nil or empty,
+// IntSlice2 will contain two empty slices.
+func (aa *IntSlice) SplitAt(i int64) *IntSlice2 {
 	return ptr2(SplitAt(*aa, i))
 }
 
 // SplitBefore finds the first element b for which a test function returns true,
-// and returns a intslice2.IntSlice2 where intslice2.IntSlice2[0] contains the first half of aa
-// and intslice2.IntSlice2[1] contains the second half of aa. Element b will be included
-// in intslice2.IntSlice2[1]
-func (aa *IntSlice) SplitBefore(test Test) *intslice2.IntSlice2 {
+// and returns a IntSlice2 where IntSlice2[0] contains the first half of aa
+// and IntSlice2[1] contains the second half of aa. Element b will be included
+// in IntSlice2[1]
+func (aa *IntSlice) SplitBefore(test Test) *IntSlice2 {
 	return ptr2(SplitBefore(*aa, test))
 }
 
@@ -502,9 +502,9 @@ func (aa *IntSlice) Union(bb *IntSlice) *IntSlice {
 	return aa
 }
 
-// Unzip splits aa into a intslice2.IntSlice2, such that intslice2.IntSlice2[0] contains all odd
-// indices from and intslice2.IntSlice2[1] contains all even indices from aa.
-func (aa *IntSlice) Unzip() *intslice2.IntSlice2 {
+// Unzip splits aa into a IntSlice2, such that IntSlice2[0] contains all odd
+// indices from and IntSlice2[1] contains all even indices from aa.
+func (aa *IntSlice) Unzip() *IntSlice2 {
 	return ptr2(Unzip(*aa))
 }
 
