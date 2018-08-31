@@ -10,7 +10,7 @@ import (
 	"github.com/jecolasurdo/transforms/pkg/slices/shared"
 )
 
-// All applies a test function to each element in the slice, and returns true if
+// IntSliceAll applies a test function to each element in the slice, and returns true if
 // the test function returns true for all items in the slice.
 func IntSliceAll(aa IntSlice, test Test) bool {
 	for _, s := range aa {
@@ -21,11 +21,11 @@ func IntSliceAll(aa IntSlice, test Test) bool {
 	return true
 }
 
-// Any applies a test function to each element of the
+// IntSliceAny applies a test function to each element of the
 // slice and returns true if the test function returns true for at least one
 // item in the list.
 //
-// Any does not require that the source slice be sorted, and merely scans
+// IntSliceAny does not require that the source slice be sorted, and merely scans
 // the slice, returning as soon as any element passes the supplied test. For
 // a binary search, consider using sort.Search from the standard library.
 func IntSliceAny(aa IntSlice, test Test) bool {
@@ -37,31 +37,31 @@ func IntSliceAny(aa IntSlice, test Test) bool {
 	return false
 }
 
-//Append adds the supplied values to the end of the slice.
+//IntSliceAppend adds the supplied values to the end of the slice.
 func IntSliceAppend(aa *IntSlice, values ...int) {
 	*aa = append(*aa, values...)
 }
 
-// Clear removes all of the items from the slice, setting the slice to nil
+// IntSliceClear removes all of the items from the slice, setting the slice to nil
 // such that any memory previously allocated to the slice can be garbage
 // collected.
 func IntSliceClear(aa *IntSlice) {
 	*aa = nil
 }
 
-// Clone returns a copy of aa.
+// IntSliceClone returns a copy of aa.
 func IntSliceClone(aa IntSlice) IntSlice {
 	return append(IntSlice{}, aa...)
 }
 
-// Collect applies a given function against each item in slice aa and
+// IntSliceCollect applies a given function against each item in slice aa and
 // each item of a slice bb, and returns the concatenation of each result.
 //
 //   Illustration:
 //     aa:  		[A, B, C]
 //     bb: 			[X, Y, Z]
 //     collector:   func(a, b) { return a + b }
-//     Collect(aa, bb, collector) -> [AX, AY, AZ, BX, BY, BZ, CX, XY, CZ]
+//     IntSliceCollect(aa, bb, collector) -> [AX, AY, AZ, BX, BY, BZ, CX, XY, CZ]
 func IntSliceCollect(aa IntSlice, bb IntSlice, collector func(a, b int) int) IntSlice {
 	cc := IntSlice{}
 	for _, a := range aa {
@@ -72,7 +72,7 @@ func IntSliceCollect(aa IntSlice, bb IntSlice, collector func(a, b int) int) Int
 	return cc
 }
 
-// Count applies the supplied test function to each element of the slice,
+// IntSliceCount applies the supplied test function to each element of the slice,
 // and returns the count of items for which the test returns true.
 func IntSliceCount(aa IntSlice, test Test) int64 {
 	matches := int64(0)
@@ -84,7 +84,7 @@ func IntSliceCount(aa IntSlice, test Test) int64 {
 	return matches
 }
 
-// Dequeue returns a IntSlice containing the head item from the source slice.
+// IntSliceDequeue returns a IntSlice containing the head item from the source slice.
 // The head item is removed from the source slice in this operation. If the
 // source slice is initially empty, the resulting slice will also be empty.
 func IntSliceDequeue(aa *IntSlice) IntSlice {
@@ -92,22 +92,22 @@ func IntSliceDequeue(aa *IntSlice) IntSlice {
 		return IntSlice{}
 	}
 	head := (*aa)[0]
-	RemoveAt(aa, 0)
+	IntSliceIntSliceRemoveAt(aa, 0)
 	return IntSlice{head}
 }
 
-// Difference returns a new slice that contains items that are not common
+// IntSliceDifference returns a new slice that contains items that are not common
 // between aa and bb. The supplied equality function is used to compare values
 // between each slice. Duplicates are retained through this process. As such,
 // The elements in the slice that results from this transform may not be
-// distinct. Distinct values from aa are listed ahead of those from bb in the
+// distinct. IntSliceDistinct values from aa are listed ahead of those from bb in the
 // resulting slice.
 //
 // Illustration:
 //   aa: [1,2,3,3,1,4]
 //   bb: [5,4,3,5]
 //   equal: func(a, b) bool {return a == b}
-//   Difference(aa, bb, equality) -> [1,2,1,5,5]
+//   IntSliceDifference(aa, bb, equality) -> [1,2,1,5,5]
 func IntSliceDifference(aa, bb IntSlice, equality Equality) IntSlice {
 	ii := make([]bool, len(aa))
 	jj := make([]bool, len(bb))
@@ -136,7 +136,7 @@ func IntSliceDifference(aa, bb IntSlice, equality Equality) IntSlice {
 	return cc
 }
 
-// Distinct removes all duplicates from the slice, using the supplied equality
+// IntSliceDistinct removes all duplicates from the slice, using the supplied equality
 // function to determine equality.
 func IntSliceDistinct(aa *IntSlice, equality Equality) {
 	bb := IntSlice{}
@@ -151,56 +151,56 @@ func IntSliceDistinct(aa *IntSlice, equality Equality) {
 			}
 		}
 	}
-	Clear(aa)
-	Append(aa, bb...)
+	IntSliceClear(aa)
+	IntSliceAppend(aa, bb...)
 }
 
-// Empty returns true if the length of the slice is zero.
+// IntSliceEmpty returns true if the length of the slice is zero.
 func IntSliceEmpty(aa IntSlice) bool {
 	return len(aa) == 0
 }
 
-// End returns the a IntSlice containing only the last element from aa.
+// IntSliceEnd returns the a IntSlice containing only the last element from aa.
 func IntSliceEnd(aa IntSlice) IntSlice {
-	if Empty(aa) {
+	if IntSliceEmpty(aa) {
 		return IntSlice{}
 	}
 	return IntSlice{aa[len(aa)-1]}
 }
 
-// Enqueue places an item at the head of the slice.
+// IntSliceEnqueue places an item at the head of the slice.
 func IntSliceEnqueue(aa *IntSlice, a int) {
 	*aa = append(*aa, a)
 	copy((*aa)[1:], (*aa)[:len(*aa)-1])
 	(*aa)[0] = a
 }
 
-// Expand applies an expansion function to each element of aa, and flattens
+// IntSliceExpand applies an expansion function to each element of aa, and flattens
 // the results into a single IntSlice.
 //
 //   Illustration (pseudocode):
 //     aa: [AB, CD, EF]
 //     expansion: func(a string) []string { return []string{a[0], a[1]}}
-//     Expand(aa, expansion) -> [A, B, C, D, E, F]
+//     IntSliceExpand(aa, expansion) -> [A, B, C, D, E, F]
 func IntSliceExpand(aa IntSlice, expansion func(int) IntSlice) IntSlice {
 	bb := IntSlice{}
 	for _, a := range aa {
-		Append(&bb, expansion(a)...)
+		IntSliceAppend(&bb, expansion(a)...)
 	}
 	return bb
 }
 
-// Filter removes all items from the slice for which the supplied test function
+// IntSliceFilter removes all items from the slice for which the supplied test function
 // returns true.
 func IntSliceFilter(aa *IntSlice, test Test) {
 	for i := len(*aa) - 1; i >= 0; i-- {
 		if test((*aa)[i]) {
-			RemoveAt(aa, int64(i))
+			IntSliceIntSliceRemoveAt(aa, int64(i))
 		}
 	}
 }
 
-// FindIndex returns the index of the first element in the slice for which the
+// IntSliceFindIndex returns the index of the first element in the slice for which the
 // supplied test function returns true. If no matches are found, -1 is returned.
 func IntSliceFindIndex(aa IntSlice, test Test) int64 {
 	for i, a := range aa {
@@ -211,44 +211,44 @@ func IntSliceFindIndex(aa IntSlice, test Test) int64 {
 	return -1
 }
 
-// First returns a IntSlice containing the first element in the slice for which
+// IntSliceFirst returns a IntSlice containing the first element in the slice for which
 // the supplied test function returns true.
 func IntSliceFirst(aa IntSlice, test Test) IntSlice {
 	bb := IntSlice{}
 	for _, a := range aa {
 		if test(a) {
-			Append(&bb, a)
+			IntSliceAppend(&bb, a)
 			break
 		}
 	}
 	return bb
 }
 
-// Fold applies a function to each item in slice aa, threading an accumulator
+// IntSliceFold applies a function to each item in slice aa, threading an accumulator
 // through each iteration. The accumulated value is returned in a new IntSlice
-// once aa is fully scanned. Fold returns a IntSlice rather than a
-// int to be consistent with this package's Reduce implementation.
+// once aa is fully scanned. IntSliceFold returns a IntSlice rather than a
+// int to be consistent with this package's IntSliceReduce implementation.
 //
 //  Illustration:
 //    aa: [1,2,3,4]
 //    acc:    1
 //    folder: acc + sourceNode
-//    Fold(aa, acc, folder) -> [11]
+//    IntSliceFold(aa, acc, folder) -> [11]
 func IntSliceFold(aa IntSlice, acc int, folder func(a, acc int) int) IntSlice {
-	return FoldI(aa, acc, func(_ int64, a, acc int) int { return folder(a, acc) })
+	return IntSliceIntSliceFoldI(aa, acc, func(_ int64, a, acc int) int { return folder(a, acc) })
 }
 
-// FoldI applies a function to each item in slice aa, threading an accumulator
+// IntSliceIntSliceFoldI applies a function to each item in slice aa, threading an accumulator
 // and an index value through each iteration. The accumulated value is returned
-// once aa is fully scanned. Foldi returns a IntSlice rather than a
-// int to be consistent with this package's Reduce implementation.
+// once aa is fully scanned. IntSliceFoldi returns a IntSlice rather than a
+// int to be consistent with this package's IntSliceReduce implementation.
 //
 //  Illustration:
 //    aa: [1,2,3,4]
 //    acc:    1
 //    folder: acc + sourceNode
-//    Fold(aa, acc, folder) -> [11]
-func IntSliceFoldI(aa IntSlice, acc int, folder func(i int64, a, acc int) int) IntSlice {
+//    IntSliceFold(aa, acc, folder) -> [11]
+func IntSliceIntSliceFoldI(aa IntSlice, acc int, folder func(i int64, a, acc int) int) IntSlice {
 	accumulation := acc
 	for i, a := range aa {
 		accumulation = folder(int64(i), a, accumulation)
@@ -256,8 +256,8 @@ func IntSliceFoldI(aa IntSlice, acc int, folder func(i int64, a, acc int) int) I
 	return IntSlice{accumulation}
 }
 
-// ForEach applies each element of the list to the given function.
-// ForEach will stop iterating if fn return false.
+// IntSliceForEach applies each element of the list to the given function.
+// IntSliceForEach will stop iterating if fn return false.
 func IntSliceForEach(aa IntSlice, fn func(int) shared.Continue) {
 	for _, a := range aa {
 		if !fn(a) {
@@ -266,7 +266,7 @@ func IntSliceForEach(aa IntSlice, fn func(int) shared.Continue) {
 	}
 }
 
-// ForEachC concurrently applies each element of the list to the given function.
+// IntSliceIntSliceForEachC concurrently applies each element of the list to the given function.
 // The elements of the list are marshalled to a pool of goroutines, where each
 // element is passed to fn concurrently.
 //
@@ -275,14 +275,14 @@ func IntSliceForEach(aa IntSlice, fn func(int) shared.Continue) {
 // will block indefinitely. This function will panic if a negative value is
 // supplied for c.
 //
-// If any execution of fn returns shared.ContinueNo, ForEachC will cease marshalling
+// If any execution of fn returns shared.ContinueNo, IntSliceIntSliceForEachC will cease marshalling
 // any backlogged work, and will immediately set the cancellation flag to true.
-// Any goroutines monitoring the cancelPending closure can wind down their
-// activities as necessary. ForEachC will continue to block until all active
+// IntSliceAny goroutines monitoring the cancelPending closure can wind down their
+// activities as necessary. IntSliceIntSliceForEachC will continue to block until all active
 // goroutines exit cleanly.
-func IntSliceForEachC(aa IntSlice, c int, fn func(a int, cancelPending func() bool) shared.Continue) {
+func IntSliceIntSliceForEachC(aa IntSlice, c int, fn func(a int, cancelPending func() bool) shared.Continue) {
 	if c < 0 {
-		panic("ForEachC: The concurrency pool size (c) must be non-negative.")
+		panic("IntSliceIntSliceForEachC: The concurrency pool size (c) must be non-negative.")
 	}
 	mu := new(sync.RWMutex)
 	halt := int64(0)
@@ -315,10 +315,10 @@ func IntSliceForEachC(aa IntSlice, c int, fn func(a int, cancelPending func() bo
 	}
 }
 
-// ForEachR applies each element of aa to a given function, scanning
+// IntSliceIntSliceForEachR applies each element of aa to a given function, scanning
 // through the slice in reverse order, starting from the end and working towards
 // the head.
-func IntSliceForEachR(aa IntSlice, fn func(int) shared.Continue) {
+func IntSliceIntSliceForEachR(aa IntSlice, fn func(int) shared.Continue) {
 	for i := len(aa) - 1; i >= 0; i-- {
 		if !fn(aa[i]) {
 			return
@@ -326,46 +326,46 @@ func IntSliceForEachR(aa IntSlice, fn func(int) shared.Continue) {
 	}
 }
 
-// Group consolidates like-items into groups according to the supplied grouper
+// IntSliceGroup consolidates like-items into groups according to the supplied grouper
 // function, and returns them as a IntSlice2.
-// The grouper function is expected to return a hash value which Group will use
+// The grouper function is expected to return a hash value which IntSliceGroup will use
 // to determine into which bucket each element wil be placed.
 func IntSliceGroup(aa IntSlice, grouper func(int) int64) IntSlice2 {
-	return GroupI(aa, func(_ int64, a int) int64 { return grouper(a) })
+	return IntSliceIntSliceGroupI(aa, func(_ int64, a int) int64 { return grouper(a) })
 }
 
-// GroupI consolidates like-items into groups according to the supplied grouper
+// IntSliceIntSliceGroupI consolidates like-items into groups according to the supplied grouper
 // function, and returns them as a IntSlice2.
-// The grouper function is expected to return a hash value which Group will use
+// The grouper function is expected to return a hash value which IntSliceGroup will use
 // to determine into which bucket each element wil be placed. For convenience
 // the index value from aa is also passed into the grouper function.
-func IntSliceGroupI(aa IntSlice, grouper func(int64, int) int64) IntSlice2 {
-	groupMap := map[int64]IntSlice{}
+func IntSliceIntSliceGroupI(aa IntSlice, grouper func(int64, int) int64) IntSlice2 {
+	groupIntSliceMap := map[int64]IntSlice{}
 	for i, a := range aa {
 		hash := grouper(int64(i), a)
-		if _, exists := groupMap[hash]; exists {
-			groupMap[hash] = append(groupMap[hash], a)
+		if _, exists := groupIntSliceMap[hash]; exists {
+			groupIntSliceMap[hash] = append(groupIntSliceMap[hash], a)
 		} else {
-			groupMap[hash] = IntSlice{a}
+			groupIntSliceMap[hash] = IntSlice{a}
 		}
 	}
 	group := IntSlice2{}
-	for _, bb := range groupMap {
+	for _, bb := range groupIntSliceMap {
 		group = append(group, bb)
 	}
 	return group
 }
 
-// Head returns a IntSlice containing the first item from the aa. If aa is
+// IntSliceHead returns a IntSlice containing the first item from the aa. If aa is
 // empty, the resulting IntSlice will be empty.
 func IntSliceHead(aa IntSlice) IntSlice {
-	if Empty(aa) {
+	if IntSliceEmpty(aa) {
 		return IntSlice{}
 	}
 	return IntSlice{aa[0]}
 }
 
-// InsertAfter inserts an element in aa after the first element for which the
+// IntSliceInsertAfter inserts an element in aa after the first element for which the
 // supplied test function returns true. If none of the tests return true, the
 // element is appended to the end of the aa.
 func IntSliceInsertAfter(aa *IntSlice, b int, test Test) {
@@ -376,10 +376,10 @@ func IntSliceInsertAfter(aa *IntSlice, b int, test Test) {
 			break
 		}
 	}
-	InsertAt(aa, b, int64(i+1))
+	IntSliceInsertAt(aa, b, int64(i+1))
 }
 
-// InsertBefore inserts an element in aa before the first element for which the
+// IntSliceInsertBefore inserts an element in aa before the first element for which the
 // supplied test function returns true. If none of the tests return true,
 // the element is inserted at the head of aa.
 func IntSliceInsertBefore(aa *IntSlice, b int, test Test) {
@@ -390,10 +390,10 @@ func IntSliceInsertBefore(aa *IntSlice, b int, test Test) {
 			break
 		}
 	}
-	InsertAt(aa, b, int64(i-1))
+	IntSliceInsertAt(aa, b, int64(i-1))
 }
 
-// InsertAt inserts an element in aa at the specified index i, shifting the
+// IntSliceInsertAt inserts an element in aa at the specified index i, shifting the
 // element originally at index i (and all subsequent elements) one position
 // to the right. If i < 0, the element is inserted at index 0. If
 // i >= len(aa), the value is appended to the end of aa.
@@ -409,15 +409,15 @@ func IntSliceInsertAt(aa *IntSlice, a int, i int64) {
 	(*aa)[i] = a
 }
 
-// Intersection compares each element of aa to bb using the supplied equal
+// IntSliceIntersection compares each element of aa to bb using the supplied equal
 // function, and returns a IntSlice containing the elements which are common
 // to both aa and bb. Duplicates are removed in this operation.
 func IntSliceIntersection(aa, bb IntSlice, equality Equality) IntSlice {
 	cc := IntSlice{}
-	ForEach(aa, func(a int) shared.Continue {
-		ForEach(bb, func(b int) shared.Continue {
-			if equality(a, b) && !Any(cc, func(c int) bool { return equality(a, c) }) {
-				Append(&cc, a)
+	IntSliceForEach(aa, func(a int) shared.Continue {
+		IntSliceForEach(bb, func(b int) shared.Continue {
+			if equality(a, b) && !IntSliceAny(cc, func(c int) bool { return equality(a, c) }) {
+				IntSliceAppend(&cc, a)
 			}
 			return shared.ContinueYes
 		})
@@ -426,102 +426,102 @@ func IntSliceIntersection(aa, bb IntSlice, equality Equality) IntSlice {
 	return cc
 }
 
-// IsProperSubset returns true if aa is a proper subset of bb.
+// IntSliceIsProperSubset returns true if aa is a proper subset of bb.
 // aa is considered a proper subset if all of its elements exist within bb, but
 // bb also contains some elements that do not exist within aa.
 // Note: This operation does not enforce that each element be unique, thus, it
-// is possible for a subset to be larger than its superset. Use the Distinct
+// is possible for a subset to be larger than its superset. Use the IntSliceDistinct
 // operations to enforce uniqueness, if that is necessary.
 func IntSliceIsProperSubset(aa, bb IntSlice, equality Equality) bool {
-	aa1, bb1 := removeIntersections(aa, bb, equality)
+	aa1, bb1 := removeIntSliceIntersections(aa, bb, equality)
 	return len(aa1) == 0 && len(bb1) > 0
 }
 
-// IsProperSuperset returns true if aa is a proper superset of bb.
+// IntSliceIsProperSuperset returns true if aa is a proper superset of bb.
 // aa is considered a proper superset if it contains all of bb's elements, but
 // aa also contains some elements that do not exist within bb.
 // Note: This operation does not enforce that each element be unique, thus, it
-// is possible for a superset to be smaller than its subset. Use the Distinct
+// is possible for a superset to be smaller than its subset. Use the IntSliceDistinct
 // operations to enforce uniqueness, if that is necessary.
 func IntSliceIsProperSuperset(aa, bb IntSlice, equality Equality) bool {
-	aa1, bb1 := removeIntersections(aa, bb, equality)
+	aa1, bb1 := removeIntSliceIntersections(aa, bb, equality)
 	return len(aa1) > 0 && len(bb1) == 0
 }
 
-// IsSubset returns true if aa is a subset of bb.
+// IntSliceIsSubset returns true if aa is a subset of bb.
 // aa is considered a subset if all of its elements exist within bb.
 // Note: This operation does not enforce that each element be unique, thus, it
-// is possible for a subset to be larger than its superset. Use the Distinct
+// is possible for a subset to be larger than its superset. Use the IntSliceDistinct
 // operations to enforce uniqueness, if that is necessary.
 func IntSliceIsSubset(aa, bb IntSlice, equality Equality) bool {
-	aa1, bb1 := removeIntersections(aa, bb, equality)
+	aa1, bb1 := removeIntSliceIntersections(aa, bb, equality)
 	return len(aa1) == 0 && len(bb1) >= 0
 }
 
-// IsSuperset returns true if aa is a superset of bb.
+// IntSliceIsSuperset returns true if aa is a superset of bb.
 // aa is considered a superset if all of bb's elements exist within aa.
 // Note: This operation does not enforce that each element be unique, thus, it
-// is possible for a superset to be smaller than its subset. Use the Distinct
+// is possible for a superset to be smaller than its subset. Use the IntSliceDistinct
 // operations to enforce uniqueness, if that is necessary.
 func IntSliceIsSuperset(aa, bb IntSlice, equality Equality) bool {
-	aa1, bb1 := removeIntersections(aa, bb, equality)
+	aa1, bb1 := removeIntSliceIntersections(aa, bb, equality)
 	return len(aa1) >= 0 && len(bb1) == 0
 }
 
-func IntSliceremoveIntersections(aa, bb IntSlice, equality Equality) (IntSlice, IntSlice) {
-	aa1 := Clone(aa)
-	bb1 := Clone(bb)
+func removeIntSliceIntersections(aa, bb IntSlice, equality Equality) (IntSlice, IntSlice) {
+	aa1 := IntSliceClone(aa)
+	bb1 := IntSliceClone(bb)
 	for ai := int64(len(aa1)) - 1; ai >= 0; ai-- {
 		intersectionFound := false
 		for bi := int64(len(bb1)) - 1; bi >= 0; bi-- {
 			if equality((aa1)[ai], (bb1)[bi]) {
 				intersectionFound = true
-				RemoveAt(&bb1, bi)
+				IntSliceIntSliceRemoveAt(&bb1, bi)
 			}
 		}
 		if intersectionFound {
-			RemoveAt(&aa1, ai)
+			IntSliceIntSliceRemoveAt(&aa1, ai)
 		}
 	}
 	return aa1, bb1
 }
 
-// Item returns a IntSlice containing the element at aa[i].
+// IntSliceItem returns a IntSlice containing the element at aa[i].
 // If len(aa) == 0, i < 0, or, i >= len(aa), the resulting slice will be empty.
 func IntSliceItem(aa IntSlice, i int64) IntSlice {
-	if Empty(aa) || i < 0 || i >= int64(len(aa)) {
+	if IntSliceEmpty(aa) || i < 0 || i >= int64(len(aa)) {
 		return IntSlice{}
 	}
 	return IntSlice{aa[i]}
 }
 
-// ItemFuzzy returns a IntSlice containing the element at aa[i].
-// If the supplied index is outside of the bounds of aa, ItemFuzzy will attempt
+// IntSliceIntSliceItemFuzzy returns a IntSlice containing the element at aa[i].
+// If the supplied index is outside of the bounds of aa, IntSliceIntSliceItemFuzzy will attempt
 // to retrieve the head or end element of aa according to the following rules:
 // If len(aa) == 0 an empty IntSlice is returned.
 // If i < 0, the head of aa is returned.
 // If i >= len(aa), the end of the aa is returned.
-func IntSliceItemFuzzy(aa IntSlice, i int64) IntSlice {
-	if Empty(aa) {
+func IntSliceIntSliceItemFuzzy(aa IntSlice, i int64) IntSlice {
+	if IntSliceEmpty(aa) {
 		return IntSlice{}
 	}
 	if i < 0 {
-		return Head(aa)
+		return IntSliceHead(aa)
 	}
 	if i >= int64(len(aa)) {
-		return End(aa)
+		return IntSliceEnd(aa)
 	}
 	return IntSlice{aa[i]}
 }
 
-// Last applies a test function to each element in aa, and returns a IntSlice
+// IntSliceLast applies a test function to each element in aa, and returns a IntSlice
 // containing the last element for which the test returned true. If no elements
 // pass the supplied test, the resulting IntSlice will be empty.
 func IntSliceLast(aa IntSlice, test Test) IntSlice {
 	bb := IntSlice{}
-	ForEachR(aa, func(a int) shared.Continue {
+	IntSliceIntSliceForEachR(aa, func(a int) shared.Continue {
 		if test(a) {
-			Append(&bb, a)
+			IntSliceAppend(&bb, a)
 			return shared.ContinueNo
 		}
 		return shared.ContinueYes
@@ -529,25 +529,25 @@ func IntSliceLast(aa IntSlice, test Test) IntSlice {
 	return bb
 }
 
-// Len returns the length of aa.
+// IntSliceLen returns the length of aa.
 func IntSliceLen(aa IntSlice) int {
 	return len(aa)
 }
 
-// Map applies a tranform to each element of the list.
+// IntSliceMap applies a tranform to each element of the list.
 func IntSliceMap(aa *IntSlice, mapFn func(int) int) {
 	for i, a := range *aa {
 		(*aa)[i] = mapFn(a)
 	}
 }
 
-// None applies a test function to each element in aa, and returns true if
+// IntSliceNone applies a test function to each element in aa, and returns true if
 // the test function returns false for all items.
 func IntSliceNone(aa IntSlice, test Test) bool {
-	return !Any(aa, test)
+	return !IntSliceAny(aa, test)
 }
 
-// Pairwise threads a transform function through aa, passing to the transform
+// IntSlicePairwise threads a transform function through aa, passing to the transform
 // successive two-element pairs, aa[i-1] && aa[i]. For the first pairing
 // the supplied init value is supplied as the initial element in the pair.
 //
@@ -555,9 +555,9 @@ func IntSliceNone(aa IntSlice, test Test) bool {
 //     aa:  [W,X,Y,Z]
 //     xform: func(a, b string) string { return a + b }
 //     init: V
-//     Pairwise(aa, init, xform) -> [VW, WX, XY, YZ]
+//     IntSlicePairwise(aa, init, xform) -> [VW, WX, XY, YZ]
 func IntSlicePairwise(aa IntSlice, init int, xform func(a, b int) int) IntSlice {
-	if Empty(aa) {
+	if IntSliceEmpty(aa) {
 		return IntSlice{}
 	}
 	bb := IntSlice{}
@@ -574,12 +574,12 @@ func IntSlicePairwise(aa IntSlice, init int, xform func(a, b int) int) IntSlice 
 	return bb
 }
 
-// Partition applies a test function to each element in aa, and returns
+// IntSlicePartition applies a test function to each element in aa, and returns
 // a IntSlice2 where IntSlice2[0] contains a IntSlice with all elements for
 // whom the test function returned true, and where IntSlice2[1] contains a
 // IntSlice with all elements for whom the test function returned false.
 //
-// Partition is a special case of the Group function.
+// IntSlicePartition is a special case of the IntSliceGroup function.
 func IntSlicePartition(aa IntSlice, test Test) IntSlice2 {
 	grouper := func(a int) int64 {
 		if test(a) {
@@ -587,43 +587,43 @@ func IntSlicePartition(aa IntSlice, test Test) IntSlice2 {
 		}
 		return 0
 	}
-	return Group(aa, grouper)
+	return IntSliceGroup(aa, grouper)
 }
 
-// Permutable returns true if the number of permutations for aa exceeds
+// IntSlicePermutable returns true if the number of permutations for aa exceeds
 // MaxInt64.
 func IntSlicePermutable(aa IntSlice) bool {
-	return Permutations(aa).IsInt64()
+	return IntSlicePermutations(aa).IsInt64()
 }
 
-// Permutations returns the number of permutations that exist given the current
+// IntSlicePermutations returns the number of permutations that exist given the current
 // number of items in the aa.
 func IntSlicePermutations(aa IntSlice) *big.Int {
 	var f big.Int
 	return f.MulRange(1, int64(len(aa)))
 }
 
-// Permute returns a IntSlice2 which contains a IntSlice for each permutation
+// IntSlicePermute returns a IntSlice2 which contains a IntSlice for each permutation
 // of aa.
 //
 // This function will panic if it determines that the list is not permutable
-// (see Permutable function).
+// (see IntSlicePermutable function).
 //
-// Permute makes no assumptions about whether or not the elements in aa are
-// distinct. Permutations are created positionally, and do not involve any
-// equality checks. As such, if it important that Permute operate on a set of
-// distinct elements, pass aa through one of the Distinct transforms before
-// passing it to Permute().
+// IntSlicePermute makes no assumptions about whether or not the elements in aa are
+// distinct. IntSlicePermutations are created positionally, and do not involve any
+// equality checks. As such, if it important that IntSlicePermute operate on a set of
+// distinct elements, pass aa through one of the IntSliceDistinct transforms before
+// passing it to IntSlicePermute().
 //
-// Permute is implemented using Heap's algorithm.
+// IntSlicePermute is implemented using Heap's algorithm.
 // https://en.wikipedia.org/wiki/Heap%27s_algorithm
 func IntSlicePermute(aa IntSlice) IntSlice2 {
-	if Empty(aa) {
+	if IntSliceEmpty(aa) {
 		return IntSlice2{}
 	}
 
-	if !Permutable(aa) {
-		panic(fmt.Sprintf("The number of permutations for this list (%v) exceeeds MaxInt64.", Permutations(aa)))
+	if !IntSlicePermutable(aa) {
+		panic(fmt.Sprintf("The number of permutations for this list (%v) exceeeds MaxInt64.", IntSlicePermutations(aa)))
 	}
 
 	acc := IntSlice2{}
@@ -631,7 +631,7 @@ func IntSlicePermute(aa IntSlice) IntSlice2 {
 	return acc
 }
 
-func IntSlicegenerate(n int64, aa IntSlice, acc *IntSlice2) {
+func generate(n int64, aa IntSlice, acc *IntSlice2) {
 	if n == 1 {
 		*acc = append(*acc, aa)
 		return
@@ -639,31 +639,31 @@ func IntSlicegenerate(n int64, aa IntSlice, acc *IntSlice2) {
 
 	for i := int64(0); i < n-1; i++ {
 		generate(n-1, aa, acc)
-		aa = Clone(aa)
+		aa = IntSliceClone(aa)
 		if n%2 != 0 {
-			SwapIndex(aa, i, n-1)
+			IntSliceSwapIndex(aa, i, n-1)
 		} else {
-			SwapIndex(aa, 0, n-1)
+			IntSliceSwapIndex(aa, 0, n-1)
 		}
 	}
 
 	generate(n-1, aa, acc)
 }
 
-// Pop returns a IntSlice containing the head element from aa, and removes the
+// IntSlicePop returns a IntSlice containing the head element from aa, and removes the
 // element from aa. If aa is empty, the returned IntSlice will also be empty.
 func IntSlicePop(aa *IntSlice) IntSlice {
-	bb := Head(*aa)
-	RemoveAt(aa, 0)
+	bb := IntSliceHead(*aa)
+	IntSliceIntSliceRemoveAt(aa, 0)
 	return bb
 }
 
-// Push places a prepends a new element at the head of aa.
+// IntSlicePush places a prepends a new element at the head of aa.
 func IntSlicePush(aa *IntSlice, a int) {
-	InsertAt(aa, a, 0)
+	IntSliceInsertAt(aa, a, 0)
 }
 
-// Reduce applies a reducer function to each element in aa, threading an
+// IntSliceReduce applies a reducer function to each element in aa, threading an
 // accumulator through each iteration. The resulting accumulation is returned
 // as an element of a new IntSlice. If aa is empty, the resulting IntSlice
 // will also be empty.
@@ -671,7 +671,7 @@ func IntSlicePush(aa *IntSlice, a int) {
 //  Illustration:
 //    aa: [1,2,3,4]
 //    reducer: acc + sourceNode
-//    Fold(aa, reducer) -> [10]
+//    IntSliceFold(aa, reducer) -> [10]
 func IntSliceReduce(aa IntSlice, reducer func(a, acc int) int) IntSlice {
 	if len(aa) == 0 {
 		return IntSlice{}
@@ -685,20 +685,20 @@ func IntSliceReduce(aa IntSlice, reducer func(a, acc int) int) IntSlice {
 	return IntSlice{accumulator}
 }
 
-// Remove applies a test function to each item in the list, and removes any item
+// IntSliceRemove applies a test function to each item in the list, and removes any item
 // for which the test returns true.
 func IntSliceRemove(aa *IntSlice, test Test) {
 	for i := int64(len(*aa)) - 1; i >= 0; i-- {
 		if test((*aa)[i]) {
-			RemoveAt(aa, i)
+			IntSliceIntSliceRemoveAt(aa, i)
 		}
 	}
 }
 
-// RemoveAt removes the item at the specified index from the slice.
+// IntSliceIntSliceRemoveAt removes the item at the specified index from the slice.
 // If len(aa) == 0, aa == nil, i < 0, or i >= len(aa), this function will do
 // nothing.
-func IntSliceRemoveAt(aa *IntSlice, i int64) {
+func IntSliceIntSliceRemoveAt(aa *IntSlice, i int64) {
 	if i < 0 || i >= int64(len(*aa)) {
 		return
 	}
@@ -707,7 +707,7 @@ func IntSliceRemoveAt(aa *IntSlice, i int64) {
 	}
 }
 
-// Reverse reverses the order of aa.
+// IntSliceReverse reverses the order of aa.
 func IntSliceReverse(aa *IntSlice) {
 	for i := len(*aa)/2 - 1; i >= 0; i-- {
 		j := len(*aa) - 1 - i
@@ -715,12 +715,12 @@ func IntSliceReverse(aa *IntSlice) {
 	}
 }
 
-// Skip removes the first n elements from aa.
+// IntSliceSkip removes the first n elements from aa.
 //
-// Note that Skip(aa, len(aa)) will remove all items from the list, but does not
+// Note that IntSliceSkip(aa, len(aa)) will remove all items from the list, but does not
 // "clear" the slice, meaning that the list remains allocated in memory.
 // To fully de-pointer the slice, and ensure it is available for garbage
-// collection as soon as possible, consider using Clear().
+// collection as soon as possible, consider using IntSliceClear().
 func IntSliceSkip(aa *IntSlice, n int64) {
 	if len(*aa) == 0 {
 		return
@@ -728,19 +728,19 @@ func IntSliceSkip(aa *IntSlice, n int64) {
 	*aa = (*aa)[n:]
 }
 
-// SkipWhile scans through aa starting at the head, and removes all
+// IntSliceIntSliceSkipWhile scans through aa starting at the head, and removes all
 // elements from aa while the test function returns true.
-// SkipWhile stops removing any further items from aa after the first test that
+// IntSliceIntSliceSkipWhile stops removing any further items from aa after the first test that
 // returns false.
-func IntSliceSkipWhile(aa *IntSlice, test Test) {
+func IntSliceIntSliceSkipWhile(aa *IntSlice, test Test) {
 	// find the first index where the test would evaluate to false and skip
 	// everything up to that index.
 	findTest := func(a int) bool { return !test(a) }
-	Skip(aa, FindIndex(*aa, findTest))
+	IntSliceSkip(aa, IntSliceFindIndex(*aa, findTest))
 }
 
-// Sort sorts aa, using the supplied less function to determine order.
-// Sort is a convenience wrapper around the stdlib sort.SliceStable
+// IntSliceSort sorts aa, using the supplied less function to determine order.
+// IntSliceSort is a convenience wrapper around the stdlib sort.SliceStable
 // function.
 func IntSliceSort(aa *IntSlice, less func(a, b int) bool) {
 	lessI := func(i, j int) bool {
@@ -749,16 +749,16 @@ func IntSliceSort(aa *IntSlice, less func(a, b int) bool) {
 	sort.SliceStable(*aa, lessI)
 }
 
-// SplitAfter finds the first element b for which a test function returns true,
+// IntSliceSplitAfter finds the first element b for which a test function returns true,
 // and returns a IntSlice2 where IntSlice2[0] contains the first half of aa
 // and IntSlice2[1] contains the second half of aa. Element b will be included
 // in IntSlice2[0]. If the no element can be found for which the test returns
 // true, IntSlice2[0] will contain aa, and IntSlice2[1] will be empty.
 func IntSliceSplitAfter(aa IntSlice, test Test) IntSlice2 {
-	return SplitAt(aa, FindIndex(aa, test)+1)
+	return IntSliceSplitAt(aa, IntSliceFindIndex(aa, test)+1)
 }
 
-// SplitAt splits aa at index i, and returns a IntSlice2 which contains the
+// IntSliceSplitAt splits aa at index i, and returns a IntSlice2 which contains the
 // two split halves of aa. aa[i] will be included in IntSlice2[1].
 // If i < 0, all of aa will be placed in IntSlice2[0] and IntSlice2[1] will
 // be empty. Conversly, if i >= len(aa), all of aa will be placed in
@@ -780,16 +780,16 @@ func IntSliceSplitAt(aa IntSlice, i int64) IntSlice2 {
 	}
 }
 
-// SplitBefore finds the first element b for which a test function returns true,
+// IntSliceSplitBefore finds the first element b for which a test function returns true,
 // and returns a IntSlice2 where IntSlice2[0] contains the first half of aa
 // and IntSlice2[1] contains the second half of aa. Element b will be included
 // in IntSlice2[1]
 func IntSliceSplitBefore(aa IntSlice, test Test) IntSlice2 {
-	return SplitAt(aa, FindIndex(aa, test))
+	return IntSliceSplitAt(aa, IntSliceFindIndex(aa, test))
 }
 
-// String returns a string representation of aa, suitable for use
-// with fmt.Print, or other similar functions. String should be regarded as
+// IntSliceString returns a string representation of aa, suitable for use
+// with fmt.Print, or other similar functions. IntSliceString should be regarded as
 // informational, and should not be relied upon to formally serialize a
 // IntSlice.
 func IntSliceString(aa IntSlice) string {
@@ -797,8 +797,8 @@ func IntSliceString(aa IntSlice) string {
 	return string(jsonBytes)
 }
 
-// SwapIndex swaps the elements at the specified indices. If either i or j is
-// out of the bounds of aa, SwapIndex does nothing.
+// IntSliceSwapIndex swaps the elements at the specified indices. If either i or j is
+// out of the bounds of aa, IntSliceSwapIndex does nothing.
 func IntSliceSwapIndex(aa IntSlice, i, j int64) {
 	l := int64(len(aa))
 	if i < 0 || j < 0 || i >= l || j >= l {
@@ -807,14 +807,14 @@ func IntSliceSwapIndex(aa IntSlice, i, j int64) {
 	aa[i], aa[j] = aa[j], aa[i]
 }
 
-// Tail removes the current head element from aa.
-// This equivelant to RemoveAt(aa, 0)
+// IntSliceTail removes the current head element from aa.
+// This equivelant to IntSliceIntSliceRemoveAt(aa, 0)
 func IntSliceTail(aa *IntSlice) {
-	RemoveAt(aa, 0)
+	IntSliceIntSliceRemoveAt(aa, 0)
 }
 
-// Take retains the first n elements of aa, and removes all remaining elements
-// from the slice. If n < 0 or n >= len(aa), Take does nothing. If n == 0, all
+// IntSliceTake retains the first n elements of aa, and removes all remaining elements
+// from the slice. If n < 0 or n >= len(aa), IntSliceTake does nothing. If n == 0, all
 // elements are removed from the slice (but the slice is not de-pointered).
 func IntSliceTake(aa *IntSlice, n int64) {
 	if len(*aa) == 0 || n < 0 || n >= int64(len(*aa)) {
@@ -823,25 +823,25 @@ func IntSliceTake(aa *IntSlice, n int64) {
 	*aa = (*aa)[:n]
 }
 
-// TakeWhile applies a test function to each element in aa, and retains all
+// IntSliceIntSliceTakeWhile applies a test function to each element in aa, and retains all
 // elements of aa so long as the test function returns true. As soon as the test
 // function returns false, take stops evaluating any further, and abandons the
 // rest of the slice.
-func IntSliceTakeWhile(aa *IntSlice, test Test) {
+func IntSliceIntSliceTakeWhile(aa *IntSlice, test Test) {
 	find := func(a int) bool {
 		return !test(a)
 	}
-	Take(aa, FindIndex(*aa, find))
+	IntSliceTake(aa, IntSliceFindIndex(*aa, find))
 }
 
-// Union appends slice bb to slice aa.
+// IntSliceUnion appends slice bb to slice aa.
 // Note: This operation does not remove any duplicates from the slice, as a
 // similar operation would when operating on a formal Set.
 func IntSliceUnion(aa *IntSlice, bb IntSlice) {
-	Append(aa, bb...)
+	IntSliceAppend(aa, bb...)
 }
 
-// Unzip splits aa into a IntSlice2, such that IntSlice2[0] contains all odd
+// IntSliceUnzip splits aa into a IntSlice2, such that IntSlice2[0] contains all odd
 // indices from aa, and IntSlice2[1] contains all even indices from aa.
 func IntSliceUnzip(aa IntSlice) IntSlice2 {
 	odds := IntSlice{}
@@ -856,7 +856,7 @@ func IntSliceUnzip(aa IntSlice) IntSlice2 {
 	return IntSlice2{odds, evens}
 }
 
-// WindowCentered applies a windowing function across the aa, using a centered
+// IntSliceWindowCentered applies a windowing function across the aa, using a centered
 // window of the specified size.
 func IntSliceWindowCentered(aa IntSlice, windowSize int64, windowFn func(window IntSlice) int) IntSlice {
 	cc := IntSlice{}
@@ -865,19 +865,19 @@ func IntSliceWindowCentered(aa IntSlice, windowSize int64, windowFn func(window 
 		currentWindow := IntSlice{}
 		a := aa[i]
 		for n := int64(1); n <= windowSize; n++ {
-			Append(&currentWindow, a)
+			IntSliceAppend(&currentWindow, a)
 			if !fullWindowReached && n >= windowSize {
 				fullWindowReached = true
 			}
 			if !fullWindowReached {
-				Append(&cc, windowFn(currentWindow))
+				IntSliceAppend(&cc, windowFn(currentWindow))
 			}
 			if i+n >= int64(len(aa)) {
 				break
 			}
 			a = aa[i+n]
 		}
-		Append(&cc, windowFn(currentWindow))
+		IntSliceAppend(&cc, windowFn(currentWindow))
 	}
 	trimSize := windowSize - 1
 	var frontTrim, backTrim int64
@@ -888,14 +888,14 @@ func IntSliceWindowCentered(aa IntSlice, windowSize int64, windowFn func(window 
 		frontTrim = trimSize / 2
 		backTrim = frontTrim + 1
 	}
-	dd := IntSlice(SplitAt(cc, frontTrim)[1])
-	Reverse(&dd)
-	ee := IntSlice(SplitAt(dd, backTrim)[1])
-	Reverse(&ee)
+	dd := IntSlice(IntSliceSplitAt(cc, frontTrim)[1])
+	IntSliceReverse(&dd)
+	ee := IntSlice(IntSliceSplitAt(dd, backTrim)[1])
+	IntSliceReverse(&ee)
 	return ee
 }
 
-// WindowLeft applies a windowing function across aa, using a left-sided window
+// IntSliceWindowLeft applies a windowing function across aa, using a left-sided window
 // of the specified size.
 func IntSliceWindowLeft(aa IntSlice, windowSize int64, windowFn func(window IntSlice) int) IntSlice {
 	bb := IntSlice{}
@@ -905,20 +905,20 @@ func IntSliceWindowLeft(aa IntSlice, windowSize int64, windowFn func(window IntS
 			if i+n >= int64(len(aa)) {
 				break
 			}
-			Append(&currentWindow, aa[i+n])
+			IntSliceAppend(&currentWindow, aa[i+n])
 		}
-		Append(&bb, windowFn(currentWindow))
+		IntSliceAppend(&bb, windowFn(currentWindow))
 	}
 	return bb
 }
 
-// WindowRight applies a windowing function across aa, using a right-sided
+// IntSliceWindowRight applies a windowing function across aa, using a right-sided
 // window of the specified size.
 func IntSliceWindowRight(aa IntSlice, windowSize int64, windowFn func(window IntSlice) int) IntSlice {
-	aa1 := Clone(aa)
-	defer Clear(&aa1)
+	aa1 := IntSliceClone(aa)
+	defer IntSliceClear(&aa1)
 
-	Reverse(&aa1)
+	IntSliceReverse(&aa1)
 	bb := IntSlice{}
 	for i := int64(0); i < int64(len(aa1)); i++ {
 		currentWindow := IntSlice{}
@@ -926,20 +926,20 @@ func IntSliceWindowRight(aa IntSlice, windowSize int64, windowFn func(window Int
 			if i+n >= int64(len(aa1)) {
 				break
 			}
-			Append(&currentWindow, aa1[i+n])
+			IntSliceAppend(&currentWindow, aa1[i+n])
 		}
-		Reverse(&currentWindow)
-		Append(&bb, windowFn(currentWindow))
+		IntSliceReverse(&currentWindow)
+		IntSliceAppend(&bb, windowFn(currentWindow))
 	}
-	Reverse(&bb)
+	IntSliceReverse(&bb)
 	return bb
 }
 
-// Zip interleaves the contents of aa with bb, and returns the result as a
+// IntSliceZip interleaves the contents of aa with bb, and returns the result as a
 // new IntSlice. aa[0] is evaluated first. Thus if aa and bb are the same
 // length, slice aa will occupy the odd indices of the result slice, and bb
 // will occupy the even indices of the result slice. If aa and bb are not
-// the same length, Zip will interleave as many values as possible, and will
+// the same length, IntSliceZip will interleave as many values as possible, and will
 // simply append the remaining values for the longer of the two slices to the
 // end of the result slice.
 func IntSliceZip(aa, bb IntSlice) IntSlice {
@@ -951,27 +951,27 @@ func IntSliceZip(aa, bb IntSlice) IntSlice {
 	}
 
 	cc := IntSlice{}
-	aaEndReached, bbEndReached := false, false
-	for i := 0; aaEndReached == false && bbEndReached == false; i++ {
+	aaIntSliceEndReached, bbIntSliceEndReached := false, false
+	for i := 0; aaIntSliceEndReached == false && bbIntSliceEndReached == false; i++ {
 		if i >= len(aa) {
-			aaEndReached = true
+			aaIntSliceEndReached = true
 		}
 		if i >= len(bb) {
-			bbEndReached = true
+			bbIntSliceEndReached = true
 		}
 		if i%2 != 0 {
-			if !aaEndReached {
-				Append(&cc, aa[i])
+			if !aaIntSliceEndReached {
+				IntSliceAppend(&cc, aa[i])
 			}
-			if !bbEndReached {
-				Append(&cc, bb[i])
+			if !bbIntSliceEndReached {
+				IntSliceAppend(&cc, bb[i])
 			}
 		} else {
-			if !bbEndReached {
-				Append(&cc, bb[i])
+			if !bbIntSliceEndReached {
+				IntSliceAppend(&cc, bb[i])
 			}
-			if !aaEndReached {
-				Append(&cc, aa[i])
+			if !aaIntSliceEndReached {
+				IntSliceAppend(&cc, aa[i])
 			}
 		}
 	}

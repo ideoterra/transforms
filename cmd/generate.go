@@ -6,7 +6,11 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
+
+	"github.com/jecolasurdo/transforms/pkg/slices/generic"
+	"github.com/jecolasurdo/transforms/pkg/slices/shared"
 )
 
 type primitiveType struct {
@@ -89,7 +93,21 @@ func main() {
 					removeLinesContainingValue(fileName, "[]"+t.SliceType)
 				}
 				if strings.Contains(fileName, "functions.go") {
-					replaceTextInFile(fileName, "func ", "func "+t.SliceType)
+					functionNames := getFunctionNamesForFile(fileName)
+					functionNames.Sort(func(a, b generic.PrimitiveType) bool {
+						return len(a.(string)) < len(b.(string))
+					}).Distinct(func(a, b generic.PrimitiveType) bool {
+						name1 := a.(string)
+						name2 := b.(string)
+						if strings.Contains(name1, "Fold") && strings.Contains(name2, "Fold") {
+							log.Println("break")
+						}
+						return strings.Contains(name1, name2)
+					}).ForEach(func(a generic.PrimitiveType) shared.Continue {
+						functionName := a.(string)
+						replaceTextInFile(fileName, functionName, t.SliceType+functionName)
+						return shared.ContinueYes
+					})
 				}
 			}
 		}
@@ -190,6 +208,20 @@ func replaceTextInFile(fileName, old, new string) {
 	if err != nil {
 		log.Fatalln(err)
 	}
+}
+func getFunctionNamesForFile(fileName string) generic.SliceType {
+	functionNames := generic.SliceType{}
+	const funcRegex = `func ([A-Z]\w*)\(`
+	re := regexp.MustCompile(funcRegex)
+	input, err := ioutil.ReadFile(fileName)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	contents := string(input)
+	for _, submatch := range re.FindAllStringSubmatch(contents, -1) {
+		functionNames.Append(submatch[1])
+	}
+	return functionNames
 }
 
 func removeLinesContainingValue(fileName, value string) {
