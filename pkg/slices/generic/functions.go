@@ -200,6 +200,24 @@ func Filter(aa *SliceType, test Test) {
 	}
 }
 
+// ApplyByTrait groups the items in aa according to a supplied trait. Then a
+// function is applied to the items in each trait group, allowing for
+// the group to be shortened, lengthened, or otherwise transformed. The
+// resulting groups are then flattened and returned as a new SliceType.
+//
+//  Illustration (pseuodocode):
+//    aa: [children, child, cats, dog, childish, dogs, cat]
+//    grouper: if a starts with b, return a hash value for b -> [[children, child, childish], [cats, cat], [dog, dogs]]
+//    apply: retain the shortest item for each trait -> [[child], [cat], [dog]]
+//    ApplyByTrait(aa, grouper, filter) -> [child, cat, dog]
+func ApplyByTrait(aa SliceType, grouper Grouper, apply func(*SliceType)) SliceType {
+	aaa := Group(aa, grouper)
+	for _, bb := range aaa {
+		apply(&bb)
+	}
+	return Flatten(aaa)
+}
+
 // FindIndex returns the index of the first element in the slice for which the
 // supplied test function returns true. If no matches are found, -1 is returned.
 func FindIndex(aa SliceType, test Test) int64 {
@@ -220,6 +238,15 @@ func First(aa SliceType, test Test) SliceType {
 			Append(&bb, a)
 			break
 		}
+	}
+	return bb
+}
+
+// Flatten takes each slice of a SliceType2 and appends it to a new slice.
+func Flatten(aa SliceType2) SliceType {
+	bb := SliceType{}
+	for _, a := range aa {
+		Append(&bb, a)
 	}
 	return bb
 }
