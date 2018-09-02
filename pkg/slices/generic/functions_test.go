@@ -3,6 +3,7 @@ package generic_test
 import (
 	"fmt"
 	"strconv"
+	"strings"
 	"sync"
 	"testing"
 	"time"
@@ -103,6 +104,7 @@ var Specifications = []Specification{
 			},
 		},
 	},
+
 	Specification{
 		FunctionName: "Clear",
 		StandardPath: Behavior{
@@ -770,7 +772,36 @@ var Specifications = []Specification{
 				t.Skip()
 			},
 		},
-	}, Specification{
+	},
+	Specification{
+		FunctionName: "GroupByTrait",
+		StandardPath: Behavior{
+			Description: "Normally groups by trait.",
+			Expectation: func(t *testing.T) {
+				aa := generic.SliceType{"pigdog", "pigs", "dog", "pigdogs", "cat", "dogs", "pig"}
+				trait := func(ai, an generic.PrimitiveType) bool {
+					return strings.Index(ai.(string), an.(string)) == 0
+				}
+				equality := func(a, b generic.PrimitiveType) bool {
+					return a.(string) == b.(string)
+				}
+				bb := generic.GroupByTrait(aa, trait, equality)
+				cc := generic.SliceType2{
+					generic.SliceType{"pigdogs", "pigdog", "pigs", "dog"},
+					generic.SliceType{"cat"},
+					generic.SliceType{"dogs", "dog"},
+				}
+				assert.ElementsMatch(t, bb, cc)
+			},
+		},
+		AlternativePath: Behavior{
+			Description: "",
+			Expectation: func(t *testing.T) {
+				t.Skip()
+			},
+		},
+	},
+	Specification{
 		FunctionName: "GroupI",
 		StandardPath: Behavior{
 			Description: "Elements are grouped as expected.",

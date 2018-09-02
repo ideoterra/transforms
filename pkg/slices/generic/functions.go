@@ -200,24 +200,6 @@ func Filter(aa *SliceType, test Test) {
 	}
 }
 
-// ApplyByTrait groups the items in aa according to a supplied trait. Then a
-// function is applied to the items in each trait group, allowing for
-// the group to be shortened, lengthened, or otherwise transformed. The
-// resulting groups are then flattened and returned as a new SliceType.
-//
-//  Illustration (pseuodocode):
-//    aa: [children, child, cats, dog, childish, dogs, cat]
-//    grouper: if a starts with b, return a hash value for b -> [[children, child, childish], [cats, cat], [dog, dogs]]
-//    apply: retain the shortest item for each trait -> [[child], [cat], [dog]]
-//    ApplyByTrait(aa, grouper, filter) -> [child, cat, dog]
-func ApplyByTrait(aa SliceType, grouper Grouper, apply func(*SliceType)) SliceType {
-	aaa := Group(aa, grouper)
-	for _, bb := range aaa {
-		apply(&bb)
-	}
-	return Flatten(aaa)
-}
-
 // FindIndex returns the index of the first element in the slice for which the
 // supplied test function returns true. If no matches are found, -1 is returned.
 func FindIndex(aa SliceType, test Test) int64 {
@@ -359,6 +341,54 @@ func ForEachR(aa SliceType, fn func(PrimitiveType) shared.Continue) {
 // to determine into which bucket each element wil be placed.
 func Group(aa SliceType, grouper func(PrimitiveType) int64) SliceType2 {
 	return GroupI(aa, func(_ int64, a PrimitiveType) int64 { return grouper(a) })
+}
+
+// GroupByTrait groups the items in aa according to a supplied trait, and
+// a returns a SliceType2 with the elements grouped by trait.
+//
+// GroupByTrait compares each item (a[i]) in the slice to every other item
+// (a[n]) using the supplied trait function. Every item a[n] who shares a trait
+// with a[i] is added to a slice that represents a group of items that express a
+// potential trait.
+//
+// This potential trait is then compared to a slice of established traits using
+// the supplied equality function. If the potential trait is a subset
+// of any established trait, it is disregarded. If the potential trait is not a
+// subset of any established trait, it is added as a new established trait.
+//
+//  Illustration (pseuodocode):
+//    aa: [pigdog, pigs, dog, pigdogs, cat, dogs, pig]
+//    trait: return strings.Index(a[i], a[n]) == 0
+//    equal: return a[i] == a[j]
+//    GroupByTrait(aa, trait, equality) ->
+//			[
+//			 [pigdogs, pigdog, pigs, pig],
+//			 [cat],
+//			 [dogs, dog],
+//			]
+func GroupByTrait(aa SliceType, trait func(ai, an PrimitiveType) bool, equality Equality) SliceType2 {
+	establishedTraits := SliceType2{}
+	for _, ai := range aa {
+		potentialTrait := SliceType{}
+		for _, an := range aa {
+			if trait(ai, an) {
+				Append(&potentialTrait, an)
+			}
+		}
+
+		traitIsSubsetOfExisting := false
+		for _, establishedTrait := range establishedTraits {
+			if IsSubset(establishedTrait, potentialTrait, equality) {
+				traitIsSubsetOfExisting = true
+				break
+			}
+
+		}
+		if !traitIsSubsetOfExisting {
+			establishedTraits = append(establishedTraits, potentialTrait)
+		}
+	}
+	return establishedTraits
 }
 
 // GroupI consolidates like-items into groups according to the supplied grouper
