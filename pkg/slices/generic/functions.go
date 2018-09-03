@@ -343,18 +343,15 @@ func Group(aa SliceType, grouper func(PrimitiveType) int64) SliceType2 {
 	return GroupI(aa, func(_ int64, a PrimitiveType) int64 { return grouper(a) })
 }
 
-// GroupByTrait groups the items in aa according to a supplied trait, and
-// a returns a SliceType2 with the elements grouped by trait.
-//
 // GroupByTrait compares each item (a[i]) in the slice to every other item
 // (a[n]) using the supplied trait function. Every item a[n] who shares a trait
 // with a[i] is added to a slice that represents a group of items that express a
-// potential trait.
-//
-// This potential trait is then compared to a slice of established traits using
-// the supplied equality function. If the potential trait is a subset
-// of any established trait, it is disregarded. If the potential trait is not a
-// subset of any established trait, it is added as a new established trait.
+// potential trait. This potential trait is then compared to a slice of
+// established traits using the supplied equality function. If the potential
+// trait is a subset of any established trait, the potential trait is it is
+// disregarded, othwewise, the potential trait is added as an established trait.
+// If the potential trait is a superset of any established trait, each relevent
+// established trait is disregarded.
 //
 //  Illustration (pseuodocode):
 //    aa: [pigdog, pigs, dog, pigdogs, cat, dogs, pig]
@@ -382,7 +379,7 @@ func GroupByTrait(aa SliceType, trait func(ai, an PrimitiveType) bool, equality 
 				traitIsSubsetOfEstablished = true
 				break
 			}
-			if IsProperSuperset(potentialTrait, establishedTrait, equality) {
+			if IsSuperset(potentialTrait, establishedTrait, equality) {
 				establishedTraits = append(establishedTraits[:i], establishedTraits[i+1:]...)
 			}
 		}
