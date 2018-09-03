@@ -780,16 +780,16 @@ var Specifications = []Specification{
 			Expectation: func(t *testing.T) {
 				aa := generic.SliceType{"pigdog", "pigs", "dog", "pigdogs", "cat", "dogs", "pig"}
 				trait := func(ai, an generic.PrimitiveType) bool {
-					return strings.Index(ai.(string), an.(string)) == 0
+					return strings.Index(an.(string), ai.(string)) == 0
 				}
 				equality := func(a, b generic.PrimitiveType) bool {
 					return a.(string) == b.(string)
 				}
 				bb := generic.GroupByTrait(aa, trait, equality)
 				cc := generic.SliceType2{
-					generic.SliceType{"pigdogs", "pigdog", "pigs", "dog"},
+					generic.SliceType{"dog", "dogs"},
 					generic.SliceType{"cat"},
-					generic.SliceType{"dogs", "dog"},
+					generic.SliceType{"pigdog", "pigs", "pigdogs", "pig"},
 				}
 				assert.ElementsMatch(t, bb, cc)
 			},

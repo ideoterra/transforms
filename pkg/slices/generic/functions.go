@@ -375,16 +375,18 @@ func GroupByTrait(aa SliceType, trait func(ai, an PrimitiveType) bool, equality 
 				Append(&potentialTrait, an)
 			}
 		}
-
-		traitIsSubsetOfExisting := false
-		for _, establishedTrait := range establishedTraits {
-			if IsSubset(establishedTrait, potentialTrait, equality) {
-				traitIsSubsetOfExisting = true
+		traitIsSubsetOfEstablished := false
+		for i := len(establishedTraits) - 1; i >= 0; i-- {
+			establishedTrait := establishedTraits[i]
+			if IsSubset(potentialTrait, establishedTrait, equality) {
+				traitIsSubsetOfEstablished = true
 				break
 			}
-
+			if IsProperSuperset(potentialTrait, establishedTrait, equality) {
+				establishedTraits = append(establishedTraits[:i], establishedTraits[i+1:]...)
+			}
 		}
-		if !traitIsSubsetOfExisting {
+		if !traitIsSubsetOfEstablished {
 			establishedTraits = append(establishedTraits, potentialTrait)
 		}
 	}
