@@ -1,6 +1,7 @@
 package generic
 
 type Test func(interface{}) bool
+type Equality func(a, b interface{}) bool
 
 // SliceType is a one dimensional slice of PrimitiveType.
 type SliceType []interface{}

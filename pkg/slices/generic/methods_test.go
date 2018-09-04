@@ -64,10 +64,10 @@ func TestUnaryValueMethodHappyPaths(t *testing.T) {
 }
 
 func TestUnaryPrimitiveMethodHappyPaths(t *testing.T) {
-	methodCalls := []func(generic.SliceType, generic.PrimitiveType){
-		func(aa generic.SliceType, b generic.PrimitiveType) { aa.Append(b) },
-		func(aa generic.SliceType, b generic.PrimitiveType) { aa.Enqueue(b) },
-		func(aa generic.SliceType, b generic.PrimitiveType) { aa.Push(b) },
+	methodCalls := []func(generic.SliceType, interface{}){
+		func(aa generic.SliceType, b interface{}) { aa.Append(b) },
+		func(aa generic.SliceType, b interface{}) { aa.Enqueue(b) },
+		func(aa generic.SliceType, b interface{}) { aa.Push(b) },
 	}
 	for i, methodCall := range methodCalls {
 		test := func(t *testing.T) {
@@ -96,7 +96,7 @@ func TestUnaryTestMethodHappyPaths(t *testing.T) {
 	}
 	for i, methodCall := range methodCalls {
 		test := func(t *testing.T) {
-			testFn := func(_ generic.PrimitiveType) bool {
+			testFn := func(_ interface{}) bool {
 				return true
 			}
 			methodCall(generic.SliceType{}, testFn)
@@ -108,31 +108,31 @@ func TestUnaryTestMethodHappyPaths(t *testing.T) {
 func TestUnaryClosureHappyPaths(t *testing.T) {
 	methodCalls := []func(generic.SliceType){
 		func(aa generic.SliceType) {
-			aa.Distinct(func(a, b generic.PrimitiveType) bool { return true })
+			aa.Distinct(func(a, b interface{}) bool { return true })
 		},
 		func(aa generic.SliceType) {
-			aa.Expand(func(generic.PrimitiveType) generic.SliceType { return nil })
+			aa.Expand(func(interface{}) []interface{} { return nil })
 		},
 		func(aa generic.SliceType) {
-			aa.ForEach(func(generic.PrimitiveType) shared.Continue { return shared.ContinueNo })
+			aa.ForEach(func(interface{}) shared.Continue { return shared.ContinueNo })
 		},
 		func(aa generic.SliceType) {
-			aa.ForEachR(func(generic.PrimitiveType) shared.Continue { return shared.ContinueNo })
+			aa.ForEachR(func(interface{}) shared.Continue { return shared.ContinueNo })
 		},
 		func(aa generic.SliceType) {
-			aa.Group(func(generic.PrimitiveType) int64 { return 0 })
+			aa.Group(func(interface{}) int64 { return 0 })
 		},
 		func(aa generic.SliceType) {
-			aa.GroupI(func(int64, generic.PrimitiveType) int64 { return 0 })
+			aa.GroupI(func(int64, interface{}) int64 { return 0 })
 		},
 		func(aa generic.SliceType) {
-			aa.Map(func(generic.PrimitiveType) generic.PrimitiveType { return primitiveZero })
+			aa.Map(func(interface{}) interface{} { return primitiveZero })
 		},
 		func(aa generic.SliceType) {
-			aa.Reduce(func(a, b generic.PrimitiveType) generic.PrimitiveType { return primitiveZero })
+			aa.Reduce(func(a, b interface{}) interface{} { return primitiveZero })
 		},
 		func(aa generic.SliceType) {
-			aa.Sort(func(a, b generic.PrimitiveType) bool { return false })
+			aa.Sort(func(a, b interface{}) bool { return false })
 		},
 	}
 	for i, methodCall := range methodCalls {
@@ -146,26 +146,26 @@ func TestUnaryClosureHappyPaths(t *testing.T) {
 func TestBinarySliceEqualityHappyPaths(t *testing.T) {
 	methodCalls := []func(generic.SliceType, generic.Equality){
 		func(aa generic.SliceType, equality generic.Equality) {
-			aa.Difference(&aa, equality)
+			aa.Difference(nil, equality)
 		},
 		func(aa generic.SliceType, equality generic.Equality) {
-			aa.Intersection(&aa, equality)
+			aa.Intersection(nil, equality)
 		},
 		func(aa generic.SliceType, equality generic.Equality) {
-			aa.IsProperSubset(&aa, equality)
+			aa.IsProperSubset(nil, equality)
 		},
 		func(aa generic.SliceType, equality generic.Equality) {
-			aa.IsProperSuperset(&aa, equality)
+			aa.IsProperSuperset(nil, equality)
 		},
 		func(aa generic.SliceType, equality generic.Equality) {
-			aa.IsSubset(&aa, equality)
+			aa.IsSubset(nil, equality)
 		},
 		func(aa generic.SliceType, equality generic.Equality) {
-			aa.IsSuperset(&aa, equality)
+			aa.IsSuperset(nil, equality)
 		}}
 	for i, methodCall := range methodCalls {
 		test := func(t *testing.T) {
-			equality := func(a, b generic.PrimitiveType) bool {
+			equality := func(a, b interface{}) bool {
 				return false
 			}
 			methodCall(generic.SliceType{}, equality)
@@ -175,17 +175,17 @@ func TestBinarySliceEqualityHappyPaths(t *testing.T) {
 }
 
 func TestBinaryPrimitiveTestHappyPaths(t *testing.T) {
-	methodCalls := []func(generic.SliceType, generic.PrimitiveType, generic.Test){
-		func(aa generic.SliceType, b generic.PrimitiveType, test generic.Test) {
+	methodCalls := []func(generic.SliceType, interface{}, generic.Test){
+		func(aa generic.SliceType, b interface{}, test generic.Test) {
 			aa.InsertAfter(b, test)
 		},
-		func(aa generic.SliceType, b generic.PrimitiveType, test generic.Test) {
+		func(aa generic.SliceType, b interface{}, test generic.Test) {
 			aa.InsertBefore(b, test)
 		},
 	}
 	for i, methodCall := range methodCalls {
 		test := func(t *testing.T) {
-			testFn := func(generic.PrimitiveType) bool {
+			testFn := func(interface{}) bool {
 				return false
 			}
 			methodCall(generic.SliceType{}, primitiveZero, testFn)
@@ -197,30 +197,30 @@ func TestBinaryPrimitiveTestHappyPaths(t *testing.T) {
 func TestBinaryValueClosureHappyPaths(t *testing.T) {
 	methodCalls := []func(generic.SliceType){
 		func(aa generic.SliceType) {
-			aa.ForEachC(0, func(generic.PrimitiveType, func() bool) shared.Continue {
+			aa.ForEachC(0, func(interface{}, func() bool) shared.Continue {
 				return shared.ContinueNo
 			})
 		},
 		func(aa generic.SliceType) {
-			aa.WindowCentered(0, func(generic.SliceType) generic.PrimitiveType { return primitiveZero })
+			aa.WindowCentered(0, func([]interface{}) interface{} { return primitiveZero })
 		},
 		func(aa generic.SliceType) {
-			aa.WindowLeft(0, func(generic.SliceType) generic.PrimitiveType { return primitiveZero })
+			aa.WindowLeft(0, func([]interface{}) interface{} { return primitiveZero })
 		},
 		func(aa generic.SliceType) {
-			aa.WindowRight(0, func(generic.SliceType) generic.PrimitiveType { return primitiveZero })
+			aa.WindowRight(0, func([]interface{}) interface{} { return primitiveZero })
 		},
 		func(aa generic.SliceType) {
-			aa.Fold(primitiveZero, func(a, b generic.PrimitiveType) generic.PrimitiveType { return primitiveZero })
+			aa.Fold(primitiveZero, func(a, b interface{}) interface{} { return primitiveZero })
 		},
 		func(aa generic.SliceType) {
-			aa.FoldI(primitiveZero, func(i int64, a, b generic.PrimitiveType) generic.PrimitiveType { return primitiveZero })
+			aa.FoldI(primitiveZero, func(i int64, a, b interface{}) interface{} { return primitiveZero })
 		},
 		func(aa generic.SliceType) {
-			aa.Pairwise(primitiveZero, func(a, b generic.PrimitiveType) generic.PrimitiveType { return primitiveZero })
+			aa.Pairwise(primitiveZero, func(a, b interface{}) interface{} { return primitiveZero })
 		},
 		func(aa generic.SliceType) {
-			aa.Collect(new(generic.SliceType), func(a, b generic.PrimitiveType) generic.PrimitiveType { return primitiveZero })
+			aa.Collect([]interface{}{}, func(a, b interface{}) interface{} { return primitiveZero })
 		},
 	}
 	for i, methodCall := range methodCalls {
