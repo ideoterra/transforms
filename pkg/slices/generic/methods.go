@@ -22,7 +22,7 @@ func box(aa SliceType) []interface{} {
 }
 
 func boxP(aa *SliceType) *[]interface{} {
-	return boxP(aa)
+	return (*[]interface{})(aa)
 }
 
 // All applies a test function to each element in the slice, and returns true if
