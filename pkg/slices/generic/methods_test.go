@@ -51,8 +51,8 @@ func TestUnaryValueMethodHappyPaths(t *testing.T) {
 		func(aa generic.SliceType) { aa.Skip(0) },
 		func(aa generic.SliceType) { aa.SplitAt(0) },
 		func(aa generic.SliceType) { aa.Take(0) },
-		func(aa generic.SliceType) { aa.Union(new(generic.SliceType)) },
-		func(aa generic.SliceType) { aa.Zip(new(generic.SliceType)) },
+		func(aa generic.SliceType) { aa.Union(new([]interface{})) },
+		func(aa generic.SliceType) { aa.Zip(new([]interface{})) },
 	}
 
 	for i, methodCall := range methodCalls {

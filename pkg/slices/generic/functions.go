@@ -12,7 +12,7 @@ import (
 
 // All applies a test function to each element in the slice, and returns true if
 // the test function returns true for all items in the slice.
-func All(aa SliceType, test Test) bool {
+func All(aa []interface{}, test func(interface{}) bool) bool {
 	for _, s := range aa {
 		if !test(s) {
 			return false
@@ -28,7 +28,7 @@ func All(aa SliceType, test Test) bool {
 // Any does not require that the source slice be sorted, and merely scans
 // the slice, returning as soon as any element passes the supplied test. For
 // a binary search, consider using sort.Search from the standard library.
-func Any(aa SliceType, test Test) bool {
+func Any(aa []interface{}, test func(interface{}) bool) bool {
 	for _, a := range aa {
 		if test(a) {
 			return true
@@ -38,20 +38,20 @@ func Any(aa SliceType, test Test) bool {
 }
 
 //Append adds the supplied values to the end of the slice.
-func Append(aa *SliceType, values ...PrimitiveType) {
+func Append(aa *[]interface{}, values ...interface{}) {
 	*aa = append(*aa, values...)
 }
 
 // Clear removes all of the items from the slice, setting the slice to nil
 // such that any memory previously allocated to the slice can be garbage
 // collected.
-func Clear(aa *SliceType) {
+func Clear(aa *[]interface{}) {
 	*aa = nil
 }
 
 // Clone returns a copy of aa.
-func Clone(aa SliceType) SliceType {
-	return append(SliceType{}, aa...)
+func Clone(aa []interface{}) []interface{} {
+	return append([]interface{}{}, aa...)
 }
 
 // Collect applies a given function against each item in slice aa and
@@ -62,8 +62,8 @@ func Clone(aa SliceType) SliceType {
 //     bb: 			[X, Y, Z]
 //     collector:   func(a, b) { return a + b }
 //     Collect(aa, bb, collector) -> [AX, AY, AZ, BX, BY, BZ, CX, XY, CZ]
-func Collect(aa SliceType, bb SliceType, collector func(a, b PrimitiveType) PrimitiveType) SliceType {
-	cc := SliceType{}
+func Collect(aa []interface{}, bb []interface{}, collector func(a, b interface{}) interface{}) []interface{} {
+	cc := []interface{}{}
 	for _, a := range aa {
 		for _, b := range bb {
 			cc = append(cc, collector(a, b))
@@ -74,7 +74,7 @@ func Collect(aa SliceType, bb SliceType, collector func(a, b PrimitiveType) Prim
 
 // Count applies the supplied test function to each element of the slice,
 // and returns the count of items for which the test returns true.
-func Count(aa SliceType, test Test) int64 {
+func Count(aa []interface{}, test func(interface{}) bool) int64 {
 	matches := int64(0)
 	for _, a := range aa {
 		if test(a) {
@@ -84,16 +84,16 @@ func Count(aa SliceType, test Test) int64 {
 	return matches
 }
 
-// Dequeue returns a SliceType containing the head item from the source slice.
+// Dequeue returns a []interface{} containing the head item from the source slice.
 // The head item is removed from the source slice in this operation. If the
 // source slice is initially empty, the resulting slice will also be empty.
-func Dequeue(aa *SliceType) SliceType {
+func Dequeue(aa *[]interface{}) []interface{} {
 	if len(*aa) == 0 {
-		return SliceType{}
+		return []interface{}{}
 	}
 	head := (*aa)[0]
 	RemoveAt(aa, 0)
-	return SliceType{head}
+	return []interface{}{head}
 }
 
 // Difference returns a new slice that contains items that are not common
@@ -108,7 +108,7 @@ func Dequeue(aa *SliceType) SliceType {
 //   bb: [5,4,3,5]
 //   equal: func(a, b) bool {return a == b}
 //   Difference(aa, bb, equality) -> [1,2,1,5,5]
-func Difference(aa, bb SliceType, equality Equality) SliceType {
+func Difference(aa, bb []interface{}, equality func(a, b interface{}) bool) []interface{} {
 	ii := make([]bool, len(aa))
 	jj := make([]bool, len(bb))
 	for i, a := range aa {
@@ -120,7 +120,7 @@ func Difference(aa, bb SliceType, equality Equality) SliceType {
 		}
 	}
 
-	cc := SliceType{}
+	cc := []interface{}{}
 	for i, a := range aa {
 		if !ii[i] {
 			cc = append(cc, a)
@@ -138,8 +138,8 @@ func Difference(aa, bb SliceType, equality Equality) SliceType {
 
 // Distinct removes all duplicates from the slice, using the supplied equality
 // function to determine equality.
-func Distinct(aa *SliceType, equality Equality) {
-	bb := SliceType{}
+func Distinct(aa *[]interface{}, equality func(a, b interface{}) bool) {
+	bb := []interface{}{}
 	dups := make([]bool, len(*aa))
 	for i, a := range *aa {
 		if !dups[i] {
@@ -156,34 +156,34 @@ func Distinct(aa *SliceType, equality Equality) {
 }
 
 // Empty returns true if the length of the slice is zero.
-func Empty(aa SliceType) bool {
+func Empty(aa []interface{}) bool {
 	return len(aa) == 0
 }
 
-// End returns the a SliceType containing only the last element from aa.
-func End(aa SliceType) SliceType {
+// End returns the a []interface{} containing only the last element from aa.
+func End(aa []interface{}) []interface{} {
 	if Empty(aa) {
-		return SliceType{}
+		return []interface{}{}
 	}
-	return SliceType{aa[len(aa)-1]}
+	return []interface{}{aa[len(aa)-1]}
 }
 
 // Enqueue places an item at the head of the slice.
-func Enqueue(aa *SliceType, a PrimitiveType) {
+func Enqueue(aa *[]interface{}, a interface{}) {
 	*aa = append(*aa, a)
 	copy((*aa)[1:], (*aa)[:len(*aa)-1])
 	(*aa)[0] = a
 }
 
 // Expand applies an expansion function to each element of aa, and flattens
-// the results into a single SliceType.
+// the results into a single []interface{}.
 //
 //   Illustration (pseudocode):
 //     aa: [AB, CD, EF]
 //     expansion: func(a string) []string { return []string{a[0], a[1]}}
 //     Expand(aa, expansion) -> [A, B, C, D, E, F]
-func Expand(aa SliceType, expansion func(PrimitiveType) SliceType) SliceType {
-	bb := SliceType{}
+func Expand(aa []interface{}, expansion func(interface{}) []interface{}) []interface{} {
+	bb := []interface{}{}
 	for _, a := range aa {
 		Append(&bb, expansion(a)...)
 	}
@@ -192,7 +192,7 @@ func Expand(aa SliceType, expansion func(PrimitiveType) SliceType) SliceType {
 
 // Filter removes all items from the slice for which the supplied test function
 // returns true.
-func Filter(aa *SliceType, test Test) {
+func Filter(aa *[]interface{}, test func(interface{}) bool) {
 	for i := len(*aa) - 1; i >= 0; i-- {
 		if test((*aa)[i]) {
 			RemoveAt(aa, int64(i))
@@ -202,7 +202,7 @@ func Filter(aa *SliceType, test Test) {
 
 // FindIndex returns the index of the first element in the slice for which the
 // supplied test function returns true. If no matches are found, -1 is returned.
-func FindIndex(aa SliceType, test Test) int64 {
+func FindIndex(aa []interface{}, test func(interface{}) bool) int64 {
 	for i, a := range aa {
 		if test(a) {
 			return int64(i)
@@ -211,10 +211,10 @@ func FindIndex(aa SliceType, test Test) int64 {
 	return -1
 }
 
-// First returns a SliceType containing the first element in the slice for which
+// First returns a []interface{} containing the first element in the slice for which
 // the supplied test function returns true.
-func First(aa SliceType, test Test) SliceType {
-	bb := SliceType{}
+func First(aa []interface{}, test func(interface{}) bool) []interface{} {
+	bb := []interface{}{}
 	for _, a := range aa {
 		if test(a) {
 			Append(&bb, a)
@@ -224,9 +224,9 @@ func First(aa SliceType, test Test) SliceType {
 	return bb
 }
 
-// Flatten takes each slice of a SliceType2 and appends it to a new slice.
-func Flatten(aa SliceType2) SliceType {
-	bb := SliceType{}
+// Flatten takes each slice of a [][]interface{} and appends it to a new slice.
+func Flatten(aa [][]interface{}) []interface{} {
+	bb := []interface{}{}
 	for _, a := range aa {
 		Append(&bb, a)
 	}
@@ -234,40 +234,40 @@ func Flatten(aa SliceType2) SliceType {
 }
 
 // Fold applies a function to each item in slice aa, threading an accumulator
-// through each iteration. The accumulated value is returned in a new SliceType
-// once aa is fully scanned. Fold returns a SliceType rather than a
-// PrimitiveType to be consistent with this package's Reduce implementation.
+// through each iteration. The accumulated value is returned in a new []interface{}
+// once aa is fully scanned. Fold returns a []interface{} rather than a
+// interface{} to be consistent with this package's Reduce implementation.
 //
 //  Illustration:
 //    aa: [1,2,3,4]
 //    acc:    1
 //    folder: acc + sourceNode
 //    Fold(aa, acc, folder) -> [11]
-func Fold(aa SliceType, acc PrimitiveType, folder func(a, acc PrimitiveType) PrimitiveType) SliceType {
-	return FoldI(aa, acc, func(_ int64, a, acc PrimitiveType) PrimitiveType { return folder(a, acc) })
+func Fold(aa []interface{}, acc interface{}, folder func(a, acc interface{}) interface{}) []interface{} {
+	return FoldI(aa, acc, func(_ int64, a, acc interface{}) interface{} { return folder(a, acc) })
 }
 
 // FoldI applies a function to each item in slice aa, threading an accumulator
 // and an index value through each iteration. The accumulated value is returned
-// once aa is fully scanned. Foldi returns a SliceType rather than a
-// PrimitiveType to be consistent with this package's Reduce implementation.
+// once aa is fully scanned. Foldi returns a []interface{} rather than a
+// interface{} to be consistent with this package's Reduce implementation.
 //
 //  Illustration:
 //    aa: [1,2,3,4]
 //    acc:    1
 //    folder: acc + sourceNode
 //    Fold(aa, acc, folder) -> [11]
-func FoldI(aa SliceType, acc PrimitiveType, folder func(i int64, a, acc PrimitiveType) PrimitiveType) SliceType {
+func FoldI(aa []interface{}, acc interface{}, folder func(i int64, a, acc interface{}) interface{}) []interface{} {
 	accumulation := acc
 	for i, a := range aa {
 		accumulation = folder(int64(i), a, accumulation)
 	}
-	return SliceType{accumulation}
+	return []interface{}{accumulation}
 }
 
 // ForEach applies each element of the list to the given function.
 // ForEach will stop iterating if fn return false.
-func ForEach(aa SliceType, fn func(PrimitiveType) shared.Continue) {
+func ForEach(aa []interface{}, fn func(interface{}) shared.Continue) {
 	for _, a := range aa {
 		if !fn(a) {
 			return
@@ -289,7 +289,7 @@ func ForEach(aa SliceType, fn func(PrimitiveType) shared.Continue) {
 // Any goroutines monitoring the cancelPending closure can wind down their
 // activities as necessary. ForEachC will continue to block until all active
 // goroutines exit cleanly.
-func ForEachC(aa SliceType, c int, fn func(a PrimitiveType, cancelPending func() bool) shared.Continue) {
+func ForEachC(aa []interface{}, c int, fn func(a interface{}, cancelPending func() bool) shared.Continue) {
 	if c < 0 {
 		panic("ForEachC: The concurrency pool size (c) must be non-negative.")
 	}
@@ -310,7 +310,7 @@ func ForEachC(aa SliceType, c int, fn func(a PrimitiveType, cancelPending func()
 			break
 		}
 		sem <- struct{}{}
-		go func(a PrimitiveType) {
+		go func(a interface{}) {
 			defer func() { <-sem }()
 			if !fn(a, cancelPending) {
 				mu.Lock()
@@ -327,7 +327,7 @@ func ForEachC(aa SliceType, c int, fn func(a PrimitiveType, cancelPending func()
 // ForEachR applies each element of aa to a given function, scanning
 // through the slice in reverse order, starting from the end and working towards
 // the head.
-func ForEachR(aa SliceType, fn func(PrimitiveType) shared.Continue) {
+func ForEachR(aa []interface{}, fn func(interface{}) shared.Continue) {
 	for i := len(aa) - 1; i >= 0; i-- {
 		if !fn(aa[i]) {
 			return
@@ -336,11 +336,11 @@ func ForEachR(aa SliceType, fn func(PrimitiveType) shared.Continue) {
 }
 
 // Group consolidates like-items into groups according to the supplied grouper
-// function, and returns them as a SliceType2.
+// function, and returns them as a [][]interface{}.
 // The grouper function is expected to return a hash value which Group will use
 // to determine into which bucket each element wil be placed.
-func Group(aa SliceType, grouper func(PrimitiveType) int64) SliceType2 {
-	return GroupI(aa, func(_ int64, a PrimitiveType) int64 { return grouper(a) })
+func Group(aa []interface{}, grouper func(interface{}) int64) [][]interface{} {
+	return GroupI(aa, func(_ int64, a interface{}) int64 { return grouper(a) })
 }
 
 // GroupByTrait compares each item (a[i]) in the slice to every other item
@@ -363,10 +363,10 @@ func Group(aa SliceType, grouper func(PrimitiveType) int64) SliceType2 {
 //			 [cat],
 //			 [dogs, dog],
 //			]
-func GroupByTrait(aa SliceType, trait func(ai, an PrimitiveType) bool, equality Equality) SliceType2 {
-	establishedTraits := SliceType2{}
+func GroupByTrait(aa []interface{}, trait func(ai, an interface{}) bool, equality func(a, b interface{}) bool) [][]interface{} {
+	establishedTraits := [][]interface{}{}
 	for _, ai := range aa {
-		potentialTrait := SliceType{}
+		potentialTrait := []interface{}{}
 		for _, an := range aa {
 			if trait(ai, an) {
 				Append(&potentialTrait, an)
@@ -391,42 +391,42 @@ func GroupByTrait(aa SliceType, trait func(ai, an PrimitiveType) bool, equality 
 }
 
 // GroupI consolidates like-items into groups according to the supplied grouper
-// function, and returns them as a SliceType2.
+// function, and returns them as a [][]interface{}.
 // The grouper function is expected to return a hash value which Group will use
 // to determine into which bucket each element wil be placed. For convenience
 // the index value from aa is also passed into the grouper function.
-func GroupI(aa SliceType, grouper func(int64, PrimitiveType) int64) SliceType2 {
-	groupMap := map[int64]SliceType{}
+func GroupI(aa []interface{}, grouper func(int64, interface{}) int64) [][]interface{} {
+	groupMap := map[int64][]interface{}{}
 	for i, a := range aa {
 		hash := grouper(int64(i), a)
 		if _, exists := groupMap[hash]; exists {
 			groupMap[hash] = append(groupMap[hash], a)
 		} else {
-			groupMap[hash] = SliceType{a}
+			groupMap[hash] = []interface{}{a}
 		}
 	}
-	group := SliceType2{}
+	group := [][]interface{}{}
 	for _, bb := range groupMap {
 		group = append(group, bb)
 	}
 	return group
 }
 
-// Head returns a SliceType containing the first item from the aa. If aa is
-// empty, the resulting SliceType will be empty.
-func Head(aa SliceType) SliceType {
+// Head returns a []interface{} containing the first item from the aa. If aa is
+// empty, the resulting []interface{} will be empty.
+func Head(aa []interface{}) []interface{} {
 	if Empty(aa) {
-		return SliceType{}
+		return []interface{}{}
 	}
-	return SliceType{aa[0]}
+	return []interface{}{aa[0]}
 }
 
 // InsertAfter inserts an element in aa after the first element for which the
 // supplied test function returns true. If none of the tests return true, the
 // element is appended to the end of the aa.
-func InsertAfter(aa *SliceType, b PrimitiveType, test Test) {
+func InsertAfter(aa *[]interface{}, b interface{}, test func(interface{}) bool) {
 	var i int
-	var a PrimitiveType
+	var a interface{}
 	for i, a = range *aa {
 		if test(a) {
 			break
@@ -438,9 +438,9 @@ func InsertAfter(aa *SliceType, b PrimitiveType, test Test) {
 // InsertBefore inserts an element in aa before the first element for which the
 // supplied test function returns true. If none of the tests return true,
 // the element is inserted at the head of aa.
-func InsertBefore(aa *SliceType, b PrimitiveType, test Test) {
+func InsertBefore(aa *[]interface{}, b interface{}, test func(interface{}) bool) {
 	var i int
-	var a PrimitiveType
+	var a interface{}
 	for i, a = range *aa {
 		if test(a) {
 			break
@@ -453,7 +453,7 @@ func InsertBefore(aa *SliceType, b PrimitiveType, test Test) {
 // element originally at index i (and all subsequent elements) one position
 // to the right. If i < 0, the element is inserted at index 0. If
 // i >= len(aa), the value is appended to the end of aa.
-func InsertAt(aa *SliceType, a PrimitiveType, i int64) {
+func InsertAt(aa *[]interface{}, a interface{}, i int64) {
 	*aa = append(*aa, a)
 	if i >= int64(len(*aa)) {
 		return
@@ -466,13 +466,13 @@ func InsertAt(aa *SliceType, a PrimitiveType, i int64) {
 }
 
 // Intersection compares each element of aa to bb using the supplied equal
-// function, and returns a SliceType containing the elements which are common
+// function, and returns a []interface{} containing the elements which are common
 // to both aa and bb. Duplicates are removed in this operation.
-func Intersection(aa, bb SliceType, equality Equality) SliceType {
-	cc := SliceType{}
-	ForEach(aa, func(a PrimitiveType) shared.Continue {
-		ForEach(bb, func(b PrimitiveType) shared.Continue {
-			if equality(a, b) && !Any(cc, func(c PrimitiveType) bool { return equality(a, c) }) {
+func Intersection(aa, bb []interface{}, equality func(a, b interface{}) bool) []interface{} {
+	cc := []interface{}{}
+	ForEach(aa, func(a interface{}) shared.Continue {
+		ForEach(bb, func(b interface{}) shared.Continue {
+			if equality(a, b) && !Any(cc, func(c interface{}) bool { return equality(a, c) }) {
 				Append(&cc, a)
 			}
 			return shared.ContinueYes
@@ -488,7 +488,7 @@ func Intersection(aa, bb SliceType, equality Equality) SliceType {
 // Note: This operation does not enforce that each element be unique, thus, it
 // is possible for a subset to be larger than its superset. Use the Distinct
 // operations to enforce uniqueness, if that is necessary.
-func IsProperSubset(aa, bb SliceType, equality Equality) bool {
+func IsProperSubset(aa, bb []interface{}, equality func(a, b interface{}) bool) bool {
 	aa1, bb1 := removeIntersections(aa, bb, equality)
 	return len(aa1) == 0 && len(bb1) > 0
 }
@@ -499,7 +499,7 @@ func IsProperSubset(aa, bb SliceType, equality Equality) bool {
 // Note: This operation does not enforce that each element be unique, thus, it
 // is possible for a superset to be smaller than its subset. Use the Distinct
 // operations to enforce uniqueness, if that is necessary.
-func IsProperSuperset(aa, bb SliceType, equality Equality) bool {
+func IsProperSuperset(aa, bb []interface{}, equality func(a, b interface{}) bool) bool {
 	aa1, bb1 := removeIntersections(aa, bb, equality)
 	return len(aa1) > 0 && len(bb1) == 0
 }
@@ -509,7 +509,7 @@ func IsProperSuperset(aa, bb SliceType, equality Equality) bool {
 // Note: This operation does not enforce that each element be unique, thus, it
 // is possible for a subset to be larger than its superset. Use the Distinct
 // operations to enforce uniqueness, if that is necessary.
-func IsSubset(aa, bb SliceType, equality Equality) bool {
+func IsSubset(aa, bb []interface{}, equality func(a, b interface{}) bool) bool {
 	aa1, bb1 := removeIntersections(aa, bb, equality)
 	return len(aa1) == 0 && len(bb1) >= 0
 }
@@ -519,12 +519,12 @@ func IsSubset(aa, bb SliceType, equality Equality) bool {
 // Note: This operation does not enforce that each element be unique, thus, it
 // is possible for a superset to be smaller than its subset. Use the Distinct
 // operations to enforce uniqueness, if that is necessary.
-func IsSuperset(aa, bb SliceType, equality Equality) bool {
+func IsSuperset(aa, bb []interface{}, equality func(a, b interface{}) bool) bool {
 	aa1, bb1 := removeIntersections(aa, bb, equality)
 	return len(aa1) >= 0 && len(bb1) == 0
 }
 
-func removeIntersections(aa, bb SliceType, equality Equality) (SliceType, SliceType) {
+func removeIntersections(aa, bb []interface{}, equality func(a, b interface{}) bool) ([]interface{}, []interface{}) {
 	aa1 := Clone(aa)
 	bb1 := Clone(bb)
 	for ai := int64(len(aa1)) - 1; ai >= 0; ai-- {
@@ -542,24 +542,24 @@ func removeIntersections(aa, bb SliceType, equality Equality) (SliceType, SliceT
 	return aa1, bb1
 }
 
-// Item returns a SliceType containing the element at aa[i].
+// Item returns a []interface{} containing the element at aa[i].
 // If len(aa) == 0, i < 0, or, i >= len(aa), the resulting slice will be empty.
-func Item(aa SliceType, i int64) SliceType {
+func Item(aa []interface{}, i int64) []interface{} {
 	if Empty(aa) || i < 0 || i >= int64(len(aa)) {
-		return SliceType{}
+		return []interface{}{}
 	}
-	return SliceType{aa[i]}
+	return []interface{}{aa[i]}
 }
 
-// ItemFuzzy returns a SliceType containing the element at aa[i].
+// ItemFuzzy returns a []interface{} containing the element at aa[i].
 // If the supplied index is outside of the bounds of aa, ItemFuzzy will attempt
 // to retrieve the head or end element of aa according to the following rules:
-// If len(aa) == 0 an empty SliceType is returned.
+// If len(aa) == 0 an empty []interface{} is returned.
 // If i < 0, the head of aa is returned.
 // If i >= len(aa), the end of the aa is returned.
-func ItemFuzzy(aa SliceType, i int64) SliceType {
+func ItemFuzzy(aa []interface{}, i int64) []interface{} {
 	if Empty(aa) {
-		return SliceType{}
+		return []interface{}{}
 	}
 	if i < 0 {
 		return Head(aa)
@@ -567,15 +567,15 @@ func ItemFuzzy(aa SliceType, i int64) SliceType {
 	if i >= int64(len(aa)) {
 		return End(aa)
 	}
-	return SliceType{aa[i]}
+	return []interface{}{aa[i]}
 }
 
-// Last applies a test function to each element in aa, and returns a SliceType
+// Last applies a test function to each element in aa, and returns a []interface{}
 // containing the last element for which the test returned true. If no elements
-// pass the supplied test, the resulting SliceType will be empty.
-func Last(aa SliceType, test Test) SliceType {
-	bb := SliceType{}
-	ForEachR(aa, func(a PrimitiveType) shared.Continue {
+// pass the supplied test, the resulting []interface{} will be empty.
+func Last(aa []interface{}, test func(interface{}) bool) []interface{} {
+	bb := []interface{}{}
+	ForEachR(aa, func(a interface{}) shared.Continue {
 		if test(a) {
 			Append(&bb, a)
 			return shared.ContinueNo
@@ -586,12 +586,12 @@ func Last(aa SliceType, test Test) SliceType {
 }
 
 // Len returns the length of aa.
-func Len(aa SliceType) int {
+func Len(aa []interface{}) int {
 	return len(aa)
 }
 
 // Map applies a tranform to each element of the list.
-func Map(aa *SliceType, mapFn func(PrimitiveType) PrimitiveType) {
+func Map(aa *[]interface{}, mapFn func(interface{}) interface{}) {
 	for i, a := range *aa {
 		(*aa)[i] = mapFn(a)
 	}
@@ -599,7 +599,7 @@ func Map(aa *SliceType, mapFn func(PrimitiveType) PrimitiveType) {
 
 // None applies a test function to each element in aa, and returns true if
 // the test function returns false for all items.
-func None(aa SliceType, test Test) bool {
+func None(aa []interface{}, test func(interface{}) bool) bool {
 	return !Any(aa, test)
 }
 
@@ -612,11 +612,11 @@ func None(aa SliceType, test Test) bool {
 //     xform: func(a, b string) string { return a + b }
 //     init: V
 //     Pairwise(aa, init, xform) -> [VW, WX, XY, YZ]
-func Pairwise(aa SliceType, init PrimitiveType, xform func(a, b PrimitiveType) PrimitiveType) SliceType {
+func Pairwise(aa []interface{}, init interface{}, xform func(a, b interface{}) interface{}) []interface{} {
 	if Empty(aa) {
-		return SliceType{}
+		return []interface{}{}
 	}
-	bb := SliceType{}
+	bb := []interface{}{}
 	i := 0
 	a1, a2 := init, aa[i]
 	for {
@@ -631,13 +631,13 @@ func Pairwise(aa SliceType, init PrimitiveType, xform func(a, b PrimitiveType) P
 }
 
 // Partition applies a test function to each element in aa, and returns
-// a SliceType2 where SliceType2[0] contains a SliceType with all elements for
-// whom the test function returned true, and where SliceType2[1] contains a
-// SliceType with all elements for whom the test function returned false.
+// a [][]interface{} where [][]interface{}[0] contains a []interface{} with all elements for
+// whom the test function returned true, and where [][]interface{}[1] contains a
+// []interface{} with all elements for whom the test function returned false.
 //
 // Partition is a special case of the Group function.
-func Partition(aa SliceType, test Test) SliceType2 {
-	grouper := func(a PrimitiveType) int64 {
+func Partition(aa []interface{}, test func(interface{}) bool) [][]interface{} {
+	grouper := func(a interface{}) int64 {
 		if test(a) {
 			return 1
 		}
@@ -648,18 +648,18 @@ func Partition(aa SliceType, test Test) SliceType2 {
 
 // Permutable returns true if the number of permutations for aa exceeds
 // MaxInt64.
-func Permutable(aa SliceType) bool {
+func Permutable(aa []interface{}) bool {
 	return Permutations(aa).IsInt64()
 }
 
 // Permutations returns the number of permutations that exist given the current
 // number of items in the aa.
-func Permutations(aa SliceType) *big.Int {
+func Permutations(aa []interface{}) *big.Int {
 	var f big.Int
 	return f.MulRange(1, int64(len(aa)))
 }
 
-// Permute returns a SliceType2 which contains a SliceType for each permutation
+// Permute returns a [][]interface{} which contains a []interface{} for each permutation
 // of aa.
 //
 // This function will panic if it determines that the list is not permutable
@@ -673,21 +673,21 @@ func Permutations(aa SliceType) *big.Int {
 //
 // Permute is implemented using Heap's algorithm.
 // https://en.wikipedia.org/wiki/Heap%27s_algorithm
-func Permute(aa SliceType) SliceType2 {
+func Permute(aa []interface{}) [][]interface{} {
 	if Empty(aa) {
-		return SliceType2{}
+		return [][]interface{}{}
 	}
 
 	if !Permutable(aa) {
 		panic(fmt.Sprintf("The number of permutations for this list (%v) exceeeds MaxInt64.", Permutations(aa)))
 	}
 
-	acc := SliceType2{}
+	acc := [][]interface{}{}
 	generate(int64(len(aa)), aa, &acc)
 	return acc
 }
 
-func generate(n int64, aa SliceType, acc *SliceType2) {
+func generate(n int64, aa []interface{}, acc *[][]interface{}) {
 	if n == 1 {
 		*acc = append(*acc, aa)
 		return
@@ -706,31 +706,31 @@ func generate(n int64, aa SliceType, acc *SliceType2) {
 	generate(n-1, aa, acc)
 }
 
-// Pop returns a SliceType containing the head element from aa, and removes the
-// element from aa. If aa is empty, the returned SliceType will also be empty.
-func Pop(aa *SliceType) SliceType {
+// Pop returns a []interface{} containing the head element from aa, and removes the
+// element from aa. If aa is empty, the returned []interface{} will also be empty.
+func Pop(aa *[]interface{}) []interface{} {
 	bb := Head(*aa)
 	RemoveAt(aa, 0)
 	return bb
 }
 
 // Push places a prepends a new element at the head of aa.
-func Push(aa *SliceType, a PrimitiveType) {
+func Push(aa *[]interface{}, a interface{}) {
 	InsertAt(aa, a, 0)
 }
 
 // Reduce applies a reducer function to each element in aa, threading an
 // accumulator through each iteration. The resulting accumulation is returned
-// as an element of a new SliceType. If aa is empty, the resulting SliceType
+// as an element of a new []interface{}. If aa is empty, the resulting []interface{}
 // will also be empty.
 //
 //  Illustration:
 //    aa: [1,2,3,4]
 //    reducer: acc + sourceNode
 //    Fold(aa, reducer) -> [10]
-func Reduce(aa SliceType, reducer func(a, acc PrimitiveType) PrimitiveType) SliceType {
+func Reduce(aa []interface{}, reducer func(a, acc interface{}) interface{}) []interface{} {
 	if len(aa) == 0 {
-		return SliceType{}
+		return []interface{}{}
 	}
 	accumulator := aa[0]
 	if len(aa) > 1 {
@@ -738,12 +738,12 @@ func Reduce(aa SliceType, reducer func(a, acc PrimitiveType) PrimitiveType) Slic
 			accumulator = reducer(aa[i], accumulator)
 		}
 	}
-	return SliceType{accumulator}
+	return []interface{}{accumulator}
 }
 
 // Remove applies a test function to each item in the list, and removes any item
 // for which the test returns true.
-func Remove(aa *SliceType, test Test) {
+func Remove(aa *[]interface{}, test func(interface{}) bool) {
 	for i := int64(len(*aa)) - 1; i >= 0; i-- {
 		if test((*aa)[i]) {
 			RemoveAt(aa, i)
@@ -754,7 +754,7 @@ func Remove(aa *SliceType, test Test) {
 // RemoveAt removes the item at the specified index from the slice.
 // If len(aa) == 0, aa == nil, i < 0, or i >= len(aa), this function will do
 // nothing.
-func RemoveAt(aa *SliceType, i int64) {
+func RemoveAt(aa *[]interface{}, i int64) {
 	if i < 0 || i >= int64(len(*aa)) {
 		return
 	}
@@ -764,7 +764,7 @@ func RemoveAt(aa *SliceType, i int64) {
 }
 
 // Reverse reverses the order of aa.
-func Reverse(aa *SliceType) {
+func Reverse(aa *[]interface{}) {
 	for i := len(*aa)/2 - 1; i >= 0; i-- {
 		j := len(*aa) - 1 - i
 		(*aa)[i], (*aa)[j] = (*aa)[j], (*aa)[i]
@@ -777,7 +777,7 @@ func Reverse(aa *SliceType) {
 // "clear" the slice, meaning that the list remains allocated in memory.
 // To fully de-pointer the slice, and ensure it is available for garbage
 // collection as soon as possible, consider using Clear().
-func Skip(aa *SliceType, n int64) {
+func Skip(aa *[]interface{}, n int64) {
 	if len(*aa) == 0 {
 		return
 	}
@@ -788,17 +788,17 @@ func Skip(aa *SliceType, n int64) {
 // elements from aa while the test function returns true.
 // SkipWhile stops removing any further items from aa after the first test that
 // returns false.
-func SkipWhile(aa *SliceType, test Test) {
+func SkipWhile(aa *[]interface{}, test func(interface{}) bool) {
 	// find the first index where the test would evaluate to false and skip
 	// everything up to that index.
-	findTest := func(a PrimitiveType) bool { return !test(a) }
+	findTest := func(a interface{}) bool { return !test(a) }
 	Skip(aa, FindIndex(*aa, findTest))
 }
 
 // Sort sorts aa, using the supplied less function to determine order.
 // Sort is a convenience wrapper around the stdlib sort.SliceStable
 // function.
-func Sort(aa *SliceType, less func(a, b PrimitiveType) bool) {
+func Sort(aa *[]interface{}, less func(a, b interface{}) bool) {
 	lessI := func(i, j int) bool {
 		return less((*aa)[i], (*aa)[j])
 	}
@@ -806,56 +806,56 @@ func Sort(aa *SliceType, less func(a, b PrimitiveType) bool) {
 }
 
 // SplitAfter finds the first element b for which a test function returns true,
-// and returns a SliceType2 where SliceType2[0] contains the first half of aa
-// and SliceType2[1] contains the second half of aa. Element b will be included
-// in SliceType2[0]. If the no element can be found for which the test returns
-// true, SliceType2[0] will contain aa, and SliceType2[1] will be empty.
-func SplitAfter(aa SliceType, test Test) SliceType2 {
+// and returns a [][]interface{} where [][]interface{}[0] contains the first half of aa
+// and [][]interface{}[1] contains the second half of aa. Element b will be included
+// in [][]interface{}[0]. If the no element can be found for which the test returns
+// true, [][]interface{}[0] will contain aa, and [][]interface{}[1] will be empty.
+func SplitAfter(aa []interface{}, test func(interface{}) bool) [][]interface{} {
 	return SplitAt(aa, FindIndex(aa, test)+1)
 }
 
-// SplitAt splits aa at index i, and returns a SliceType2 which contains the
-// two split halves of aa. aa[i] will be included in SliceType2[1].
-// If i < 0, all of aa will be placed in SliceType2[0] and SliceType2[1] will
+// SplitAt splits aa at index i, and returns a [][]interface{} which contains the
+// two split halves of aa. aa[i] will be included in [][]interface{}[1].
+// If i < 0, all of aa will be placed in [][]interface{}[0] and [][]interface{}[1] will
 // be empty. Conversly, if i >= len(aa), all of aa will be placed in
-// SliceType2[1] and SliceType2[0] will be empty. If aa is nil or empty,
-// SliceType2 will contain two empty slices.
-func SplitAt(aa SliceType, i int64) SliceType2 {
+// [][]interface{}[1] and [][]interface{}[0] will be empty. If aa is nil or empty,
+// [][]interface{} will contain two empty slices.
+func SplitAt(aa []interface{}, i int64) [][]interface{} {
 	if len(aa) == 0 {
-		return SliceType2{
-			SliceType{},
-			SliceType{},
+		return [][]interface{}{
+			[]interface{}{},
+			[]interface{}{},
 		}
 	}
 	if i < 0 {
 		i = 0
 	}
-	return SliceType2{
+	return [][]interface{}{
 		aa[:i],
 		aa[i:],
 	}
 }
 
 // SplitBefore finds the first element b for which a test function returns true,
-// and returns a SliceType2 where SliceType2[0] contains the first half of aa
-// and SliceType2[1] contains the second half of aa. Element b will be included
-// in SliceType2[1]
-func SplitBefore(aa SliceType, test Test) SliceType2 {
+// and returns a [][]interface{} where [][]interface{}[0] contains the first half of aa
+// and [][]interface{}[1] contains the second half of aa. Element b will be included
+// in [][]interface{}[1]
+func SplitBefore(aa []interface{}, test func(interface{}) bool) [][]interface{} {
 	return SplitAt(aa, FindIndex(aa, test))
 }
 
 // String returns a string representation of aa, suitable for use
 // with fmt.Print, or other similar functions. String should be regarded as
 // informational, and should not be relied upon to formally serialize a
-// SliceType.
-func String(aa SliceType) string {
+// []interface{}.
+func String(aa []interface{}) string {
 	jsonBytes, _ := json.Marshal(aa)
 	return string(jsonBytes)
 }
 
 // SwapIndex swaps the elements at the specified indices. If either i or j is
 // out of the bounds of aa, SwapIndex does nothing.
-func SwapIndex(aa SliceType, i, j int64) {
+func SwapIndex(aa []interface{}, i, j int64) {
 	l := int64(len(aa))
 	if i < 0 || j < 0 || i >= l || j >= l {
 		return
@@ -865,14 +865,14 @@ func SwapIndex(aa SliceType, i, j int64) {
 
 // Tail removes the current head element from aa.
 // This equivelant to RemoveAt(aa, 0)
-func Tail(aa *SliceType) {
+func Tail(aa *[]interface{}) {
 	RemoveAt(aa, 0)
 }
 
 // Take retains the first n elements of aa, and removes all remaining elements
 // from the slice. If n < 0 or n >= len(aa), Take does nothing. If n == 0, all
 // elements are removed from the slice (but the slice is not de-pointered).
-func Take(aa *SliceType, n int64) {
+func Take(aa *[]interface{}, n int64) {
 	if len(*aa) == 0 || n < 0 || n >= int64(len(*aa)) {
 		return
 	}
@@ -883,8 +883,8 @@ func Take(aa *SliceType, n int64) {
 // elements of aa so long as the test function returns true. As soon as the test
 // function returns false, take stops evaluating any further, and abandons the
 // rest of the slice.
-func TakeWhile(aa *SliceType, test Test) {
-	find := func(a PrimitiveType) bool {
+func TakeWhile(aa *[]interface{}, test func(interface{}) bool) {
+	find := func(a interface{}) bool {
 		return !test(a)
 	}
 	Take(aa, FindIndex(*aa, find))
@@ -893,15 +893,15 @@ func TakeWhile(aa *SliceType, test Test) {
 // Union appends slice bb to slice aa.
 // Note: This operation does not remove any duplicates from the slice, as a
 // similar operation would when operating on a formal Set.
-func Union(aa *SliceType, bb SliceType) {
+func Union(aa *[]interface{}, bb []interface{}) {
 	Append(aa, bb...)
 }
 
-// Unzip splits aa into a SliceType2, such that SliceType2[0] contains all odd
-// indices from aa, and SliceType2[1] contains all even indices from aa.
-func Unzip(aa SliceType) SliceType2 {
-	odds := SliceType{}
-	evens := SliceType{}
+// Unzip splits aa into a [][]interface{}, such that [][]interface{}[0] contains all odd
+// indices from aa, and [][]interface{}[1] contains all even indices from aa.
+func Unzip(aa []interface{}) [][]interface{} {
+	odds := []interface{}{}
+	evens := []interface{}{}
 	for i, a := range aa {
 		if i%2 != 0 {
 			odds = append(odds, a)
@@ -909,16 +909,16 @@ func Unzip(aa SliceType) SliceType2 {
 			evens = append(evens, a)
 		}
 	}
-	return SliceType2{odds, evens}
+	return [][]interface{}{odds, evens}
 }
 
 // WindowCentered applies a windowing function across the aa, using a centered
 // window of the specified size.
-func WindowCentered(aa SliceType, windowSize int64, windowFn func(window SliceType) PrimitiveType) SliceType {
-	cc := SliceType{}
+func WindowCentered(aa []interface{}, windowSize int64, windowFn func(window []interface{}) interface{}) []interface{} {
+	cc := []interface{}{}
 	fullWindowReached := false
 	for i := int64(0); i < int64(len(aa)); i++ {
-		currentWindow := SliceType{}
+		currentWindow := []interface{}{}
 		a := aa[i]
 		for n := int64(1); n <= windowSize; n++ {
 			Append(&currentWindow, a)
@@ -944,19 +944,19 @@ func WindowCentered(aa SliceType, windowSize int64, windowFn func(window SliceTy
 		frontTrim = trimSize / 2
 		backTrim = frontTrim + 1
 	}
-	dd := SliceType(SplitAt(cc, frontTrim)[1])
+	dd := []interface{}(SplitAt(cc, frontTrim)[1])
 	Reverse(&dd)
-	ee := SliceType(SplitAt(dd, backTrim)[1])
+	ee := []interface{}(SplitAt(dd, backTrim)[1])
 	Reverse(&ee)
 	return ee
 }
 
 // WindowLeft applies a windowing function across aa, using a left-sided window
 // of the specified size.
-func WindowLeft(aa SliceType, windowSize int64, windowFn func(window SliceType) PrimitiveType) SliceType {
-	bb := SliceType{}
+func WindowLeft(aa []interface{}, windowSize int64, windowFn func(window []interface{}) interface{}) []interface{} {
+	bb := []interface{}{}
 	for i := int64(0); i < int64(len(aa)); i++ {
-		currentWindow := SliceType{}
+		currentWindow := []interface{}{}
 		for n := int64(0); n < windowSize; n++ {
 			if i+n >= int64(len(aa)) {
 				break
@@ -970,14 +970,14 @@ func WindowLeft(aa SliceType, windowSize int64, windowFn func(window SliceType) 
 
 // WindowRight applies a windowing function across aa, using a right-sided
 // window of the specified size.
-func WindowRight(aa SliceType, windowSize int64, windowFn func(window SliceType) PrimitiveType) SliceType {
+func WindowRight(aa []interface{}, windowSize int64, windowFn func(window []interface{}) interface{}) []interface{} {
 	aa1 := Clone(aa)
 	defer Clear(&aa1)
 
 	Reverse(&aa1)
-	bb := SliceType{}
+	bb := []interface{}{}
 	for i := int64(0); i < int64(len(aa1)); i++ {
-		currentWindow := SliceType{}
+		currentWindow := []interface{}{}
 		for n := int64(0); n < windowSize; n++ {
 			if i+n >= int64(len(aa1)) {
 				break
@@ -992,13 +992,13 @@ func WindowRight(aa SliceType, windowSize int64, windowFn func(window SliceType)
 }
 
 // Zip interleaves the contents of aa with bb, and returns the result as a
-// new SliceType. aa[0] is evaluated first. Thus if aa and bb are the same
+// new []interface{}. aa[0] is evaluated first. Thus if aa and bb are the same
 // length, slice aa will occupy the odd indices of the result slice, and bb
 // will occupy the even indices of the result slice. If aa and bb are not
 // the same length, Zip will interleave as many values as possible, and will
 // simply append the remaining values for the longer of the two slices to the
 // end of the result slice.
-func Zip(aa, bb SliceType) SliceType {
+func Zip(aa, bb []interface{}) []interface{} {
 	if len(aa) == 0 {
 		return bb
 	}
@@ -1006,7 +1006,7 @@ func Zip(aa, bb SliceType) SliceType {
 		return aa
 	}
 
-	cc := SliceType{}
+	cc := []interface{}{}
 	aaEndReached, bbEndReached := false, false
 	for i := 0; aaEndReached == false && bbEndReached == false; i++ {
 		if i >= len(aa) {
