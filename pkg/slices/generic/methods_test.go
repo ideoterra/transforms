@@ -6,6 +6,7 @@ import (
 
 	"github.com/jecolasurdo/transforms/pkg/slices/generic"
 	"github.com/jecolasurdo/transforms/pkg/slices/shared"
+	"github.com/stretchr/testify/assert"
 )
 
 // As a rule, all methods in this package (methods.go) are just wrappers around
@@ -242,4 +243,66 @@ func TestBinaryValueValueHappyPaths(t *testing.T) {
 		}
 		t.Run(fmt.Sprintf("BinaryValueValue test %v", i+1), test)
 	}
+}
+
+func TestMutatingMethods(t *testing.T) {
+	// The methods covered by this test are be expected to mutate their
+	// receiver value. Core behavior of each method is covered in the function
+	// tests (see function_test.go), so these tests are fairly cursory, in that
+	// they only seek to verify that the value has changed after an operation,
+	// but don't go so far as to check how the value changed.
+
+	var equality = func(a, b interface{}) bool {
+		return a.(int) == b.(int)
+	}
+
+	var condition = func(a interface{}) bool {
+		return a.(int) == 1
+	}
+
+	var sliceForUnionTest = []interface{}{1}
+
+	methodCalls := []func(*generic.SliceType){
+		func(aa *generic.SliceType) { aa.Append(1) },
+		func(aa *generic.SliceType) { aa.Clear() },
+		func(aa *generic.SliceType) { aa.Dequeue() },
+		func(aa *generic.SliceType) { aa.Distinct(equality) },
+		func(aa *generic.SliceType) { aa.Enqueue(1) },
+		func(aa *generic.SliceType) { aa.Filter(condition) },
+		func(aa *generic.SliceType) { aa.InsertAfter(1, condition) },
+		func(aa *generic.SliceType) { aa.InsertBefore(1, condition) },
+		func(aa *generic.SliceType) { aa.InsertAt(1, 0) },
+		func(aa *generic.SliceType) { aa.Map(func(a interface{}) interface{} { return a.(int) * 2 }) },
+		func(aa *generic.SliceType) { aa.Pop() },
+		func(aa *generic.SliceType) { aa.Push(1) },
+		func(aa *generic.SliceType) { aa.Remove(condition) },
+		func(aa *generic.SliceType) { aa.RemoveAt(1) },
+		func(aa *generic.SliceType) { aa.Reverse() },
+		func(aa *generic.SliceType) { aa.Skip(1) },
+		func(aa *generic.SliceType) { aa.SkipWhile(condition) },
+		func(aa *generic.SliceType) { aa.Sort(func(a, b interface{}) bool { return a.(int) < b.(int) }) },
+		func(aa *generic.SliceType) { aa.SwapIndex(0, 2) },
+		func(aa *generic.SliceType) { aa.Tail() },
+		func(aa *generic.SliceType) { aa.Take(1) },
+		func(aa *generic.SliceType) { aa.TakeWhile(condition) },
+		func(aa *generic.SliceType) { aa.Union(&sliceForUnionTest) },
+	}
+	for i, methodCall := range methodCalls {
+		test := func(t *testing.T) {
+			aa := generic.SliceType{1, 1, 2, 1}
+			methodCall(&aa)
+			bb := generic.SliceType{1, 1, 2, 1}
+			assert.NotEqual(t, aa.String(), bb.String())
+		}
+		t.Run(fmt.Sprintf("Mutation test %v", i+1), test)
+	}
+}
+
+func TestFoo(t *testing.T) {
+	aa := &generic.SliceType{1, 2, 3}
+	aa.
+		Append(4).
+		Map(func(a interface{}) interface{} { return a.(int) * 2 })
+	bb := generic.SliceType{2, 4, 6, 8}
+	assert.ElementsMatch(t, *aa, bb)
 }

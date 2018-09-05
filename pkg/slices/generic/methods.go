@@ -46,7 +46,6 @@ func (aa *SliceType) Any(test func(interface{}) bool) bool {
 func (aa *SliceType) Append(values ...interface{}) genericiface.GenericSliceIface {
 	Append(boxP(aa), values...)
 	return aa
-
 }
 
 // Clear removes all of the items from the slice, setting the slice to nil
@@ -391,7 +390,6 @@ func (aa *SliceType) Push(a interface{}) genericiface.GenericSliceIface {
 // will also be empty.
 func (aa *SliceType) Reduce(reducer func(a, acc interface{}) interface{}) genericiface.GenericSliceIface {
 	return unbox(Reduce(box(*aa), reducer))
-
 }
 
 // Remove applies a test function to each item in the list, and removes any item
