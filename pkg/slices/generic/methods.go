@@ -3,6 +3,7 @@ package generic
 import (
 	"math/big"
 
+	"github.com/jecolasurdo/transforms/pkg/slices/closures"
 	"github.com/jecolasurdo/transforms/pkg/slices/generic/iface"
 	"github.com/jecolasurdo/transforms/pkg/slices/shared"
 )
@@ -25,21 +26,21 @@ func boxP(aa *SliceType) *[]interface{} {
 	return (*[]interface{})(aa)
 }
 
-// All applies a test function to each element in the slice, and returns true if
-// the test function returns true for all items in the slice.
-func (aa *SliceType) All(test func(interface{}) bool) bool {
-	return All(*aa, test)
+// All applies a condition function to each element in the slice, and returns true if
+// the condition function returns true for all items in the slice.
+func (aa *SliceType) All(condition closures.ConditionFn) bool {
+	return All(*aa, condition)
 }
 
-// Any applies a test function to each element of the
-// slice and returns true if the test function returns true for at least one
+// Any applies a condition function to each element of the
+// slice and returns true if the condition function returns true for at least one
 // item in the list.
 //
 // Any does not require that the source slice be sorted, and merely scans
-// the slice, returning as soon as any element passes the supplied test. For
+// the slice, returning as soon as any element passes the supplied condition. For
 // a binary search, consider using sort.Search from the standard library.
-func (aa *SliceType) Any(test func(interface{}) bool) bool {
-	return Any(box(*aa), test)
+func (aa *SliceType) Any(condition closures.ConditionFn) bool {
+	return Any(box(*aa), condition)
 }
 
 //Append adds the supplied values to the end of the slice.
@@ -67,10 +68,10 @@ func (aa *SliceType) Collect(bb []interface{}, collector func(a, b interface{}) 
 	return unbox(Collect(box(*aa), bb, collector))
 }
 
-// Count applies the supplied test function to each element of the slice,
-// and returns the count of items for which the test returns true.
-func (aa *SliceType) Count(test func(interface{}) bool) int64 {
-	return Count(*aa, test)
+// Count applies the supplied condition function to each element of the slice,
+// and returns the count of items for which the condition returns true.
+func (aa *SliceType) Count(condition closures.ConditionFn) int64 {
+	return Count(*aa, condition)
 }
 
 // Dequeue returns a genericiface.GenericSliceIface containing the head item from the source slice.
@@ -86,14 +87,14 @@ func (aa *SliceType) Dequeue() genericiface.GenericSliceIface {
 // The elements in the slice that results from this transform may not be
 // distinct. Distinct values from aa are listed ahead of those from bb in the
 // resulting slice.
-func (aa *SliceType) Difference(bb []interface{}, equality func(a, b interface{}) bool) genericiface.GenericSliceIface {
+func (aa *SliceType) Difference(bb []interface{}, equality closures.EqualityFn) genericiface.GenericSliceIface {
 	return unbox(Difference(box(*aa), bb, equality))
 
 }
 
 // Distinct removes all duplicates from the slice, using the supplied equality
 // function to determine equality.
-func (aa *SliceType) Distinct(equality func(a, b interface{}) bool) genericiface.GenericSliceIface {
+func (aa *SliceType) Distinct(equality closures.EqualityFn) genericiface.GenericSliceIface {
 	Distinct(boxP(aa), equality)
 	return aa
 }
@@ -121,23 +122,23 @@ func (aa *SliceType) Expand(expansion func(interface{}) []interface{}) genericif
 	return unbox(Expand(box(*aa), expansion))
 }
 
-// Filter removes all items from the slice for which the supplied test function
+// Filter removes all items from the slice for which the supplied condition function
 // returns true.
-func (aa *SliceType) Filter(test func(interface{}) bool) genericiface.GenericSliceIface {
-	Filter(boxP(aa), test)
+func (aa *SliceType) Filter(condition closures.ConditionFn) genericiface.GenericSliceIface {
+	Filter(boxP(aa), condition)
 	return aa
 }
 
 // FindIndex returns the index of the first element in the slice for which the
-// supplied test function returns true. If no matches are found, -1 is returned.
-func (aa *SliceType) FindIndex(test func(interface{}) bool) int64 {
-	return FindIndex(*aa, test)
+// supplied condition function returns true. If no matches are found, -1 is returned.
+func (aa *SliceType) FindIndex(condition closures.ConditionFn) int64 {
+	return FindIndex(*aa, condition)
 }
 
 // First returns a genericiface.GenericSliceIface containing the first element in the slice for which
-// the supplied test function returns true.
-func (aa *SliceType) First(test func(interface{}) bool) genericiface.GenericSliceIface {
-	return unbox(First(box(*aa), test))
+// the supplied condition function returns true.
+func (aa *SliceType) First(condition closures.ConditionFn) genericiface.GenericSliceIface {
+	return unbox(First(box(*aa), condition))
 
 }
 
@@ -215,18 +216,18 @@ func (aa *SliceType) Head() genericiface.GenericSliceIface {
 }
 
 // InsertAfter inserts an element in aa after the first element for which the
-// supplied test function returns true. If none of the tests return true, the
+// supplied condition function returns true. If none of the tests return true, the
 // element is appended to the end of the aa.
-func (aa *SliceType) InsertAfter(b interface{}, test func(interface{}) bool) genericiface.GenericSliceIface {
-	InsertAfter(boxP(aa), b, test)
+func (aa *SliceType) InsertAfter(b interface{}, condition closures.ConditionFn) genericiface.GenericSliceIface {
+	InsertAfter(boxP(aa), b, condition)
 	return aa
 }
 
 // InsertBefore inserts an element in aa before the first element for which the
-// supplied test function returns true. If none of the tests return true,
+// supplied condition function returns true. If none of the tests return true,
 // the element is inserted at the head of aa.
-func (aa *SliceType) InsertBefore(b interface{}, test func(interface{}) bool) genericiface.GenericSliceIface {
-	InsertBefore(boxP(aa), b, test)
+func (aa *SliceType) InsertBefore(b interface{}, condition closures.ConditionFn) genericiface.GenericSliceIface {
+	InsertBefore(boxP(aa), b, condition)
 	return aa
 }
 
@@ -242,7 +243,7 @@ func (aa *SliceType) InsertAt(a interface{}, i int64) genericiface.GenericSliceI
 // Intersection compares each element of aa to bb using the supplied equal
 // function, and returns a genericiface.GenericSliceIface containing the elements which are common
 // to both aa and bb. Duplicates are removed in this operation.
-func (aa *SliceType) Intersection(bb []interface{}, equality func(a, b interface{}) bool) genericiface.GenericSliceIface {
+func (aa *SliceType) Intersection(bb []interface{}, equality closures.EqualityFn) genericiface.GenericSliceIface {
 	return unbox(Intersection(box(*aa), bb, equality))
 }
 
@@ -252,7 +253,7 @@ func (aa *SliceType) Intersection(bb []interface{}, equality func(a, b interface
 // Note: This operation does not enforce that each element be unique, thus, it
 // is possible for a subset to be larger than its superset. Use the Distinct
 // operations to enforce uniqueness, if that is necessary.
-func (aa *SliceType) IsProperSubset(bb []interface{}, equality func(a, b interface{}) bool) bool {
+func (aa *SliceType) IsProperSubset(bb []interface{}, equality closures.EqualityFn) bool {
 	return IsProperSubset(box(*aa), bb, equality)
 }
 
@@ -262,7 +263,7 @@ func (aa *SliceType) IsProperSubset(bb []interface{}, equality func(a, b interfa
 // Note: This operation does not enforce that each element be unique, thus, it
 // is possible for a superset to be smaller than its subset. Use the Distinct
 // operations to enforce uniqueness, if that is necessary.
-func (aa *SliceType) IsProperSuperset(bb []interface{}, equality func(a, b interface{}) bool) bool {
+func (aa *SliceType) IsProperSuperset(bb []interface{}, equality closures.EqualityFn) bool {
 	return IsProperSuperset(box(*aa), bb, equality)
 }
 
@@ -271,7 +272,7 @@ func (aa *SliceType) IsProperSuperset(bb []interface{}, equality func(a, b inter
 // Note: This operation does not enforce that each element be unique, thus, it
 // is possible for a subset to be larger than its superset. Use the Distinct
 // operations to enforce uniqueness, if that is necessary.
-func (aa *SliceType) IsSubset(bb []interface{}, equality func(a, b interface{}) bool) bool {
+func (aa *SliceType) IsSubset(bb []interface{}, equality closures.EqualityFn) bool {
 	return IsSubset(box(*aa), bb, equality)
 }
 
@@ -280,7 +281,7 @@ func (aa *SliceType) IsSubset(bb []interface{}, equality func(a, b interface{}) 
 // Note: This operation does not enforce that each element be unique, thus, it
 // is possible for a superset to be smaller than its subset. Use the Distinct
 // operations to enforce uniqueness, if that is necessary.
-func (aa *SliceType) IsSuperset(bb []interface{}, equality func(a, b interface{}) bool) bool {
+func (aa *SliceType) IsSuperset(bb []interface{}, equality closures.EqualityFn) bool {
 	return IsSuperset(box(*aa), bb, equality)
 }
 
@@ -300,11 +301,11 @@ func (aa *SliceType) ItemFuzzy(i int64) genericiface.GenericSliceIface {
 	return unbox(ItemFuzzy(box(*aa), i))
 }
 
-// Last applies a test function to each element in and returns a genericiface.GenericSliceIface
-// containing the last element for which the test returned true. If no elements
-// pass the supplied test, the resulting genericiface.GenericSliceIface will be empty.
-func (aa *SliceType) Last(test func(interface{}) bool) genericiface.GenericSliceIface {
-	return unbox(Last(box(*aa), test))
+// Last applies a condition function to each element in and returns a genericiface.GenericSliceIface
+// containing the last element for which the condition returned true. If no elements
+// pass the supplied condition, the resulting genericiface.GenericSliceIface will be empty.
+func (aa *SliceType) Last(condition closures.ConditionFn) genericiface.GenericSliceIface {
+	return unbox(Last(box(*aa), condition))
 }
 
 // Len returns the length of aa.
@@ -318,10 +319,10 @@ func (aa *SliceType) Map(mapFn func(interface{}) interface{}) genericiface.Gener
 	return aa
 }
 
-// None applies a test function to each element in and returns true if
-// the test function returns false for all items.
-func (aa *SliceType) None(test func(interface{}) bool) bool {
-	return None(box(*aa), test)
+// None applies a condition function to each element in and returns true if
+// the condition function returns false for all items.
+func (aa *SliceType) None(condition closures.ConditionFn) bool {
+	return None(box(*aa), condition)
 }
 
 // Pairwise threads a transform function through passing to the transform
@@ -331,14 +332,14 @@ func (aa *SliceType) Pairwise(init interface{}, xform func(a, b interface{}) int
 	return unbox(Pairwise(box(*aa), init, xform))
 }
 
-// Partition applies a test function to each element in and returns
+// Partition applies a condition function to each element in and returns
 // a genericiface.GenericSlice2Iface where genericiface.GenericSlice2Iface[0] contains a genericiface.GenericSliceIface with all elements for
-// whom the test function returned true, and where genericiface.GenericSlice2Iface[1] contains a
-// genericiface.GenericSliceIface with all elements for whom the test function returned false.
+// whom the condition function returned true, and where genericiface.GenericSlice2Iface[1] contains a
+// genericiface.GenericSliceIface with all elements for whom the condition function returned false.
 //
 // Partition is a special case of the Group function.
-func (aa *SliceType) Partition(test func(interface{}) bool) genericiface.GenericSlice2Iface {
-	return unbox2(Partition(box(*aa), test))
+func (aa *SliceType) Partition(condition closures.ConditionFn) genericiface.GenericSlice2Iface {
+	return unbox2(Partition(box(*aa), condition))
 }
 
 // Permutable returns true if the number of permutations for aa exceeds
@@ -392,10 +393,10 @@ func (aa *SliceType) Reduce(reducer func(a, acc interface{}) interface{}) generi
 	return unbox(Reduce(box(*aa), reducer))
 }
 
-// Remove applies a test function to each item in the list, and removes any item
-// for which the test returns true.
-func (aa *SliceType) Remove(test func(interface{}) bool) genericiface.GenericSliceIface {
-	Remove(boxP(aa), test)
+// Remove applies a condition function to each item in the list, and removes any item
+// for which the condition returns true.
+func (aa *SliceType) Remove(condition closures.ConditionFn) genericiface.GenericSliceIface {
+	Remove(boxP(aa), condition)
 	return aa
 }
 
@@ -425,11 +426,11 @@ func (aa *SliceType) Skip(n int64) genericiface.GenericSliceIface {
 }
 
 // SkipWhile scans through aa starting at the head, and removes all
-// elements from aa while the test function returns true.
-// SkipWhile stops removing any further items from aa after the first test that
+// elements from aa while the condition function returns true.
+// SkipWhile stops removing any further items from aa after the first condition that
 // returns false.
-func (aa *SliceType) SkipWhile(test func(interface{}) bool) genericiface.GenericSliceIface {
-	SkipWhile(boxP(aa), test)
+func (aa *SliceType) SkipWhile(condition closures.ConditionFn) genericiface.GenericSliceIface {
+	SkipWhile(boxP(aa), condition)
 	return aa
 }
 
@@ -441,13 +442,13 @@ func (aa *SliceType) Sort(less func(a, b interface{}) bool) genericiface.Generic
 	return aa
 }
 
-// SplitAfter finds the first element b for which a test function returns true,
+// SplitAfter finds the first element b for which a condition function returns true,
 // and returns a genericiface.GenericSlice2Iface where genericiface.GenericSlice2Iface[0] contains the first half of aa
 // and genericiface.GenericSlice2Iface[1] contains the second half of aa. Element b will be included
-// in genericiface.GenericSlice2Iface[0]. If the no element can be found for which the test returns
+// in genericiface.GenericSlice2Iface[0]. If the no element can be found for which the condition returns
 // true, genericiface.GenericSlice2Iface[0] will contain and genericiface.GenericSlice2Iface[1] will be empty.
-func (aa *SliceType) SplitAfter(test func(interface{}) bool) genericiface.GenericSlice2Iface {
-	return unbox2(SplitAfter(box(*aa), test))
+func (aa *SliceType) SplitAfter(condition closures.ConditionFn) genericiface.GenericSlice2Iface {
+	return unbox2(SplitAfter(box(*aa), condition))
 }
 
 // SplitAt splits aa at index i, and returns a genericiface.GenericSlice2Iface which contains the
@@ -460,12 +461,12 @@ func (aa *SliceType) SplitAt(i int64) genericiface.GenericSlice2Iface {
 	return unbox2(SplitAt(box(*aa), i))
 }
 
-// SplitBefore finds the first element b for which a test function returns true,
+// SplitBefore finds the first element b for which a condition function returns true,
 // and returns a genericiface.GenericSlice2Iface where genericiface.GenericSlice2Iface[0] contains the first half of aa
 // and genericiface.GenericSlice2Iface[1] contains the second half of aa. Element b will be included
 // in genericiface.GenericSlice2Iface[1]
-func (aa *SliceType) SplitBefore(test func(interface{}) bool) genericiface.GenericSlice2Iface {
-	return unbox2(SplitBefore(box(*aa), test))
+func (aa *SliceType) SplitBefore(condition closures.ConditionFn) genericiface.GenericSlice2Iface {
+	return unbox2(SplitBefore(box(*aa), condition))
 }
 
 // String returns a string representation of suitable for use
@@ -498,12 +499,12 @@ func (aa *SliceType) Take(n int64) genericiface.GenericSliceIface {
 	return aa
 }
 
-// TakeWhile applies a test function to each element in and retains all
-// elements of aa so long as the test function returns true. As soon as the test
+// TakeWhile applies a condition function to each element in and retains all
+// elements of aa so long as the condition function returns true. As soon as the condition
 // function returns false, take stops evaluating any further, and abandons the
 // rest of the slice.
-func (aa *SliceType) TakeWhile(test func(interface{}) bool) genericiface.GenericSliceIface {
-	TakeWhile(boxP(aa), test)
+func (aa *SliceType) TakeWhile(condition closures.ConditionFn) genericiface.GenericSliceIface {
+	TakeWhile(boxP(aa), condition)
 	return aa
 }
 

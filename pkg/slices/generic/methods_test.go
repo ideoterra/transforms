@@ -5,6 +5,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/jecolasurdo/transforms/pkg/slices/closures"
 	"github.com/jecolasurdo/transforms/pkg/slices/generic"
 	"github.com/jecolasurdo/transforms/pkg/slices/shared"
 	"github.com/stretchr/testify/assert"
@@ -12,7 +13,7 @@ import (
 
 // As a rule, all methods in this package (methods.go) are just wrappers around
 // a set of base functions (see functions.go). We want to keep a high level of
-// test coverage while minimizing test-effort, so method sets are tested in bulk
+// condition coverage while minimizing condition-effort, so method sets are tested in bulk
 // where possible for simple happy-path operation.
 //
 // Additional tests are added as necessary, but the bulk of the deeper testing
@@ -38,10 +39,10 @@ func TestNullaryMethodHappyPaths(t *testing.T) {
 	}
 
 	for i, methodCall := range methodCalls {
-		test := func(t *testing.T) {
+		condition := func(t *testing.T) {
 			methodCall(generic.SliceType{})
 		}
-		t.Run(fmt.Sprintf("Nullary test %v", i+1), test)
+		t.Run(fmt.Sprintf("Nullary condition %v", i+1), condition)
 	}
 }
 
@@ -58,10 +59,10 @@ func TestUnaryValueMethodHappyPaths(t *testing.T) {
 	}
 
 	for i, methodCall := range methodCalls {
-		test := func(t *testing.T) {
+		condition := func(t *testing.T) {
 			methodCall(generic.SliceType{})
 		}
-		t.Run(fmt.Sprintf("UnaryValue test %v", i+1), test)
+		t.Run(fmt.Sprintf("UnaryValue condition %v", i+1), condition)
 	}
 }
 
@@ -72,38 +73,38 @@ func TestUnaryPrimitiveMethodHappyPaths(t *testing.T) {
 		func(aa generic.SliceType, b interface{}) { aa.Push(b) },
 	}
 	for i, methodCall := range methodCalls {
-		test := func(t *testing.T) {
+		condition := func(t *testing.T) {
 			methodCall(generic.SliceType{}, primitiveZero)
 		}
-		t.Run(fmt.Sprintf("UnaryPrimitive test %v", i+1), test)
+		t.Run(fmt.Sprintf("UnaryPrimitive condition %v", i+1), condition)
 	}
 }
 
 func TestUnaryTestMethodHappyPaths(t *testing.T) {
-	methodCalls := []func(generic.SliceType, generic.Test){
-		func(aa generic.SliceType, test generic.Test) { aa.All(test) },
-		func(aa generic.SliceType, test generic.Test) { aa.Any(test) },
-		func(aa generic.SliceType, test generic.Test) { aa.Count(test) },
-		func(aa generic.SliceType, test generic.Test) { aa.Filter(test) },
-		func(aa generic.SliceType, test generic.Test) { aa.FindIndex(test) },
-		func(aa generic.SliceType, test generic.Test) { aa.First(test) },
-		func(aa generic.SliceType, test generic.Test) { aa.Last(test) },
-		func(aa generic.SliceType, test generic.Test) { aa.None(test) },
-		func(aa generic.SliceType, test generic.Test) { aa.Partition(test) },
-		func(aa generic.SliceType, test generic.Test) { aa.Remove(test) },
-		func(aa generic.SliceType, test generic.Test) { aa.SkipWhile(test) },
-		func(aa generic.SliceType, test generic.Test) { aa.SplitAfter(test) },
-		func(aa generic.SliceType, test generic.Test) { aa.SplitBefore(test) },
-		func(aa generic.SliceType, test generic.Test) { aa.TakeWhile(test) },
+	methodCalls := []func(generic.SliceType, closures.ConditionFn){
+		func(aa generic.SliceType, condition closures.ConditionFn) { aa.All(condition) },
+		func(aa generic.SliceType, condition closures.ConditionFn) { aa.Any(condition) },
+		func(aa generic.SliceType, condition closures.ConditionFn) { aa.Count(condition) },
+		func(aa generic.SliceType, condition closures.ConditionFn) { aa.Filter(condition) },
+		func(aa generic.SliceType, condition closures.ConditionFn) { aa.FindIndex(condition) },
+		func(aa generic.SliceType, condition closures.ConditionFn) { aa.First(condition) },
+		func(aa generic.SliceType, condition closures.ConditionFn) { aa.Last(condition) },
+		func(aa generic.SliceType, condition closures.ConditionFn) { aa.None(condition) },
+		func(aa generic.SliceType, condition closures.ConditionFn) { aa.Partition(condition) },
+		func(aa generic.SliceType, condition closures.ConditionFn) { aa.Remove(condition) },
+		func(aa generic.SliceType, condition closures.ConditionFn) { aa.SkipWhile(condition) },
+		func(aa generic.SliceType, condition closures.ConditionFn) { aa.SplitAfter(condition) },
+		func(aa generic.SliceType, condition closures.ConditionFn) { aa.SplitBefore(condition) },
+		func(aa generic.SliceType, condition closures.ConditionFn) { aa.TakeWhile(condition) },
 	}
 	for i, methodCall := range methodCalls {
-		test := func(t *testing.T) {
+		condition := func(t *testing.T) {
 			testFn := func(_ interface{}) bool {
 				return true
 			}
 			methodCall(generic.SliceType{}, testFn)
 		}
-		t.Run(fmt.Sprintf("UnaryTest test %v", i+1), test)
+		t.Run(fmt.Sprintf("UnaryTest condition %v", i+1), condition)
 	}
 }
 
@@ -138,61 +139,61 @@ func TestUnaryClosureHappyPaths(t *testing.T) {
 		},
 	}
 	for i, methodCall := range methodCalls {
-		test := func(t *testing.T) {
+		condition := func(t *testing.T) {
 			methodCall(generic.SliceType{})
 		}
-		t.Run(fmt.Sprintf("UnaryClosure test %v", i+1), test)
+		t.Run(fmt.Sprintf("UnaryClosure condition %v", i+1), condition)
 	}
 }
 
 func TestBinarySliceEqualityHappyPaths(t *testing.T) {
-	methodCalls := []func(generic.SliceType, generic.Equality){
-		func(aa generic.SliceType, equality generic.Equality) {
+	methodCalls := []func(generic.SliceType, closures.EqualityFn){
+		func(aa generic.SliceType, equality closures.EqualityFn) {
 			aa.Difference(nil, equality)
 		},
-		func(aa generic.SliceType, equality generic.Equality) {
+		func(aa generic.SliceType, equality closures.EqualityFn) {
 			aa.Intersection(nil, equality)
 		},
-		func(aa generic.SliceType, equality generic.Equality) {
+		func(aa generic.SliceType, equality closures.EqualityFn) {
 			aa.IsProperSubset(nil, equality)
 		},
-		func(aa generic.SliceType, equality generic.Equality) {
+		func(aa generic.SliceType, equality closures.EqualityFn) {
 			aa.IsProperSuperset(nil, equality)
 		},
-		func(aa generic.SliceType, equality generic.Equality) {
+		func(aa generic.SliceType, equality closures.EqualityFn) {
 			aa.IsSubset(nil, equality)
 		},
-		func(aa generic.SliceType, equality generic.Equality) {
+		func(aa generic.SliceType, equality closures.EqualityFn) {
 			aa.IsSuperset(nil, equality)
 		}}
 	for i, methodCall := range methodCalls {
-		test := func(t *testing.T) {
+		condition := func(t *testing.T) {
 			equality := func(a, b interface{}) bool {
 				return false
 			}
 			methodCall(generic.SliceType{}, equality)
 		}
-		t.Run(fmt.Sprintf("BinarySliceEquality test %v", i+1), test)
+		t.Run(fmt.Sprintf("BinarySliceEquality condition %v", i+1), condition)
 	}
 }
 
 func TestBinaryPrimitiveTestHappyPaths(t *testing.T) {
-	methodCalls := []func(generic.SliceType, interface{}, generic.Test){
-		func(aa generic.SliceType, b interface{}, test generic.Test) {
-			aa.InsertAfter(b, test)
+	methodCalls := []func(generic.SliceType, interface{}, closures.ConditionFn){
+		func(aa generic.SliceType, b interface{}, condition closures.ConditionFn) {
+			aa.InsertAfter(b, condition)
 		},
-		func(aa generic.SliceType, b interface{}, test generic.Test) {
-			aa.InsertBefore(b, test)
+		func(aa generic.SliceType, b interface{}, condition closures.ConditionFn) {
+			aa.InsertBefore(b, condition)
 		},
 	}
 	for i, methodCall := range methodCalls {
-		test := func(t *testing.T) {
+		condition := func(t *testing.T) {
 			testFn := func(interface{}) bool {
 				return false
 			}
 			methodCall(generic.SliceType{}, primitiveZero, testFn)
 		}
-		t.Run(fmt.Sprintf("BinaryPrimitiveTest test %v", i+1), test)
+		t.Run(fmt.Sprintf("BinaryPrimitiveTest condition %v", i+1), condition)
 	}
 }
 
@@ -226,10 +227,10 @@ func TestBinaryValueClosureHappyPaths(t *testing.T) {
 		},
 	}
 	for i, methodCall := range methodCalls {
-		test := func(t *testing.T) {
+		condition := func(t *testing.T) {
 			methodCall(generic.SliceType{})
 		}
-		t.Run(fmt.Sprintf("BinaryValueClosure test %v", i+1), test)
+		t.Run(fmt.Sprintf("BinaryValueClosure condition %v", i+1), condition)
 	}
 }
 
@@ -239,15 +240,15 @@ func TestBinaryValueValueHappyPaths(t *testing.T) {
 		func(aa generic.SliceType) { aa.SwapIndex(0, 0) },
 	}
 	for i, methodCall := range methodCalls {
-		test := func(t *testing.T) {
+		condition := func(t *testing.T) {
 			methodCall(generic.SliceType{})
 		}
-		t.Run(fmt.Sprintf("BinaryValueValue test %v", i+1), test)
+		t.Run(fmt.Sprintf("BinaryValueValue condition %v", i+1), condition)
 	}
 }
 
 func TestMutatingMethods(t *testing.T) {
-	// The methods covered by this test are expected to mutate their receiver
+	// The methods covered by this condition are expected to mutate their receiver
 	// value. Core behavior of each method is covered in the function
 	// tests (see functions_test.go), so these tests are fairly cursory in that
 	// they only seek to verify that the value has changed after an operation,
@@ -289,7 +290,7 @@ func TestMutatingMethods(t *testing.T) {
 		func(aa *generic.SliceType) { aa.Union(&sliceForUnionTest) },
 	}
 	for i, methodCall := range methodCalls {
-		test := func(t *testing.T) {
+		condition := func(t *testing.T) {
 			aa := generic.SliceType{1, 1, 2, 1}
 			methodCall(&aa)
 			bb := generic.SliceType{1, 1, 2, 1}
@@ -297,12 +298,12 @@ func TestMutatingMethods(t *testing.T) {
 				t.Fail()
 			}
 		}
-		t.Run(fmt.Sprintf("Mutation test %v", i+1), test)
+		t.Run(fmt.Sprintf("Mutation condition %v", i+1), condition)
 	}
 }
 
 func TestNonMutatingMethods(t *testing.T) {
-	// The methods covered by this test are be expected not to mutate their
+	// The methods covered by this condition are be expected not to mutate their
 	// receiver value. Core behavior of each method is covered in the function
 	// tests (see functions_test.go), so these tests are fairly cursory in that
 	// they only seek to verify that the receiver value has not changed after
@@ -398,7 +399,7 @@ func TestNonMutatingMethods(t *testing.T) {
 	}
 
 	for i, methodCall := range methodCalls {
-		test := func(t *testing.T) {
+		condition := func(t *testing.T) {
 			aa := generic.SliceType{1, 2, 3}
 			methodCall(&aa)
 			bb := generic.SliceType{1, 2, 3}
@@ -406,7 +407,7 @@ func TestNonMutatingMethods(t *testing.T) {
 				t.Fail()
 			}
 		}
-		t.Run(fmt.Sprintf("Mutation test %v", i+1), test)
+		t.Run(fmt.Sprintf("Mutation condition %v", i+1), condition)
 	}
 }
 
