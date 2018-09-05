@@ -2,6 +2,7 @@ package generic_test
 
 import (
 	"fmt"
+	"reflect"
 	"testing"
 
 	"github.com/jecolasurdo/transforms/pkg/slices/generic"
@@ -292,7 +293,40 @@ func TestMutatingMethods(t *testing.T) {
 			aa := generic.SliceType{1, 1, 2, 1}
 			methodCall(&aa)
 			bb := generic.SliceType{1, 1, 2, 1}
-			assert.NotEqual(t, aa.String(), bb.String())
+			if reflect.DeepEqual(aa, bb) {
+				t.Fail()
+			}
+		}
+		t.Run(fmt.Sprintf("Mutation test %v", i+1), test)
+	}
+}
+
+func TestNonMutatingMethods(t *testing.T) {
+	// The methods covered by this test are be expected not to mutate their
+	// receiver value. Core behavior of each method is covered in the function
+	// tests (see function_test.go), so these tests are fairly cursory, in that
+	// they only seek to verify that the receiver value has not changed after
+	// each operation, but do not otherwise verify the outcome.
+
+	// var equality = func(a, b interface{}) bool {
+	// 	return a.(int) == b.(int)
+	// }
+
+	var condition = func(a interface{}) bool {
+		return a.(int) > 0
+	}
+
+	methodCalls := []func(*generic.SliceType){
+		func(aa *generic.SliceType) { aa.All(condition) },
+	}
+	for i, methodCall := range methodCalls {
+		test := func(t *testing.T) {
+			aa := generic.SliceType{1, 2, 3}
+			methodCall(&aa)
+			bb := generic.SliceType{1, 2, 3}
+			if !reflect.DeepEqual(aa, bb) {
+				t.Fail()
+			}
 		}
 		t.Run(fmt.Sprintf("Mutation test %v", i+1), test)
 	}
