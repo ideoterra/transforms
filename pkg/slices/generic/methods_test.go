@@ -247,9 +247,9 @@ func TestBinaryValueValueHappyPaths(t *testing.T) {
 }
 
 func TestMutatingMethods(t *testing.T) {
-	// The methods covered by this test are be expected to mutate their
-	// receiver value. Core behavior of each method is covered in the function
-	// tests (see function_test.go), so these tests are fairly cursory, in that
+	// The methods covered by this test are expected to mutate their receiver
+	// value. Core behavior of each method is covered in the function
+	// tests (see functions_test.go), so these tests are fairly cursory in that
 	// they only seek to verify that the value has changed after an operation,
 	// but don't go so far as to check how the value changed.
 
@@ -304,21 +304,99 @@ func TestMutatingMethods(t *testing.T) {
 func TestNonMutatingMethods(t *testing.T) {
 	// The methods covered by this test are be expected not to mutate their
 	// receiver value. Core behavior of each method is covered in the function
-	// tests (see function_test.go), so these tests are fairly cursory, in that
+	// tests (see functions_test.go), so these tests are fairly cursory in that
 	// they only seek to verify that the receiver value has not changed after
-	// each operation, but do not otherwise verify the outcome.
+	// each operation, but do not otherwise verify the outcomes.
 
-	// var equality = func(a, b interface{}) bool {
-	// 	return a.(int) == b.(int)
-	// }
+	var equality = func(a, b interface{}) bool {
+		return a.(int) == b.(int)
+	}
 
 	var condition = func(a interface{}) bool {
 		return a.(int) > 0
 	}
 
+	var window = func(window []interface{}) interface{} {
+		return window[0]
+	}
+
+	sliceForZipTest := []interface{}{4, 5, 6}
+
 	methodCalls := []func(*generic.SliceType){
 		func(aa *generic.SliceType) { aa.All(condition) },
+		func(aa *generic.SliceType) { aa.Any(condition) },
+		func(aa *generic.SliceType) { aa.Clone() },
+		func(aa *generic.SliceType) {
+			aa.Collect([]interface{}{1, 2}, func(a, b interface{}) interface{} {
+				return a.(int) * b.(int)
+			})
+		},
+		func(aa *generic.SliceType) { aa.Count(condition) },
+		func(aa *generic.SliceType) { aa.Difference([]interface{}{2, 3}, equality) },
+		func(aa *generic.SliceType) { aa.Empty() },
+		func(aa *generic.SliceType) { aa.End() },
+		func(aa *generic.SliceType) {
+			aa.Expand(func(a interface{}) []interface{} { return []interface{}{1, 2} })
+		},
+		func(aa *generic.SliceType) { aa.FindIndex(condition) },
+		func(aa *generic.SliceType) { aa.First(condition) },
+		func(aa *generic.SliceType) {
+			aa.Fold(2, func(a, acc interface{}) interface{} {
+				return acc.(int) * a.(int)
+			})
+		},
+		func(aa *generic.SliceType) {
+			aa.FoldI(2, func(_ int64, a, acc interface{}) interface{} {
+				return acc.(int) * a.(int)
+			})
+		},
+		func(aa *generic.SliceType) {
+			aa.ForEach(func(_ interface{}) shared.Continue { return shared.ContinueYes })
+		},
+		func(aa *generic.SliceType) {
+			aa.ForEachC(1, func(_ interface{}, _ func() bool) shared.Continue { return shared.ContinueYes })
+		},
+		func(aa *generic.SliceType) {
+			aa.ForEachR(func(_ interface{}) shared.Continue { return shared.ContinueYes })
+		},
+		func(aa *generic.SliceType) { aa.Group(func(_ interface{}) int64 { return 0 }) },
+		func(aa *generic.SliceType) { aa.GroupI(func(i int64, _ interface{}) int64 { return i }) },
+		func(aa *generic.SliceType) { aa.Head() },
+		func(aa *generic.SliceType) { aa.Intersection([]interface{}{1, 2}, equality) },
+		func(aa *generic.SliceType) { aa.IsProperSubset([]interface{}{1, 2}, equality) },
+		func(aa *generic.SliceType) { aa.IsProperSuperset([]interface{}{1, 2}, equality) },
+		func(aa *generic.SliceType) { aa.IsSubset([]interface{}{1, 2}, equality) },
+		func(aa *generic.SliceType) { aa.IsSuperset([]interface{}{1, 2}, equality) },
+		func(aa *generic.SliceType) { aa.Item(0) },
+		func(aa *generic.SliceType) { aa.ItemFuzzy(0) },
+		func(aa *generic.SliceType) { aa.Last(condition) },
+		func(aa *generic.SliceType) { aa.Len() },
+		func(aa *generic.SliceType) { aa.None(condition) },
+		func(aa *generic.SliceType) {
+			aa.Pairwise(1, func(a, b interface{}) interface{} {
+				return a.(int) * b.(int)
+			})
+		},
+		func(aa *generic.SliceType) { aa.Partition(condition) },
+		func(aa *generic.SliceType) { aa.Permutable() },
+		func(aa *generic.SliceType) { aa.Permutations() },
+		func(aa *generic.SliceType) { aa.Permute() },
+		func(aa *generic.SliceType) {
+			aa.Reduce(func(a, acc interface{}) interface{} {
+				return a.(int) + acc.(int)
+			})
+		},
+		func(aa *generic.SliceType) { aa.SplitAfter(condition) },
+		func(aa *generic.SliceType) { aa.SplitAt(1) },
+		func(aa *generic.SliceType) { aa.SplitBefore(condition) },
+		func(aa *generic.SliceType) { _ = aa.String() },
+		func(aa *generic.SliceType) { aa.Unzip() },
+		func(aa *generic.SliceType) { aa.WindowCentered(2, window) },
+		func(aa *generic.SliceType) { aa.WindowLeft(2, window) },
+		func(aa *generic.SliceType) { aa.WindowRight(2, window) },
+		func(aa *generic.SliceType) { aa.Zip(&sliceForZipTest) },
 	}
+
 	for i, methodCall := range methodCalls {
 		test := func(t *testing.T) {
 			aa := generic.SliceType{1, 2, 3}
