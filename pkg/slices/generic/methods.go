@@ -3,7 +3,7 @@ package generic
 import (
 	"math/big"
 
-	"github.com/jecolasurdo/transforms/pkg/slices/closures"
+	"github.com/jecolasurdo/transforms/pkg/slices/generic/closures"
 	"github.com/jecolasurdo/transforms/pkg/slices/generic/iface"
 	"github.com/jecolasurdo/transforms/pkg/slices/shared"
 )

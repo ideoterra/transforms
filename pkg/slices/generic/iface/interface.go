@@ -1,12 +1,15 @@
+// Package genericiface establishes an interface that allows methods/functions
+// to be decoupled from their concrete implementations.
 package genericiface
 
 import (
 	"math/big"
 
-	c "github.com/jecolasurdo/transforms/pkg/slices/closures"
+	c "github.com/jecolasurdo/transforms/pkg/slices/generic/closures"
 	"github.com/jecolasurdo/transforms/pkg/slices/shared"
 )
 
+// GenericSliceIface represents an object that knows how to do tranformations.
 type GenericSliceIface interface {
 	All(condition c.ConditionFn) bool
 	Any(condition c.ConditionFn) bool

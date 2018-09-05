@@ -1,3 +1,5 @@
+// Package closures contains the definitions of functions that are frequently
+// used as closures in various transformations.
 package closures
 
 // ConditionFn determines whether or not a value meets some condition.
