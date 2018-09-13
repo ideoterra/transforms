@@ -49,6 +49,11 @@ func (aa *SliceType) Append(values ...interface{}) genericiface.GenericSliceIfac
 	return aa
 }
 
+//AsSlice returns the elements of the slice as a bare []interface{}.
+func (aa *SliceType) AsSlice() []interface{} {
+	return []interface{}(*aa)
+}
+
 // Clear removes all of the items from the slice, setting the slice to nil
 // such that any memory previously allocated to the slice can be garbage
 // collected.

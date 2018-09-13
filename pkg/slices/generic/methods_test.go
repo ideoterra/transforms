@@ -3,12 +3,12 @@ package generic_test
 import (
 	"fmt"
 	"reflect"
+	"strings"
 	"testing"
 
 	"github.com/jecolasurdo/transforms/pkg/slices/generic"
 	"github.com/jecolasurdo/transforms/pkg/slices/generic/closures"
 	"github.com/jecolasurdo/transforms/pkg/slices/shared"
-	"github.com/stretchr/testify/assert"
 )
 
 // As a rule, all methods in this package (methods.go) are just wrappers around
@@ -411,11 +411,42 @@ func TestNonMutatingMethods(t *testing.T) {
 	}
 }
 
-func TestFoo(t *testing.T) {
-	aa := &generic.SliceType{1, 2, 3}
-	aa.
-		Append(4).
-		Map(func(a interface{}) interface{} { return a.(int) * 2 })
-	bb := generic.SliceType{2, 4, 6, 8}
-	assert.ElementsMatch(t, *aa, bb)
+func Example_mapReduce() {
+	result := new(generic.SliceType).
+		Append(1, 2, 3, 4).
+		Map(func(a interface{}) interface{} {
+			return a.(int) * 2
+		}).
+		Reduce(func(a, acc interface{}) interface{} {
+			return a.(int) + acc.(int)
+		}).
+		AsSlice()[0]
+
+	fmt.Println(result)
+	//Output: 20
+}
+
+func ExampleGroupByTrait() {
+	// Consider a list of words. You notice that some of the words start with
+	// one or more of the other words in the list. You want to group all words
+	// who share the trait of starting with one or more of the other words in
+	// the list.
+
+	words := []interface{}{"pigdog", "pigs", "dog", "pigdogs", "cat", "dogs", "pig"}
+	trait := func(a, b interface{}) bool {
+		// Group any words that have the trait of starting with another word.
+		// e.g. `strings.Index(dogs, dog) == 0` exhibits this trait, but
+		//      `strings.Index(dogs, cat) == 0` does not exhibit this trait.
+		return strings.Index(b.(string), a.(string)) == 0
+	}
+	equality := func(a, b interface{}) bool {
+		return a.(string) == b.(string)
+	}
+	result := generic.GroupByTrait(words, trait, equality)
+
+	// Result: It appears that there are three groups of words that share this
+	// trait. Words that start with "dog", words that start with "cat", and
+	// words that start with "pig".
+	fmt.Println(result)
+	//Output: [[dog dogs] [cat] [pigdog pigs pigdogs pig]]
 }

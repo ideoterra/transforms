@@ -14,6 +14,7 @@ type GenericSliceIface interface {
 	All(condition c.ConditionFn) bool
 	Any(condition c.ConditionFn) bool
 	Append(values ...interface{}) GenericSliceIface
+	AsSlice() []interface{}
 	Clear() GenericSliceIface
 	Clone() GenericSliceIface
 	Collect(bb []interface{}, collector func(a, b interface{}) interface{}) GenericSliceIface
