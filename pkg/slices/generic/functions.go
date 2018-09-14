@@ -810,7 +810,7 @@ func Sort(aa *[]interface{}, less func(a, b interface{}) bool) {
 // and [][]interface{}[1] contains the second half of aa. Element b will be included
 // in [][]interface{}[0]. If the no element can be found for which the test returns
 // true, [][]interface{}[0] will contain aa, and [][]interface{}[1] will be empty.
-func SplitAfter(aa []interface{}, test func(interface{}) bool) [][]interface{} {
+func SplitAfter(aa []interface{}, test func(interface{}) bool) []interface{} {
 	return SplitAt(aa, FindIndex(aa, test)+1)
 }
 
@@ -820,9 +820,9 @@ func SplitAfter(aa []interface{}, test func(interface{}) bool) [][]interface{} {
 // be empty. Conversly, if i >= len(aa), all of aa will be placed in
 // [][]interface{}[1] and [][]interface{}[0] will be empty. If aa is nil or empty,
 // [][]interface{} will contain two empty slices.
-func SplitAt(aa []interface{}, i int64) [][]interface{} {
+func SplitAt(aa []interface{}, i int64) []interface{} {
 	if len(aa) == 0 {
-		return [][]interface{}{
+		return []interface{}{
 			[]interface{}{},
 			[]interface{}{},
 		}
@@ -830,7 +830,7 @@ func SplitAt(aa []interface{}, i int64) [][]interface{} {
 	if i < 0 {
 		i = 0
 	}
-	return [][]interface{}{
+	return []interface{}{
 		aa[:i],
 		aa[i:],
 	}
@@ -840,7 +840,7 @@ func SplitAt(aa []interface{}, i int64) [][]interface{} {
 // and returns a [][]interface{} where [][]interface{}[0] contains the first half of aa
 // and [][]interface{}[1] contains the second half of aa. Element b will be included
 // in [][]interface{}[1]
-func SplitBefore(aa []interface{}, test func(interface{}) bool) [][]interface{} {
+func SplitBefore(aa []interface{}, test func(interface{}) bool) []interface{} {
 	return SplitAt(aa, FindIndex(aa, test))
 }
 
