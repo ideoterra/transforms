@@ -363,8 +363,8 @@ func Group(aa []interface{}, grouper func(interface{}) int64) []interface{} {
 //			 [cat],
 //			 [dogs, dog],
 //			]
-func GroupByTrait(aa []interface{}, trait func(ai, an interface{}) bool, equality func(a, b interface{}) bool) [][]interface{} {
-	establishedTraits := [][]interface{}{}
+func GroupByTrait(aa []interface{}, trait func(ai, an interface{}) bool, equality func(a, b interface{}) bool) []interface{} {
+	establishedTraits := []interface{}{}
 	for _, ai := range aa {
 		potentialTrait := []interface{}{}
 		for _, an := range aa {
@@ -375,11 +375,11 @@ func GroupByTrait(aa []interface{}, trait func(ai, an interface{}) bool, equalit
 		traitIsSubsetOfEstablished := false
 		for i := len(establishedTraits) - 1; i >= 0; i-- {
 			establishedTrait := establishedTraits[i]
-			if IsSubset(potentialTrait, establishedTrait, equality) {
+			if IsSubset(potentialTrait, establishedTrait.([]interface{}), equality) {
 				traitIsSubsetOfEstablished = true
 				break
 			}
-			if IsSuperset(potentialTrait, establishedTrait, equality) {
+			if IsSuperset(potentialTrait, establishedTrait.([]interface{}), equality) {
 				establishedTraits = append(establishedTraits[:i], establishedTraits[i+1:]...)
 			}
 		}
