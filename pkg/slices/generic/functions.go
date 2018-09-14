@@ -673,21 +673,21 @@ func Permutations(aa []interface{}) *big.Int {
 //
 // Permute is implemented using Heap's algorithm.
 // https://en.wikipedia.org/wiki/Heap%27s_algorithm
-func Permute(aa []interface{}) [][]interface{} {
+func Permute(aa []interface{}) []interface{} {
 	if Empty(aa) {
-		return [][]interface{}{}
+		return []interface{}{}
 	}
 
 	if !Permutable(aa) {
 		panic(fmt.Sprintf("The number of permutations for this list (%v) exceeeds MaxInt64.", Permutations(aa)))
 	}
 
-	acc := [][]interface{}{}
+	acc := []interface{}{}
 	generate(int64(len(aa)), aa, &acc)
 	return acc
 }
 
-func generate(n int64, aa []interface{}, acc *[][]interface{}) {
+func generate(n int64, aa []interface{}, acc *[]interface{}) {
 	if n == 1 {
 		*acc = append(*acc, aa)
 		return
