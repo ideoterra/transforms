@@ -339,7 +339,7 @@ func ForEachR(aa []interface{}, fn func(interface{}) shared.Continue) {
 // function, and returns them as a [][]interface{}.
 // The grouper function is expected to return a hash value which Group will use
 // to determine into which bucket each element wil be placed.
-func Group(aa []interface{}, grouper func(interface{}) int64) [][]interface{} {
+func Group(aa []interface{}, grouper func(interface{}) int64) []interface{} {
 	return GroupI(aa, func(_ int64, a interface{}) int64 { return grouper(a) })
 }
 
@@ -395,7 +395,7 @@ func GroupByTrait(aa []interface{}, trait func(ai, an interface{}) bool, equalit
 // The grouper function is expected to return a hash value which Group will use
 // to determine into which bucket each element wil be placed. For convenience
 // the index value from aa is also passed into the grouper function.
-func GroupI(aa []interface{}, grouper func(int64, interface{}) int64) [][]interface{} {
+func GroupI(aa []interface{}, grouper func(int64, interface{}) int64) []interface{} {
 	groupMap := map[int64][]interface{}{}
 	for i, a := range aa {
 		hash := grouper(int64(i), a)
@@ -405,7 +405,7 @@ func GroupI(aa []interface{}, grouper func(int64, interface{}) int64) [][]interf
 			groupMap[hash] = []interface{}{a}
 		}
 	}
-	group := [][]interface{}{}
+	group := []interface{}{}
 	for _, bb := range groupMap {
 		group = append(group, bb)
 	}
@@ -636,7 +636,7 @@ func Pairwise(aa []interface{}, init interface{}, xform func(a, b interface{}) i
 // []interface{} with all elements for whom the test function returned false.
 //
 // Partition is a special case of the Group function.
-func Partition(aa []interface{}, test func(interface{}) bool) [][]interface{} {
+func Partition(aa []interface{}, test func(interface{}) bool) []interface{} {
 	grouper := func(a interface{}) int64 {
 		if test(a) {
 			return 1
