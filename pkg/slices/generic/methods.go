@@ -8,28 +8,28 @@ import (
 	"github.com/jecolasurdo/transforms/pkg/slices/shared"
 )
 
-func unbox(tt1 []interface{}) *SliceType {
-	tt2 := SliceType(tt1)
-	return &tt2
+func unbox(aa []interface{}) *SliceType {
+	bb := SliceType(aa)
+	return &bb
 }
 
-func unbox2(tt1 [][]interface{}) *SliceType2 {
-	tt2 := SliceType2(tt1)
-	return &tt2
+func unbox2(aa [][]interface{}) *SliceType2 {
+	bb := SliceType2(aa)
+	return &bb
 }
 
-func box(tt1 SliceType) []interface{} {
-	return ([]interface{})(tt1)
+func box(aa SliceType) []interface{} {
+	return ([]interface{})(aa)
 }
 
-func boxP(tt1 *SliceType) *[]interface{} {
-	return (*[]interface{})(tt1)
+func boxP(aa *SliceType) *[]interface{} {
+	return (*[]interface{})(aa)
 }
 
 // All applies a condition function to each element in the slice, and returns true if
 // the condition function returns true for all items in the slice.
-func (tt1 *SliceType) All(condition closures.ConditionFn) bool {
-	return All(*tt1, condition)
+func (aa *SliceType) All(condition closures.ConditionFn) bool {
+	return All(*aa, condition)
 }
 
 // Any applies a condition function to each element of the
@@ -39,135 +39,135 @@ func (tt1 *SliceType) All(condition closures.ConditionFn) bool {
 // Any does not require that the source slice be sorted, and merely scans
 // the slice, returning as soon as any element passes the supplied condition. For
 // a binary search, consider using sort.Search from the standard library.
-func (tt1 *SliceType) Any(condition closures.ConditionFn) bool {
-	return Any(box(*tt1), condition)
+func (aa *SliceType) Any(condition closures.ConditionFn) bool {
+	return Any(box(*aa), condition)
 }
 
 //Append adds the supplied values to the end of the slice.
-func (tt1 *SliceType) Append(values ...interface{}) genericiface.GenericSliceIface {
-	Append(boxP(tt1), values...)
-	return tt1
+func (aa *SliceType) Append(values ...interface{}) genericiface.GenericSliceIface {
+	Append(boxP(aa), values...)
+	return aa
 }
 
 //AsSlice returns the elements of the slice as a bare []interface{}.
-func (tt1 *SliceType) AsSlice() []interface{} {
-	return []interface{}(*tt1)
+func (aa *SliceType) AsSlice() []interface{} {
+	return []interface{}(*aa)
 }
 
 // Clear removes all of the items from the slice, setting the slice to nil
 // such that any memory previously allocated to the slice can be garbage
 // collected.
-func (tt1 *SliceType) Clear() genericiface.GenericSliceIface {
-	*tt1 = nil
-	return tt1
+func (aa *SliceType) Clear() genericiface.GenericSliceIface {
+	*aa = nil
+	return aa
 }
 
-// Clone returns a copy of tt1
-func (tt1 *SliceType) Clone() genericiface.GenericSliceIface {
-	return unbox(Clone(box(*tt1)))
+// Clone returns a copy of aa
+func (aa *SliceType) Clone() genericiface.GenericSliceIface {
+	return unbox(Clone(box(*aa)))
 }
 
-// Collect applies a given function against each item in slice tt1 and
-// each item of a slice tt2, and returns the concatenation of each result.
-func (tt1 *SliceType) Collect(tt2 []interface{}, collector func(t1 interface{}, t2 interface{}) interface{}) genericiface.GenericSliceIface {
-	return unbox(Collect(box(*tt1), tt2, collector))
+// Collect applies a given function against each item in slice aa and
+// each item of a slice bb, and returns the concatenation of each result.
+func (aa *SliceType) Collect(bb []interface{}, collector func(a, b interface{}) interface{}) genericiface.GenericSliceIface {
+	return unbox(Collect(box(*aa), bb, collector))
 }
 
 // Count applies the supplied condition function to each element of the slice,
 // and returns the count of items for which the condition returns true.
-func (tt1 *SliceType) Count(condition closures.ConditionFn) int64 {
-	return Count(*tt1, condition)
+func (aa *SliceType) Count(condition closures.ConditionFn) int64 {
+	return Count(*aa, condition)
 }
 
 // Dequeue returns a genericiface.GenericSliceIface containing the head item from the source slice.
 // The head item is removed from the source slice in this operation. If the
 // source slice is initially empty, the resulting slice will also be empty.
-func (tt1 *SliceType) Dequeue() genericiface.GenericSliceIface {
-	return unbox(Dequeue(boxP(tt1)))
+func (aa *SliceType) Dequeue() genericiface.GenericSliceIface {
+	return unbox(Dequeue(boxP(aa)))
 }
 
 // Difference returns a new slice that contains items that are not common
-// between tt1 and tt2. The supplied equality function is used to compare values
+// between aa and bb. The supplied equality function is used to compare values
 // between each slice. Duplicates are retained through this process. As such,
 // The elements in the slice that results from this transform may not be
-// distinct. Distinct values from tt1 are listed ahead of those from tt2 in the
+// distinct. Distinct values from aa are listed ahead of those from bb in the
 // resulting slice.
-func (tt1 *SliceType) Difference(tt2 []interface{}, equality closures.EqualityFn) genericiface.GenericSliceIface {
-	return unbox(Difference(box(*tt1), tt2, equality))
+func (aa *SliceType) Difference(bb []interface{}, equality closures.EqualityFn) genericiface.GenericSliceIface {
+	return unbox(Difference(box(*aa), bb, equality))
 
 }
 
 // Distinct removes all duplicates from the slice, using the supplied equality
 // function to determine equality.
-func (tt1 *SliceType) Distinct(equality closures.EqualityFn) genericiface.GenericSliceIface {
-	Distinct(boxP(tt1), equality)
-	return tt1
+func (aa *SliceType) Distinct(equality closures.EqualityFn) genericiface.GenericSliceIface {
+	Distinct(boxP(aa), equality)
+	return aa
 }
 
 // Empty returns true if the length of the slice is zero.
-func (tt1 *SliceType) Empty() bool {
-	return Empty(*tt1)
+func (aa *SliceType) Empty() bool {
+	return Empty(*aa)
 }
 
-// End returns the a genericiface.GenericSliceIface containing only the last element from tt1.
-func (tt1 *SliceType) End() genericiface.GenericSliceIface {
-	return unbox(End(box(*tt1)))
+// End returns the a genericiface.GenericSliceIface containing only the last element from aa.
+func (aa *SliceType) End() genericiface.GenericSliceIface {
+	return unbox(End(box(*aa)))
 
 }
 
 // Enqueue places an item at the head of the slice.
-func (tt1 *SliceType) Enqueue(t1 interface{}) genericiface.GenericSliceIface {
-	Enqueue(boxP(tt1), t1)
-	return tt1
+func (aa *SliceType) Enqueue(a interface{}) genericiface.GenericSliceIface {
+	Enqueue(boxP(aa), a)
+	return aa
 }
 
-// Expand applies an expansion function to each element of tt1, and flattens
+// Expand applies an expansion function to each element of aa, and flattens
 // the results into a single genericiface.GenericSliceIface.
-func (tt1 *SliceType) Expand(expansion func(interface{}) []interface{}) genericiface.GenericSliceIface {
-	return unbox(Expand(box(*tt1), expansion))
+func (aa *SliceType) Expand(expansion func(interface{}) []interface{}) genericiface.GenericSliceIface {
+	return unbox(Expand(box(*aa), expansion))
 }
 
 // Filter removes all items from the slice for which the supplied condition function
 // returns true.
-func (tt1 *SliceType) Filter(condition closures.ConditionFn) genericiface.GenericSliceIface {
-	Filter(boxP(tt1), condition)
-	return tt1
+func (aa *SliceType) Filter(condition closures.ConditionFn) genericiface.GenericSliceIface {
+	Filter(boxP(aa), condition)
+	return aa
 }
 
 // FindIndex returns the index of the first element in the slice for which the
 // supplied condition function returns true. If no matches are found, -1 is returned.
-func (tt1 *SliceType) FindIndex(condition closures.ConditionFn) int64 {
-	return FindIndex(*tt1, condition)
+func (aa *SliceType) FindIndex(condition closures.ConditionFn) int64 {
+	return FindIndex(*aa, condition)
 }
 
 // First returns a genericiface.GenericSliceIface containing the first element in the slice for which
 // the supplied condition function returns true.
-func (tt1 *SliceType) First(condition closures.ConditionFn) genericiface.GenericSliceIface {
-	return unbox(First(box(*tt1), condition))
+func (aa *SliceType) First(condition closures.ConditionFn) genericiface.GenericSliceIface {
+	return unbox(First(box(*aa), condition))
 
 }
 
-// Fold applies a function to each item in slice tt1, threading an accumulator
+// Fold applies a function to each item in slice aa, threading an accumulator
 // through each iteration. The accumulated value is returned in a new genericiface.GenericSliceIface
-// once tt1 is fully scanned. Fold returns a genericiface.GenericSliceIface rather than a
+// once aa is fully scanned. Fold returns a genericiface.GenericSliceIface rather than a
 // interface{} to be consistent with this package's Reduce implementation.
-func (tt1 *SliceType) Fold(acc interface{}, folder func(a, acc interface{}) interface{}) genericiface.GenericSliceIface {
-	return unbox(Fold(box(*tt1), acc, folder))
+func (aa *SliceType) Fold(acc interface{}, folder func(a, acc interface{}) interface{}) genericiface.GenericSliceIface {
+	return unbox(Fold(box(*aa), acc, folder))
 }
 
-// FoldI applies a function to each item in slice tt1, threading an accumulator
+// FoldI applies a function to each item in slice aa, threading an accumulator
 // and an index value through each iteration. The accumulated value is returned
-// once tt1 is fully scanned. Foldi returns a genericiface.GenericSliceIface rather than a
+// once aa is fully scanned. Foldi returns a genericiface.GenericSliceIface rather than a
 // interface{} to be consistent with this package's Reduce implementation.
-func (tt1 *SliceType) FoldI(acc interface{}, folder func(i int64, a, acc interface{}) interface{}) genericiface.GenericSliceIface {
-	return unbox(FoldI(box(*tt1), acc, folder))
+func (aa *SliceType) FoldI(acc interface{}, folder func(i int64, a, acc interface{}) interface{}) genericiface.GenericSliceIface {
+	return unbox(FoldI(box(*aa), acc, folder))
 }
 
 // ForEach applies each element of the list to the given function.
 // ForEach will stop iterating if fn return false.
-func (tt1 *SliceType) ForEach(fn func(interface{}) shared.Continue) genericiface.GenericSliceIface {
-	ForEach(*tt1, fn)
-	return tt1
+func (aa *SliceType) ForEach(fn func(interface{}) shared.Continue) genericiface.GenericSliceIface {
+	ForEach(*aa, fn)
+	return aa
 }
 
 // ForEachC concurrently applies each element of the list to the given function.
@@ -184,157 +184,157 @@ func (tt1 *SliceType) ForEach(fn func(interface{}) shared.Continue) genericiface
 // Any goroutines monitoring the cancelPending closure can wind down their
 // activities as necessary. ForEachC will continue to block until all active
 // goroutines exit cleanly.
-func (tt1 *SliceType) ForEachC(c int, fn func(t1 interface{}, cancelPending func() bool) shared.Continue) genericiface.GenericSliceIface {
-	ForEachC(*tt1, c, fn)
-	return tt1
+func (aa *SliceType) ForEachC(c int, fn func(a interface{}, cancelPending func() bool) shared.Continue) genericiface.GenericSliceIface {
+	ForEachC(*aa, c, fn)
+	return aa
 }
 
-// ForEachR applies each element of tt1 to a given function, scanning
+// ForEachR applies each element of aa to a given function, scanning
 // through the slice in reverse order, starting from the end and working towards
 // the head.
-func (tt1 *SliceType) ForEachR(fn func(interface{}) shared.Continue) genericiface.GenericSliceIface {
-	ForEachR(*tt1, fn)
-	return tt1
+func (aa *SliceType) ForEachR(fn func(interface{}) shared.Continue) genericiface.GenericSliceIface {
+	ForEachR(*aa, fn)
+	return aa
 }
 
 // Group consolidates like-items into groups according to the supplied grouper
 // function, and returns them as a genericiface.GenericSlice2Iface.
 // The grouper function is expected to return a hash value which Group will use
 // to determine into which bucket each element wil be placed.
-func (tt1 *SliceType) Group(grouper func(interface{}) int64) genericiface.GenericSlice2Iface {
-	return unbox2(Group(box(*tt1), grouper))
+func (aa *SliceType) Group(grouper func(interface{}) int64) genericiface.GenericSlice2Iface {
+	return unbox2(Group(box(*aa), grouper))
 }
 
 // GroupI consolidates like-items into groups according to the supplied grouper
 // function, and returns them as a genericiface.GenericSlice2Iface.
 // The grouper function is expected to return a hash value which Group will use
 // to determine into which bucket each element wil be placed. For convenience
-// the index value from tt1 is also passed into the grouper function.
-func (tt1 *SliceType) GroupI(grouper func(int64, interface{}) int64) genericiface.GenericSlice2Iface {
-	return unbox2(GroupI(box(*tt1), grouper))
+// the index value from aa is also passed into the grouper function.
+func (aa *SliceType) GroupI(grouper func(int64, interface{}) int64) genericiface.GenericSlice2Iface {
+	return unbox2(GroupI(box(*aa), grouper))
 }
 
-// Head returns a genericiface.GenericSliceIface containing the first item from the tt1. If tt1 is
+// Head returns a genericiface.GenericSliceIface containing the first item from the aa. If aa is
 // empty, the resulting genericiface.GenericSliceIface will be empty.
-func (tt1 *SliceType) Head() genericiface.GenericSliceIface {
-	return unbox(Head(box(*tt1)))
+func (aa *SliceType) Head() genericiface.GenericSliceIface {
+	return unbox(Head(box(*aa)))
 }
 
-// InsertAfter inserts an element in tt1 after the first element for which the
+// InsertAfter inserts an element in aa after the first element for which the
 // supplied condition function returns true. If none of the tests return true, the
-// element is appended to the end of the tt1.
-func (tt1 *SliceType) InsertAfter(t2 interface{}, condition closures.ConditionFn) genericiface.GenericSliceIface {
-	InsertAfter(boxP(tt1), t2, condition)
-	return tt1
+// element is appended to the end of the aa.
+func (aa *SliceType) InsertAfter(b interface{}, condition closures.ConditionFn) genericiface.GenericSliceIface {
+	InsertAfter(boxP(aa), b, condition)
+	return aa
 }
 
-// InsertBefore inserts an element in tt1 before the first element for which the
+// InsertBefore inserts an element in aa before the first element for which the
 // supplied condition function returns true. If none of the tests return true,
-// the element is inserted at the head of tt1.
-func (tt1 *SliceType) InsertBefore(t2 interface{}, condition closures.ConditionFn) genericiface.GenericSliceIface {
-	InsertBefore(boxP(tt1), t2, condition)
-	return tt1
+// the element is inserted at the head of aa.
+func (aa *SliceType) InsertBefore(b interface{}, condition closures.ConditionFn) genericiface.GenericSliceIface {
+	InsertBefore(boxP(aa), b, condition)
+	return aa
 }
 
-// InsertAt inserts an element in tt1 at the specified index i, shifting the
+// InsertAt inserts an element in aa at the specified index i, shifting the
 // element originally at index i (and all subsequent elements) one position
 // to the right. If i < 0, the element is inserted at index 0. If
-// i >= len(tt1), the value is appended to the end of tt1.
-func (tt1 *SliceType) InsertAt(t1 interface{}, i int64) genericiface.GenericSliceIface {
-	InsertAt(boxP(tt1), t1, i)
-	return tt1
+// i >= len(aa), the value is appended to the end of aa.
+func (aa *SliceType) InsertAt(a interface{}, i int64) genericiface.GenericSliceIface {
+	InsertAt(boxP(aa), a, i)
+	return aa
 }
 
-// Intersection compares each element of tt1 to tt2 using the supplied equal
+// Intersection compares each element of aa to bb using the supplied equal
 // function, and returns a genericiface.GenericSliceIface containing the elements which are common
-// to both tt1 and tt2. Duplicates are removed in this operation.
-func (tt1 *SliceType) Intersection(tt2 []interface{}, equality closures.EqualityFn) genericiface.GenericSliceIface {
-	return unbox(Intersection(box(*tt1), tt2, equality))
+// to both aa and bb. Duplicates are removed in this operation.
+func (aa *SliceType) Intersection(bb []interface{}, equality closures.EqualityFn) genericiface.GenericSliceIface {
+	return unbox(Intersection(box(*aa), bb, equality))
 }
 
-// IsProperSubset returns true if tt1 is a proper subset of tt2.
-// tt1 is considered a proper subset if all of its elements exist within tt2, but
-// tt2 also contains some elements that do not exist within tt1.
+// IsProperSubset returns true if aa is a proper subset of bb.
+// aa is considered a proper subset if all of its elements exist within bb, but
+// bb also contains some elements that do not exist within aa.
 // Note: This operation does not enforce that each element be unique, thus, it
 // is possible for a subset to be larger than its superset. Use the Distinct
 // operations to enforce uniqueness, if that is necessary.
-func (tt1 *SliceType) IsProperSubset(tt2 []interface{}, equality closures.EqualityFn) bool {
-	return IsProperSubset(box(*tt1), tt2, equality)
+func (aa *SliceType) IsProperSubset(bb []interface{}, equality closures.EqualityFn) bool {
+	return IsProperSubset(box(*aa), bb, equality)
 }
 
-// IsProperSuperset returns true if tt1 is a proper superset of tt2.
-// tt1 is considered a proper superset if it contains all of tt2's elements, but
-// tt1 also contains some elements that do not exist within tt2.
+// IsProperSuperset returns true if aa is a proper superset of bb.
+// aa is considered a proper superset if it contains all of bb's elements, but
+// aa also contains some elements that do not exist within bb.
 // Note: This operation does not enforce that each element be unique, thus, it
 // is possible for a superset to be smaller than its subset. Use the Distinct
 // operations to enforce uniqueness, if that is necessary.
-func (tt1 *SliceType) IsProperSuperset(tt2 []interface{}, equality closures.EqualityFn) bool {
-	return IsProperSuperset(box(*tt1), tt2, equality)
+func (aa *SliceType) IsProperSuperset(bb []interface{}, equality closures.EqualityFn) bool {
+	return IsProperSuperset(box(*aa), bb, equality)
 }
 
-// IsSubset returns true if tt1 is a subset of tt2.
-// tt1 is considered a subset if all of its elements exist within tt2.
+// IsSubset returns true if aa is a subset of bb.
+// aa is considered a subset if all of its elements exist within bb.
 // Note: This operation does not enforce that each element be unique, thus, it
 // is possible for a subset to be larger than its superset. Use the Distinct
 // operations to enforce uniqueness, if that is necessary.
-func (tt1 *SliceType) IsSubset(tt2 []interface{}, equality closures.EqualityFn) bool {
-	return IsSubset(box(*tt1), tt2, equality)
+func (aa *SliceType) IsSubset(bb []interface{}, equality closures.EqualityFn) bool {
+	return IsSubset(box(*aa), bb, equality)
 }
 
-// IsSuperset returns true if tt1 is a superset of tt2.
-// tt1 is considered a superset if all of tt2's elements exist within tt1.
+// IsSuperset returns true if aa is a superset of bb.
+// aa is considered a superset if all of bb's elements exist within aa.
 // Note: This operation does not enforce that each element be unique, thus, it
 // is possible for a superset to be smaller than its subset. Use the Distinct
 // operations to enforce uniqueness, if that is necessary.
-func (tt1 *SliceType) IsSuperset(tt2 []interface{}, equality closures.EqualityFn) bool {
-	return IsSuperset(box(*tt1), tt2, equality)
+func (aa *SliceType) IsSuperset(bb []interface{}, equality closures.EqualityFn) bool {
+	return IsSuperset(box(*aa), bb, equality)
 }
 
-// Item returns a genericiface.GenericSliceIface containing the element at tt1[i].
-// If len(tt1) == 0, i < 0, or, i >= len(tt1), the resulting slice will be empty.
-func (tt1 *SliceType) Item(i int64) genericiface.GenericSliceIface {
-	return unbox(Item(box(*tt1), i))
+// Item returns a genericiface.GenericSliceIface containing the element at aa[i].
+// If len(aa) == 0, i < 0, or, i >= len(aa), the resulting slice will be empty.
+func (aa *SliceType) Item(i int64) genericiface.GenericSliceIface {
+	return unbox(Item(box(*aa), i))
 }
 
-// ItemFuzzy returns a genericiface.GenericSliceIface containing the element at tt1[i].
+// ItemFuzzy returns a genericiface.GenericSliceIface containing the element at aa[i].
 // If the supplied index is outside of the bounds of ItemFuzzy will attempt
-// to retrieve the head or end element of tt1 according to the following rules:
-// If len(tt1) == 0 an empty genericiface.GenericSliceIface is returned.
-// If i < 0, the head of tt1 is returned.
-// If i >= len(tt1), the end of the tt1 is returned.
-func (tt1 *SliceType) ItemFuzzy(i int64) genericiface.GenericSliceIface {
-	return unbox(ItemFuzzy(box(*tt1), i))
+// to retrieve the head or end element of aa according to the following rules:
+// If len(aa) == 0 an empty genericiface.GenericSliceIface is returned.
+// If i < 0, the head of aa is returned.
+// If i >= len(aa), the end of the aa is returned.
+func (aa *SliceType) ItemFuzzy(i int64) genericiface.GenericSliceIface {
+	return unbox(ItemFuzzy(box(*aa), i))
 }
 
 // Last applies a condition function to each element in and returns a genericiface.GenericSliceIface
 // containing the last element for which the condition returned true. If no elements
 // pass the supplied condition, the resulting genericiface.GenericSliceIface will be empty.
-func (tt1 *SliceType) Last(condition closures.ConditionFn) genericiface.GenericSliceIface {
-	return unbox(Last(box(*tt1), condition))
+func (aa *SliceType) Last(condition closures.ConditionFn) genericiface.GenericSliceIface {
+	return unbox(Last(box(*aa), condition))
 }
 
-// Len returns the length of tt1.
-func (tt1 *SliceType) Len() int {
-	return Len(box(*tt1))
+// Len returns the length of aa.
+func (aa *SliceType) Len() int {
+	return Len(box(*aa))
 }
 
 // Map applies a tranform to each element of the list.
-func (tt1 *SliceType) Map(mapFn func(interface{}) interface{}) genericiface.GenericSliceIface {
-	Map(boxP(tt1), mapFn)
-	return tt1
+func (aa *SliceType) Map(mapFn func(interface{}) interface{}) genericiface.GenericSliceIface {
+	Map(boxP(aa), mapFn)
+	return aa
 }
 
 // None applies a condition function to each element in and returns true if
 // the condition function returns false for all items.
-func (tt1 *SliceType) None(condition closures.ConditionFn) bool {
-	return None(box(*tt1), condition)
+func (aa *SliceType) None(condition closures.ConditionFn) bool {
+	return None(box(*aa), condition)
 }
 
 // Pairwise threads a transform function through passing to the transform
-// successive two-element pairs, tt1[i-1] && tt1[i]. For the first pairing
+// successive two-element pairs, aa[i-1] && aa[i]. For the first pairing
 // the supplied init value is supplied as the initial element in the pair.
-func (tt1 *SliceType) Pairwise(init interface{}, xform func(t1 interface{}, t2 interface{}) interface{}) genericiface.GenericSliceIface {
-	return unbox(Pairwise(box(*tt1), init, xform))
+func (aa *SliceType) Pairwise(init interface{}, xform func(a, b interface{}) interface{}) genericiface.GenericSliceIface {
+	return unbox(Pairwise(box(*aa), init, xform))
 }
 
 // Partition applies a condition function to each element in and returns
@@ -343,217 +343,217 @@ func (tt1 *SliceType) Pairwise(init interface{}, xform func(t1 interface{}, t2 i
 // genericiface.GenericSliceIface with all elements for whom the condition function returned false.
 //
 // Partition is a special case of the Group function.
-func (tt1 *SliceType) Partition(condition closures.ConditionFn) genericiface.GenericSlice2Iface {
-	return unbox2(Partition(box(*tt1), condition))
+func (aa *SliceType) Partition(condition closures.ConditionFn) genericiface.GenericSlice2Iface {
+	return unbox2(Partition(box(*aa), condition))
 }
 
-// Permutable returns true if the number of permutations for tt1 exceeds
+// Permutable returns true if the number of permutations for aa exceeds
 // MaxInt64.
-func (tt1 *SliceType) Permutable() bool {
-	return Permutable(*tt1)
+func (aa *SliceType) Permutable() bool {
+	return Permutable(*aa)
 }
 
 // Permutations returns the number of permutations that exist given the current
-// number of items in the tt1.
-func (tt1 *SliceType) Permutations() *big.Int {
-	return Permutations(*tt1)
+// number of items in the aa.
+func (aa *SliceType) Permutations() *big.Int {
+	return Permutations(*aa)
 }
 
 // Permute returns a genericiface.GenericSlice2Iface which contains a genericiface.GenericSliceIface for each permutation
-// of tt1.
+// of aa.
 //
 // This function will panic if it determines that the list is not permutable
 // (see Permutable function).
 //
-// Permute makes no assumptions about whether or not the elements in tt1 are
+// Permute makes no assumptions about whether or not the elements in aa are
 // distinct. Permutations are created positionally, and do not involve any
 // equality checks. As such, if it important that Permute operate on a set of
-// distinct elements, pass tt1 through one of the Distinct transforms before
+// distinct elements, pass aa through one of the Distinct transforms before
 // passing it to Permute().
 //
 // Permute is implemented using Heap's algorithm.
 // https://en.wikipedia.org/wiki/Heap%27s_algorithm
-func (tt1 *SliceType) Permute() genericiface.GenericSlice2Iface {
-	return (Permute(*tt1))
+func (aa *SliceType) Permute() genericiface.GenericSlice2Iface {
+	return (Permute(*aa))
 }
 
 // Pop returns a genericiface.GenericSliceIface containing the head element from and removes the
-// element from tt1. If tt1 is empty, the returned genericiface.GenericSliceIface will also be empty.
-func (tt1 *SliceType) Pop() genericiface.GenericSliceIface {
-	Pop(boxP(tt1))
-	return tt1
+// element from aa. If aa is empty, the returned genericiface.GenericSliceIface will also be empty.
+func (aa *SliceType) Pop() genericiface.GenericSliceIface {
+	Pop(boxP(aa))
+	return aa
 }
 
-// Push places a prepends a new element at the head of tt1.
-func (tt1 *SliceType) Push(t1 interface{}) genericiface.GenericSliceIface {
-	Push(boxP(tt1), t1)
-	return tt1
+// Push places a prepends a new element at the head of aa.
+func (aa *SliceType) Push(a interface{}) genericiface.GenericSliceIface {
+	Push(boxP(aa), a)
+	return aa
 }
 
 // Reduce applies a reducer function to each element in threading an
 // accumulator through each iteration. The resulting accumulation is returned
-// as an element of a new genericiface.GenericSliceIface. If tt1 is empty, the resulting genericiface.GenericSliceIface
+// as an element of a new genericiface.GenericSliceIface. If aa is empty, the resulting genericiface.GenericSliceIface
 // will also be empty.
-func (tt1 *SliceType) Reduce(reducer func(a, acc interface{}) interface{}) genericiface.GenericSliceIface {
-	return unbox(Reduce(box(*tt1), reducer))
+func (aa *SliceType) Reduce(reducer func(a, acc interface{}) interface{}) genericiface.GenericSliceIface {
+	return unbox(Reduce(box(*aa), reducer))
 }
 
 // Remove applies a condition function to each item in the list, and removes any item
 // for which the condition returns true.
-func (tt1 *SliceType) Remove(condition closures.ConditionFn) genericiface.GenericSliceIface {
-	Remove(boxP(tt1), condition)
-	return tt1
+func (aa *SliceType) Remove(condition closures.ConditionFn) genericiface.GenericSliceIface {
+	Remove(boxP(aa), condition)
+	return aa
 }
 
 // RemoveAt removes the item at the specified index from the slice.
-// If len(tt1) == 0, tt1 == nil, i < 0, or i >= len(tt1), this function will do
+// If len(aa) == 0, aa == nil, i < 0, or i >= len(aa), this function will do
 // nothing.
-func (tt1 *SliceType) RemoveAt(i int64) genericiface.GenericSliceIface {
-	RemoveAt(boxP(tt1), i)
-	return tt1
+func (aa *SliceType) RemoveAt(i int64) genericiface.GenericSliceIface {
+	RemoveAt(boxP(aa), i)
+	return aa
 }
 
-// Reverse reverses the order of tt1.
-func (tt1 *SliceType) Reverse() genericiface.GenericSliceIface {
-	Reverse(boxP(tt1))
-	return tt1
+// Reverse reverses the order of aa.
+func (aa *SliceType) Reverse() genericiface.GenericSliceIface {
+	Reverse(boxP(aa))
+	return aa
 }
 
-// Skip removes the first n elements from tt1.
+// Skip removes the first n elements from aa.
 //
-// Note that Skip(len(tt1)) will remove all items from the list, but does not
+// Note that Skip(len(aa)) will remove all items from the list, but does not
 // "clear" the slice, meaning that the list remains allocated in memory.
 // To fully de-pointer the slice, and ensure it is available for garbage
 // collection as soon as possible, consider using Clear().
-func (tt1 *SliceType) Skip(n int64) genericiface.GenericSliceIface {
-	Skip(boxP(tt1), n)
-	return tt1
+func (aa *SliceType) Skip(n int64) genericiface.GenericSliceIface {
+	Skip(boxP(aa), n)
+	return aa
 }
 
-// SkipWhile scans through tt1 starting at the head, and removes all
-// elements from tt1 while the condition function returns true.
-// SkipWhile stops removing any further items from tt1 after the first condition that
+// SkipWhile scans through aa starting at the head, and removes all
+// elements from aa while the condition function returns true.
+// SkipWhile stops removing any further items from aa after the first condition that
 // returns false.
-func (tt1 *SliceType) SkipWhile(condition closures.ConditionFn) genericiface.GenericSliceIface {
-	SkipWhile(boxP(tt1), condition)
-	return tt1
+func (aa *SliceType) SkipWhile(condition closures.ConditionFn) genericiface.GenericSliceIface {
+	SkipWhile(boxP(aa), condition)
+	return aa
 }
 
 // Sort sorts using the supplied less function to determine order.
 // Sort is a convenience wrapper around the stdlib sort.SliceStable
 // function.
-func (tt1 *SliceType) Sort(less func(t1 interface{}, t2 interface{}) bool) genericiface.GenericSliceIface {
-	Sort(boxP(tt1), less)
-	return tt1
+func (aa *SliceType) Sort(less func(a, b interface{}) bool) genericiface.GenericSliceIface {
+	Sort(boxP(aa), less)
+	return aa
 }
 
 // SplitAfter finds the first element b for which a condition function returns true,
-// and returns a genericiface.GenericSlice2Iface where genericiface.GenericSlice2Iface[0] contains the first half of tt1
-// and genericiface.GenericSlice2Iface[1] contains the second half of tt1. Element b will be included
+// and returns a genericiface.GenericSlice2Iface where genericiface.GenericSlice2Iface[0] contains the first half of aa
+// and genericiface.GenericSlice2Iface[1] contains the second half of aa. Element b will be included
 // in genericiface.GenericSlice2Iface[0]. If the no element can be found for which the condition returns
 // true, genericiface.GenericSlice2Iface[0] will contain and genericiface.GenericSlice2Iface[1] will be empty.
-func (tt1 *SliceType) SplitAfter(condition closures.ConditionFn) genericiface.GenericSlice2Iface {
-	return unbox2(SplitAfter(box(*tt1), condition))
+func (aa *SliceType) SplitAfter(condition closures.ConditionFn) genericiface.GenericSlice2Iface {
+	return unbox2(SplitAfter(box(*aa), condition))
 }
 
-// SplitAt splits tt1 at index i, and returns a genericiface.GenericSlice2Iface which contains the
-// two split halves of tt1. tt1[i] will be included in genericiface.GenericSlice2Iface[1].
-// If i < 0, all of tt1 will be placed in genericiface.GenericSlice2Iface[0] and genericiface.GenericSlice2Iface[1] will
-// be empty. Conversly, if i >= len(tt1), all of tt1 will be placed in
-// genericiface.GenericSlice2Iface[1] and genericiface.GenericSlice2Iface[0] will be empty. If tt1 is nil or empty,
+// SplitAt splits aa at index i, and returns a genericiface.GenericSlice2Iface which contains the
+// two split halves of aa. aa[i] will be included in genericiface.GenericSlice2Iface[1].
+// If i < 0, all of aa will be placed in genericiface.GenericSlice2Iface[0] and genericiface.GenericSlice2Iface[1] will
+// be empty. Conversly, if i >= len(aa), all of aa will be placed in
+// genericiface.GenericSlice2Iface[1] and genericiface.GenericSlice2Iface[0] will be empty. If aa is nil or empty,
 // genericiface.GenericSlice2Iface will contain two empty slices.
-func (tt1 *SliceType) SplitAt(i int64) genericiface.GenericSlice2Iface {
-	return unbox2(SplitAt(box(*tt1), i))
+func (aa *SliceType) SplitAt(i int64) genericiface.GenericSlice2Iface {
+	return unbox2(SplitAt(box(*aa), i))
 }
 
 // SplitBefore finds the first element b for which a condition function returns true,
-// and returns a genericiface.GenericSlice2Iface where genericiface.GenericSlice2Iface[0] contains the first half of tt1
-// and genericiface.GenericSlice2Iface[1] contains the second half of tt1. Element b will be included
+// and returns a genericiface.GenericSlice2Iface where genericiface.GenericSlice2Iface[0] contains the first half of aa
+// and genericiface.GenericSlice2Iface[1] contains the second half of aa. Element b will be included
 // in genericiface.GenericSlice2Iface[1]
-func (tt1 *SliceType) SplitBefore(condition closures.ConditionFn) genericiface.GenericSlice2Iface {
-	return unbox2(SplitBefore(box(*tt1), condition))
+func (aa *SliceType) SplitBefore(condition closures.ConditionFn) genericiface.GenericSlice2Iface {
+	return unbox2(SplitBefore(box(*aa), condition))
 }
 
 // String returns a string representation of suitable for use
 // with fmt.Print, or other similar functions. String should be regarded as
 // informational, and should not be relied upon to formally serialize a
 // genericiface.GenericSliceIface.
-func (tt1 *SliceType) String() string {
-	return String(box(*tt1))
+func (aa *SliceType) String() string {
+	return String(box(*aa))
 }
 
 // SwapIndex swaps the elements at the specified indices. If either i or j is
 // out of the bounds of SwapIndex does nothing.
-func (tt1 *SliceType) SwapIndex(i, j int64) genericiface.GenericSliceIface {
-	SwapIndex(box(*tt1), i, j)
-	return tt1
+func (aa *SliceType) SwapIndex(i, j int64) genericiface.GenericSliceIface {
+	SwapIndex(box(*aa), i, j)
+	return aa
 }
 
-// Tail removes the current head element from tt1.
+// Tail removes the current head element from aa.
 // This equivelant to RemoveAt(0)
-func (tt1 *SliceType) Tail() genericiface.GenericSliceIface {
-	Tail(boxP(tt1))
-	return tt1
+func (aa *SliceType) Tail() genericiface.GenericSliceIface {
+	Tail(boxP(aa))
+	return aa
 }
 
 // Take retains the first n elements of and removes all remaining elements
-// from the slice. If n < 0 or n >= len(tt1), Take does nothing. If n == 0, all
+// from the slice. If n < 0 or n >= len(aa), Take does nothing. If n == 0, all
 // elements are removed from the slice (but the slice is not de-pointered).
-func (tt1 *SliceType) Take(n int64) genericiface.GenericSliceIface {
-	Take(boxP(tt1), n)
-	return tt1
+func (aa *SliceType) Take(n int64) genericiface.GenericSliceIface {
+	Take(boxP(aa), n)
+	return aa
 }
 
 // TakeWhile applies a condition function to each element in and retains all
-// elements of tt1 so long as the condition function returns true. As soon as the condition
+// elements of aa so long as the condition function returns true. As soon as the condition
 // function returns false, take stops evaluating any further, and abandons the
 // rest of the slice.
-func (tt1 *SliceType) TakeWhile(condition closures.ConditionFn) genericiface.GenericSliceIface {
-	TakeWhile(boxP(tt1), condition)
-	return tt1
+func (aa *SliceType) TakeWhile(condition closures.ConditionFn) genericiface.GenericSliceIface {
+	TakeWhile(boxP(aa), condition)
+	return aa
 }
 
-// Union appends slice tt2 to slice tt1.
+// Union appends slice bb to slice aa.
 // Note: This operation does not remove any duplicates from the slice, as a
 // similar operation would when operating on a formal Set.
-func (tt1 *SliceType) Union(tt2 *[]interface{}) genericiface.GenericSliceIface {
-	Union(boxP(tt1), *tt2)
-	return tt1
+func (aa *SliceType) Union(bb *[]interface{}) genericiface.GenericSliceIface {
+	Union(boxP(aa), *bb)
+	return aa
 }
 
-// Unzip splits tt1 into a genericiface.GenericSlice2Iface, such that genericiface.GenericSlice2Iface[0] contains all odd
-// indices from and genericiface.GenericSlice2Iface[1] contains all even indices from tt1.
-func (tt1 *SliceType) Unzip() genericiface.GenericSlice2Iface {
-	return unbox2(Unzip(box(*tt1)))
+// Unzip splits aa into a genericiface.GenericSlice2Iface, such that genericiface.GenericSlice2Iface[0] contains all odd
+// indices from and genericiface.GenericSlice2Iface[1] contains all even indices from aa.
+func (aa *SliceType) Unzip() genericiface.GenericSlice2Iface {
+	return unbox2(Unzip(box(*aa)))
 }
 
 // WindowCentered applies a windowing function across the using a centered
 // window of the specified size.
-func (tt1 *SliceType) WindowCentered(windowSize int64, windowFn func(window []interface{}) interface{}) genericiface.GenericSliceIface {
-	return unbox(WindowCentered(box(*tt1), windowSize, windowFn))
+func (aa *SliceType) WindowCentered(windowSize int64, windowFn func(window []interface{}) interface{}) genericiface.GenericSliceIface {
+	return unbox(WindowCentered(box(*aa), windowSize, windowFn))
 }
 
 // WindowLeft applies a windowing function across using a left-sided window
 // of the specified size.
-func (tt1 *SliceType) WindowLeft(windowSize int64, windowFn func(window []interface{}) interface{}) genericiface.GenericSliceIface {
-	return unbox(WindowLeft(box(*tt1), windowSize, windowFn))
+func (aa *SliceType) WindowLeft(windowSize int64, windowFn func(window []interface{}) interface{}) genericiface.GenericSliceIface {
+	return unbox(WindowLeft(box(*aa), windowSize, windowFn))
 }
 
 // WindowRight applies a windowing function across using a right-sided
 // window of the specified size.
-func (tt1 *SliceType) WindowRight(windowSize int64, windowFn func(window []interface{}) interface{}) genericiface.GenericSliceIface {
-	return unbox(WindowRight(box(*tt1), windowSize, windowFn))
+func (aa *SliceType) WindowRight(windowSize int64, windowFn func(window []interface{}) interface{}) genericiface.GenericSliceIface {
+	return unbox(WindowRight(box(*aa), windowSize, windowFn))
 }
 
-// Zip interleaves the contents of tt1 with tt2, and returns the result as a
-// new genericiface.GenericSliceIface. tt1[0] is evaluated first. Thus if tt1 and tt2 are the same
-// length, slice tt1 will occupy the odd indices of the result slice, and tt2
-// will occupy the even indices of the result slice. If tt1 and tt2 are not
+// Zip interleaves the contents of aa with bb, and returns the result as a
+// new genericiface.GenericSliceIface. aa[0] is evaluated first. Thus if aa and bb are the same
+// length, slice aa will occupy the odd indices of the result slice, and bb
+// will occupy the even indices of the result slice. If aa and bb are not
 // the same length, Zip will interleave as many values as possible, and will
 // simply append the remaining values for the longer of the two slices to the
 // end of the result slice.
-func (tt1 *SliceType) Zip(tt2 *[]interface{}) genericiface.GenericSliceIface {
-	return unbox(Zip(box(*tt1), *tt2))
+func (aa *SliceType) Zip(bb *[]interface{}) genericiface.GenericSliceIface {
+	return unbox(Zip(box(*aa), *bb))
 }
 
 var _ genericiface.GenericSliceIface = (genericiface.GenericSliceIface)(nil)
