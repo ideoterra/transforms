@@ -899,7 +899,7 @@ func Union(aa *[]interface{}, bb []interface{}) {
 
 // Unzip splits aa into a [][]interface{}, such that [][]interface{}[0] contains all odd
 // indices from aa, and [][]interface{}[1] contains all even indices from aa.
-func Unzip(aa []interface{}) [][]interface{} {
+func Unzip(aa []interface{}) []interface{} {
 	odds := []interface{}{}
 	evens := []interface{}{}
 	for i, a := range aa {
@@ -909,7 +909,7 @@ func Unzip(aa []interface{}) [][]interface{} {
 			evens = append(evens, a)
 		}
 	}
-	return [][]interface{}{odds, evens}
+	return []interface{}{odds, evens}
 }
 
 // WindowCentered applies a windowing function across the aa, using a centered
@@ -944,9 +944,9 @@ func WindowCentered(aa []interface{}, windowSize int64, windowFn func(window []i
 		frontTrim = trimSize / 2
 		backTrim = frontTrim + 1
 	}
-	dd := []interface{}(SplitAt(cc, frontTrim)[1])
+	dd := SplitAt(cc, frontTrim)[1].([]interface{})
 	Reverse(&dd)
-	ee := []interface{}(SplitAt(dd, backTrim)[1])
+	ee := SplitAt(dd, backTrim)[1].([]interface{})
 	Reverse(&ee)
 	return ee
 }
