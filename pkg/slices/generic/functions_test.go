@@ -80,7 +80,7 @@ var Specifications = []Specification{
 				aa := []interface{}{1, 2, 3, 4}
 				bb := []interface{}{5, 6, 7, 8}
 				generic.Append(&aa, bb...)
-				assert.ElementsMatch(t, []interface{}{1, 2, 3, 4, 5, 6, 7, 8}, aa)
+				assertSlicesEqual(t, []interface{}{1, 2, 3, 4, 5, 6, 7, 8}, aa)
 			},
 		},
 		AlternativePath: Behavior{
@@ -89,7 +89,7 @@ var Specifications = []Specification{
 				aa := []interface{}{1, 2, 3, 4}
 				bb := []interface{}{}
 				generic.Append(&aa, bb...)
-				assert.ElementsMatch(t, []interface{}{1, 2, 3, 4}, aa)
+				assertSlicesEqual(t, []interface{}{1, 2, 3, 4}, aa)
 			},
 		},
 		EdgeCases: []Behavior{
@@ -99,7 +99,7 @@ var Specifications = []Specification{
 					var aa []interface{}
 					bb := []interface{}{5, 6, 7, 8}
 					generic.Append(&aa, bb...)
-					assert.ElementsMatch(t, []interface{}{5, 6, 7, 8}, aa)
+					assertSlicesEqual(t, []interface{}{5, 6, 7, 8}, aa)
 				},
 			},
 		},
@@ -121,7 +121,7 @@ var Specifications = []Specification{
 				aa := []interface{}{1, 2, 3, 4}
 				generic.Clear(&aa)
 				generic.Append(&aa, 6, 7, 8)
-				assert.ElementsMatch(t, []interface{}{6, 7, 8}, aa)
+				assertSlicesEqual(t, []interface{}{6, 7, 8}, aa)
 			},
 		},
 	},
@@ -135,7 +135,7 @@ var Specifications = []Specification{
 				if &aa == &bb {
 					t.Error("Slices aa and bb should not have the same address")
 				}
-				assert.ElementsMatch(t, aa, bb)
+				assertSlicesEqual(t, aa, bb)
 			},
 		},
 		AlternativePath: Behavior{
@@ -164,7 +164,7 @@ var Specifications = []Specification{
 				}
 				cc := generic.Collect(aa, bb, collector)
 				dd := []interface{}{"AY", "AZ", "BY", "BZ"}
-				assert.ElementsMatch(t, cc, dd)
+				assertSlicesEqual(t, cc, dd)
 			},
 		},
 		AlternativePath: Behavior{
@@ -206,7 +206,7 @@ var Specifications = []Specification{
 				bb := generic.Dequeue(&aa)
 				assert.Equal(t, 1, bb[0])
 				cc := []interface{}{2, 3}
-				assert.ElementsMatch(t, aa, cc)
+				assertSlicesEqual(t, aa, cc)
 			},
 		},
 		AlternativePath: Behavior{
@@ -232,7 +232,7 @@ var Specifications = []Specification{
 				}
 				cc := generic.Difference(aa, bb, equality)
 				dd := []interface{}{1, 2, 5}
-				assert.ElementsMatch(t, cc, dd)
+				assertSlicesEqual(t, cc, dd)
 			},
 		},
 		AlternativePath: Behavior{
@@ -247,7 +247,7 @@ var Specifications = []Specification{
 				}
 				cc := generic.Difference(aa, bb, equality)
 				dd := []interface{}{1, 2, 1, 5, 5}
-				assert.ElementsMatch(t, cc, dd)
+				assertSlicesEqual(t, cc, dd)
 			},
 		},
 	},
@@ -262,7 +262,7 @@ var Specifications = []Specification{
 				}
 				generic.Distinct(&aa, equality)
 				bb := []interface{}{"Dani", "Riley", "Tori", "Janice"}
-				assert.ElementsMatch(t, aa, bb)
+				assertSlicesEqual(t, aa, bb)
 			},
 		},
 		AlternativePath: Behavior{
@@ -316,7 +316,7 @@ var Specifications = []Specification{
 				aa := []interface{}{1, 2, 3}
 				generic.Enqueue(&aa, 4)
 				bb := []interface{}{4, 1, 2, 3}
-				assert.ElementsMatch(t, aa, bb)
+				assertSlicesEqual(t, aa, bb)
 			},
 		},
 		AlternativePath: Behavior{
@@ -339,7 +339,7 @@ var Specifications = []Specification{
 				}
 				bb := generic.Expand(aa, expansion)
 				cc := []interface{}{"A", "B", "C", "D", "E", "F"}
-				assert.ElementsMatch(t, bb, cc)
+				assertSlicesEqual(t, bb, cc)
 			},
 		},
 		AlternativePath: Behavior{
@@ -360,7 +360,7 @@ var Specifications = []Specification{
 				}
 				generic.Filter(&aa, test)
 				bb := []interface{}{1, 3}
-				assert.ElementsMatch(t, aa, bb)
+				assertSlicesEqual(t, aa, bb)
 			},
 		},
 		AlternativePath: Behavior{
@@ -406,7 +406,7 @@ var Specifications = []Specification{
 				}
 				bb := generic.First(aa, test)
 				cc := []interface{}{2}
-				assert.ElementsMatch(t, bb, cc)
+				assertSlicesEqual(t, bb, cc)
 			},
 		},
 		AlternativePath: Behavior{
@@ -418,7 +418,7 @@ var Specifications = []Specification{
 				}
 				bb := generic.First(aa, test)
 				cc := []interface{}{}
-				assert.ElementsMatch(t, bb, cc)
+				assertSlicesEqual(t, bb, cc)
 			},
 		},
 	},
@@ -758,12 +758,12 @@ var Specifications = []Specification{
 					}
 				}
 				bb := generic.Group(aa, grouper)
-				cc := generic.SliceType2{
+				cc := generic.SliceType{
 					generic.SliceType{"A", "B"},
 					generic.SliceType{"C", "D"},
 					generic.SliceType{"E", "F"},
 				}
-				assert.ElementsMatch(t, bb, cc)
+				assertSlicesEqual(t, bb, cc)
 			},
 		},
 		AlternativePath: Behavior{
@@ -786,12 +786,12 @@ var Specifications = []Specification{
 					return a.(string) == b.(string)
 				}
 				bb := generic.GroupByTrait(aa, trait, equality)
-				cc := generic.SliceType2{
+				cc := generic.SliceType{
 					generic.SliceType{"dog", "dogs"},
 					generic.SliceType{"cat"},
 					generic.SliceType{"pigdog", "pigs", "pigdogs", "pig"},
 				}
-				assert.ElementsMatch(t, bb, cc)
+				assertSlicesEqual(t, bb, cc)
 			},
 		},
 		AlternativePath: Behavior{
@@ -818,12 +818,12 @@ var Specifications = []Specification{
 					}
 				}
 				bb := generic.GroupI(aa, grouper)
-				cc := generic.SliceType2{
+				cc := generic.SliceType{
 					generic.SliceType{"A", "B"},
 					generic.SliceType{"C", "D"},
 					generic.SliceType{"E", "F"},
 				}
-				assert.ElementsMatch(t, bb, cc)
+				assertSlicesEqual(t, bb, cc)
 			},
 		},
 		AlternativePath: Behavior{
@@ -840,7 +840,7 @@ var Specifications = []Specification{
 			Expectation: func(t *testing.T) {
 				aa := []interface{}{1, 2, 3}
 				bb := generic.Head(aa)
-				assert.ElementsMatch(t, bb, []interface{}{1})
+				assertSlicesEqual(t, bb, []interface{}{1})
 			},
 		},
 		AlternativePath: Behavior{
@@ -865,7 +865,7 @@ var Specifications = []Specification{
 				}
 				generic.InsertAfter(&aa, 9, test)
 				bb := []interface{}{1, 9, 2, 3}
-				assert.ElementsMatch(t, aa, bb)
+				assertSlicesEqual(t, aa, bb)
 			},
 		},
 		AlternativePath: Behavior{
@@ -877,7 +877,7 @@ var Specifications = []Specification{
 				}
 				generic.InsertAfter(&aa, 9, test)
 				bb := []interface{}{1, 2, 3, 9}
-				assert.ElementsMatch(t, aa, bb)
+				assertSlicesEqual(t, aa, bb)
 			},
 		},
 	},
@@ -892,7 +892,7 @@ var Specifications = []Specification{
 				}
 				generic.InsertBefore(&aa, 9, test)
 				bb := []interface{}{1, 9, 2, 3, 4}
-				assert.ElementsMatch(t, aa, bb)
+				assertSlicesEqual(t, aa, bb)
 			},
 		},
 		AlternativePath: Behavior{
@@ -904,7 +904,7 @@ var Specifications = []Specification{
 				}
 				generic.InsertBefore(&aa, 9, test)
 				bb := []interface{}{9, 1, 2, 3, 4}
-				assert.ElementsMatch(t, aa, bb)
+				assertSlicesEqual(t, aa, bb)
 			},
 		},
 	},
@@ -916,7 +916,7 @@ var Specifications = []Specification{
 				aa := []interface{}{1, 2, 3}
 				generic.InsertAt(&aa, 9, 2)
 				bb := []interface{}{1, 2, 9, 3}
-				assert.ElementsMatch(t, aa, bb)
+				assertSlicesEqual(t, aa, bb)
 			},
 		},
 		AlternativePath: Behavior{
@@ -925,7 +925,7 @@ var Specifications = []Specification{
 				aa := []interface{}{}
 				generic.InsertAt(&aa, 9, 0)
 				bb := []interface{}{9}
-				assert.ElementsMatch(t, aa, bb)
+				assertSlicesEqual(t, aa, bb)
 			},
 		},
 		EdgeCases: []Behavior{
@@ -935,7 +935,7 @@ var Specifications = []Specification{
 					aa := []interface{}{1, 2, 3}
 					generic.InsertAt(&aa, 9, -2)
 					bb := []interface{}{9, 1, 2, 3}
-					assert.ElementsMatch(t, aa, bb)
+					assertSlicesEqual(t, aa, bb)
 				},
 			},
 			Behavior{
@@ -944,7 +944,7 @@ var Specifications = []Specification{
 					aa := []interface{}{1, 2, 3}
 					generic.InsertAt(&aa, 9, 99)
 					bb := []interface{}{1, 2, 3, 9}
-					assert.ElementsMatch(t, aa, bb)
+					assertSlicesEqual(t, aa, bb)
 				},
 			},
 		},
@@ -961,7 +961,7 @@ var Specifications = []Specification{
 				}
 				cc := generic.Intersection(aa, bb, equality)
 				dd := []interface{}{4, 2}
-				assert.ElementsMatch(t, cc, dd)
+				assertSlicesEqual(t, cc, dd)
 			},
 		},
 		AlternativePath: Behavior{
@@ -974,7 +974,7 @@ var Specifications = []Specification{
 				}
 				cc := generic.Intersection(aa, bb, equality)
 				dd := []interface{}{4, 2}
-				assert.ElementsMatch(t, cc, dd)
+				assertSlicesEqual(t, cc, dd)
 			},
 		},
 	},
@@ -1094,7 +1094,7 @@ var Specifications = []Specification{
 				aa := []interface{}{1, 2, 3}
 				bb := generic.Item(aa, 1)
 				cc := []interface{}{2}
-				assert.ElementsMatch(t, bb, cc)
+				assertSlicesEqual(t, bb, cc)
 			},
 		},
 		AlternativePath: Behavior{
@@ -1104,7 +1104,7 @@ var Specifications = []Specification{
 					aa := []interface{}{}
 					bb := generic.ItemFuzzy(aa, i)
 					cc := []interface{}{}
-					assert.ElementsMatch(t, bb, cc)
+					assertSlicesEqual(t, bb, cc)
 				}
 			},
 		},
@@ -1115,7 +1115,7 @@ var Specifications = []Specification{
 					aa := []interface{}{1, 2, 3}
 					bb := generic.Item(aa, -1)
 					cc := []interface{}{}
-					assert.ElementsMatch(t, bb, cc)
+					assertSlicesEqual(t, bb, cc)
 				},
 			},
 			Behavior{
@@ -1124,7 +1124,7 @@ var Specifications = []Specification{
 					aa := []interface{}{1, 2, 3}
 					bb := generic.Item(aa, 10)
 					cc := []interface{}{}
-					assert.ElementsMatch(t, bb, cc)
+					assertSlicesEqual(t, bb, cc)
 				},
 			},
 		},
@@ -1137,7 +1137,7 @@ var Specifications = []Specification{
 				aa := []interface{}{1, 2, 3}
 				bb := generic.ItemFuzzy(aa, 1)
 				cc := []interface{}{2}
-				assert.ElementsMatch(t, bb, cc)
+				assertSlicesEqual(t, bb, cc)
 			},
 		},
 		AlternativePath: Behavior{
@@ -1147,7 +1147,7 @@ var Specifications = []Specification{
 					aa := []interface{}{}
 					bb := generic.ItemFuzzy(aa, i)
 					cc := []interface{}{}
-					assert.ElementsMatch(t, bb, cc)
+					assertSlicesEqual(t, bb, cc)
 				}
 			},
 		},
@@ -1158,7 +1158,7 @@ var Specifications = []Specification{
 					aa := []interface{}{1, 2, 3}
 					bb := generic.ItemFuzzy(aa, -1)
 					cc := []interface{}{1}
-					assert.ElementsMatch(t, bb, cc)
+					assertSlicesEqual(t, bb, cc)
 				},
 			},
 			Behavior{
@@ -1167,7 +1167,7 @@ var Specifications = []Specification{
 					aa := []interface{}{1, 2, 3}
 					bb := generic.ItemFuzzy(aa, 10)
 					cc := []interface{}{3}
-					assert.ElementsMatch(t, bb, cc)
+					assertSlicesEqual(t, bb, cc)
 				},
 			},
 		},
@@ -1183,7 +1183,7 @@ var Specifications = []Specification{
 				}
 				bb := generic.Last(aa, test)
 				cc := []interface{}{7}
-				assert.ElementsMatch(t, bb, cc)
+				assertSlicesEqual(t, bb, cc)
 			},
 		},
 		AlternativePath: Behavior{
@@ -1220,7 +1220,7 @@ var Specifications = []Specification{
 				}
 				generic.Map(&aa, mapFn)
 				bb := []interface{}{2, 4, 6}
-				assert.ElementsMatch(t, aa, bb)
+				assertSlicesEqual(t, aa, bb)
 			},
 		},
 		AlternativePath: Behavior{
@@ -1264,7 +1264,7 @@ var Specifications = []Specification{
 				}
 				bb := generic.Pairwise(aa, "V", xform)
 				cc := []interface{}{"VW", "WX", "XY", "YZ"}
-				assert.ElementsMatch(t, bb, cc)
+				assertSlicesEqual(t, bb, cc)
 			},
 		},
 		AlternativePath: Behavior{
@@ -1276,7 +1276,7 @@ var Specifications = []Specification{
 				}
 				bb := generic.Pairwise(aa, "V", xform)
 				cc := []interface{}{}
-				assert.ElementsMatch(t, bb, cc)
+				assertSlicesEqual(t, bb, cc)
 			},
 		},
 	},
@@ -1290,8 +1290,8 @@ var Specifications = []Specification{
 					return a.(int)%2 == 0
 				}
 				bb := generic.Partition(aa, test)
-				cc := generic.SliceType2{generic.SliceType{2, 4, 6}, []interface{}{1, 3, 5}}
-				assert.ElementsMatch(t, bb, cc)
+				cc := generic.SliceType{generic.SliceType{2, 4, 6}, []interface{}{1, 3, 5}}
+				assertSlicesEqual(t, bb, cc)
 			},
 		},
 		AlternativePath: Behavior{
@@ -1348,7 +1348,7 @@ var Specifications = []Specification{
 			Expectation: func(t *testing.T) {
 				aa := []interface{}{"A", "B", "C"}
 				bb := generic.Permute(aa)
-				cc := generic.SliceType2{
+				cc := generic.SliceType{
 					generic.SliceType{"A", "B", "C"},
 					generic.SliceType{"B", "A", "C"},
 					generic.SliceType{"C", "A", "B"},
@@ -1356,7 +1356,7 @@ var Specifications = []Specification{
 					generic.SliceType{"B", "C", "A"},
 					generic.SliceType{"C", "B", "A"},
 				}
-				assert.ElementsMatch(t, bb, cc)
+				assertSlicesEqual(t, bb, cc)
 			},
 		},
 		AlternativePath: Behavior{
@@ -1365,7 +1365,7 @@ var Specifications = []Specification{
 				aa := []interface{}{"A", "B", "C"}
 				generic.Permute(aa)
 				cc := []interface{}{"A", "B", "C"}
-				assert.ElementsMatch(t, aa, cc)
+				assertSlicesEqual(t, aa, cc)
 			},
 		},
 		EdgeCases: []Behavior{
@@ -1401,8 +1401,8 @@ var Specifications = []Specification{
 				bb := generic.Pop(&aa)
 				cc := []interface{}{2, 3}
 				dd := []interface{}{1}
-				assert.ElementsMatch(t, aa, cc)
-				assert.ElementsMatch(t, bb, dd)
+				assertSlicesEqual(t, aa, cc)
+				assertSlicesEqual(t, bb, dd)
 			},
 		},
 		AlternativePath: Behavior{
@@ -1424,7 +1424,7 @@ var Specifications = []Specification{
 				aa := []interface{}{1, 2, 3}
 				generic.Push(&aa, 9)
 				bb := []interface{}{9, 1, 2, 3}
-				assert.ElementsMatch(t, aa, bb)
+				assertSlicesEqual(t, aa, bb)
 			},
 		},
 		AlternativePath: Behavior{
@@ -1445,7 +1445,7 @@ var Specifications = []Specification{
 				}
 				bb := generic.Reduce(aa, reducer)
 				cc := []interface{}{10}
-				assert.ElementsMatch(t, bb, cc)
+				assertSlicesEqual(t, bb, cc)
 			},
 		},
 		AlternativePath: Behavior{
@@ -1457,7 +1457,7 @@ var Specifications = []Specification{
 				}
 				bb := generic.Reduce(aa, reducer)
 				cc := []interface{}{}
-				assert.ElementsMatch(t, bb, cc)
+				assertSlicesEqual(t, bb, cc)
 			},
 		},
 		EdgeCases: []Behavior{
@@ -1470,7 +1470,7 @@ var Specifications = []Specification{
 					}
 					bb := generic.Reduce(aa, reducer)
 					cc := []interface{}{1}
-					assert.ElementsMatch(t, bb, cc)
+					assertSlicesEqual(t, bb, cc)
 				},
 			},
 		},
@@ -1486,7 +1486,7 @@ var Specifications = []Specification{
 				}
 				generic.Remove(&aa, test)
 				bb := []interface{}{1, 3, 5}
-				assert.ElementsMatch(t, aa, bb)
+				assertSlicesEqual(t, aa, bb)
 			},
 		},
 		AlternativePath: Behavior{
@@ -1498,7 +1498,7 @@ var Specifications = []Specification{
 				}
 				generic.Remove(&aa, test)
 				bb := []interface{}{1, 2, 3, 4, 5, 6}
-				assert.ElementsMatch(t, aa, bb)
+				assertSlicesEqual(t, aa, bb)
 			},
 		},
 	},
@@ -1510,7 +1510,7 @@ var Specifications = []Specification{
 				aa := []interface{}{1, 2, 3, 4}
 				generic.RemoveAt(&aa, 2)
 				bb := []interface{}{1, 2, 4}
-				assert.ElementsMatch(t, aa, bb)
+				assertSlicesEqual(t, aa, bb)
 			},
 		},
 		AlternativePath: Behavior{
@@ -1519,7 +1519,7 @@ var Specifications = []Specification{
 				aa := []interface{}{}
 				generic.RemoveAt(&aa, 2)
 				bb := []interface{}{}
-				assert.ElementsMatch(t, aa, bb)
+				assertSlicesEqual(t, aa, bb)
 			},
 		},
 		EdgeCases: []Behavior{
@@ -1537,7 +1537,7 @@ var Specifications = []Specification{
 					aa := []interface{}{1, 2, 3, 4}
 					generic.RemoveAt(&aa, -1)
 					bb := []interface{}{1, 2, 3, 4}
-					assert.ElementsMatch(t, aa, bb)
+					assertSlicesEqual(t, aa, bb)
 				},
 			},
 			Behavior{
@@ -1546,7 +1546,7 @@ var Specifications = []Specification{
 					aa := []interface{}{1, 2, 3, 4}
 					generic.RemoveAt(&aa, 10)
 					bb := []interface{}{1, 2, 3, 4}
-					assert.ElementsMatch(t, aa, bb)
+					assertSlicesEqual(t, aa, bb)
 				},
 			},
 		},
@@ -1559,7 +1559,7 @@ var Specifications = []Specification{
 				aa := []interface{}{1, 2, 3, 4}
 				generic.Reverse(&aa)
 				bb := []interface{}{4, 3, 2, 1}
-				assert.ElementsMatch(t, aa, bb)
+				assertSlicesEqual(t, aa, bb)
 			},
 		},
 		AlternativePath: Behavior{
@@ -1568,7 +1568,7 @@ var Specifications = []Specification{
 				aa := []interface{}{}
 				generic.Reverse(&aa)
 				bb := []interface{}{}
-				assert.ElementsMatch(t, aa, bb)
+				assertSlicesEqual(t, aa, bb)
 			},
 		},
 		EdgeCases: []Behavior{
@@ -1590,7 +1590,7 @@ var Specifications = []Specification{
 				aa := []interface{}{1, 2, 3, 4}
 				generic.Skip(&aa, 2)
 				bb := []interface{}{3, 4}
-				assert.ElementsMatch(t, aa, bb)
+				assertSlicesEqual(t, aa, bb)
 			},
 		},
 		AlternativePath: Behavior{
@@ -1599,7 +1599,7 @@ var Specifications = []Specification{
 				aa := []interface{}{1, 2, 3, 4}
 				generic.Skip(&aa, 4)
 				bb := []interface{}{}
-				assert.ElementsMatch(t, aa, bb)
+				assertSlicesEqual(t, aa, bb)
 			},
 		},
 		EdgeCases: []Behavior{
@@ -1609,7 +1609,7 @@ var Specifications = []Specification{
 					aa := []interface{}{}
 					generic.Skip(&aa, 4)
 					bb := []interface{}{}
-					assert.ElementsMatch(t, aa, bb)
+					assertSlicesEqual(t, aa, bb)
 				},
 			},
 			Behavior{
@@ -1628,7 +1628,7 @@ var Specifications = []Specification{
 						aa := []interface{}{}
 						generic.Skip(&aa, n)
 						bb := []interface{}{}
-						assert.ElementsMatch(t, aa, bb)
+						assertSlicesEqual(t, aa, bb)
 					}
 				},
 			},
@@ -1645,7 +1645,7 @@ var Specifications = []Specification{
 				}
 				generic.SkipWhile(&aa, test)
 				bb := []interface{}{3, 4}
-				assert.ElementsMatch(t, aa, bb)
+				assertSlicesEqual(t, aa, bb)
 			},
 		},
 		AlternativePath: Behavior{
@@ -1657,7 +1657,7 @@ var Specifications = []Specification{
 				}
 				generic.SkipWhile(&aa, test)
 				bb := []interface{}{1, 2, 3, 4}
-				assert.ElementsMatch(t, aa, bb)
+				assertSlicesEqual(t, aa, bb)
 			},
 		},
 	},
@@ -1672,7 +1672,7 @@ var Specifications = []Specification{
 				}
 				generic.Sort(&aa, less)
 				bb := []interface{}{2, 3, 4, 5, 6}
-				assert.ElementsMatch(t, aa, bb)
+				assertSlicesEqual(t, aa, bb)
 			},
 		},
 		AlternativePath: Behavior{
@@ -1692,26 +1692,26 @@ var Specifications = []Specification{
 					return a.(int) == 7
 				}
 				bb := generic.SplitAfter(aa, test)
-				cc := generic.SliceType2{
+				cc := generic.SliceType{
 					generic.SliceType{6, 7},
 					generic.SliceType{8, 9},
 				}
-				assert.ElementsMatch(t, bb, cc)
+				assertSlicesEqual(t, bb, cc)
 			},
 		},
 		AlternativePath: Behavior{
-			Description: "No match found, aa will be in SliceType2[0]",
+			Description: "No match found, aa will be in SliceType[0]",
 			Expectation: func(t *testing.T) {
 				aa := []interface{}{6, 7, 8, 9}
 				test := func(a interface{}) bool {
 					return a.(int) == 10
 				}
 				bb := generic.SplitAfter(aa, test)
-				cc := generic.SliceType2{
+				cc := generic.SliceType{
 					generic.SliceType{6, 7, 8, 9},
 					generic.SliceType{},
 				}
-				assert.ElementsMatch(t, bb, cc)
+				assertSlicesEqual(t, bb, cc)
 			},
 		},
 	},
@@ -1722,11 +1722,11 @@ var Specifications = []Specification{
 			Expectation: func(t *testing.T) {
 				aa := []interface{}{6, 7, 8, 9}
 				bb := generic.SplitAt(aa, 2)
-				cc := generic.SliceType2{
+				cc := generic.SliceType{
 					generic.SliceType{6, 7},
 					generic.SliceType{8, 9},
 				}
-				assert.ElementsMatch(t, bb, cc)
+				assertSlicesEqual(t, bb, cc)
 			},
 		},
 		AlternativePath: Behavior{
@@ -1734,11 +1734,11 @@ var Specifications = []Specification{
 			Expectation: func(t *testing.T) {
 				aa := []interface{}{}
 				bb := generic.SplitAt(aa, 2)
-				cc := generic.SliceType2{
+				cc := generic.SliceType{
 					generic.SliceType{},
 					generic.SliceType{},
 				}
-				assert.ElementsMatch(t, bb, cc)
+				assertSlicesEqual(t, bb, cc)
 			},
 		},
 		EdgeCases: []Behavior{
@@ -1747,35 +1747,35 @@ var Specifications = []Specification{
 				Expectation: func(t *testing.T) {
 					var aa generic.SliceType
 					bb := generic.SplitAt(aa, 2)
-					cc := generic.SliceType2{
+					cc := generic.SliceType{
 						generic.SliceType{},
 						generic.SliceType{},
 					}
-					assert.ElementsMatch(t, bb, cc)
+					assertSlicesEqual(t, bb, cc)
 				},
 			},
 			Behavior{
-				Description: "If i < 0, the full slice will be placed in SliceType2[1]",
+				Description: "If i < 0, the full slice will be placed in SliceType[1]",
 				Expectation: func(t *testing.T) {
 					aa := []interface{}{6, 7, 8, 9}
 					bb := generic.SplitAt(aa, -1)
-					cc := generic.SliceType2{
+					cc := generic.SliceType{
 						generic.SliceType{},
 						generic.SliceType{6, 7, 8, 9},
 					}
-					assert.ElementsMatch(t, bb, cc)
+					assertSlicesEqual(t, bb, cc)
 				},
 			},
 			Behavior{
-				Description: "If i >= len(aa), the full slice will be placed in SliceType2[0]",
+				Description: "If i >= len(aa), the full slice will be placed in SliceType[0]",
 				Expectation: func(t *testing.T) {
 					aa := []interface{}{6, 7, 8, 9}
 					bb := generic.SplitAt(aa, 4)
-					cc := generic.SliceType2{
+					cc := generic.SliceType{
 						generic.SliceType{6, 7, 8, 9},
 						generic.SliceType{},
 					}
-					assert.ElementsMatch(t, bb, cc)
+					assertSlicesEqual(t, bb, cc)
 				},
 			},
 		},
@@ -1790,26 +1790,26 @@ var Specifications = []Specification{
 					return a.(int) == 8
 				}
 				bb := generic.SplitBefore(aa, test)
-				cc := generic.SliceType2{
+				cc := generic.SliceType{
 					generic.SliceType{6, 7},
 					generic.SliceType{8, 9},
 				}
-				assert.ElementsMatch(t, bb, cc)
+				assertSlicesEqual(t, bb, cc)
 			},
 		},
 		AlternativePath: Behavior{
-			Description: "No match found, aa will be in SliceType2[0]",
+			Description: "No match found, aa will be in SliceType[0]",
 			Expectation: func(t *testing.T) {
 				aa := []interface{}{6, 7, 8, 9}
 				test := func(a interface{}) bool {
 					return a.(int) == 10
 				}
 				bb := generic.SplitBefore(aa, test)
-				cc := generic.SliceType2{
+				cc := generic.SliceType{
 					generic.SliceType{6, 7, 8, 9},
 					generic.SliceType{},
 				}
-				assert.ElementsMatch(t, bb, cc)
+				assertSlicesEqual(t, bb, cc)
 			},
 		},
 	},
@@ -1838,7 +1838,7 @@ var Specifications = []Specification{
 				aa := []interface{}{1, 2, 3, 4, 5}
 				generic.SwapIndex(aa, 2, 4)
 				bb := []interface{}{1, 2, 5, 4, 3}
-				assert.ElementsMatch(t, aa, bb)
+				assertSlicesEqual(t, aa, bb)
 			},
 		},
 		AlternativePath: Behavior{
@@ -1858,7 +1858,7 @@ var Specifications = []Specification{
 					aa := []interface{}{1, 2, 3, 4, 5}
 					generic.SwapIndex(aa, ii[0], ii[1])
 					bb := []interface{}{1, 2, 3, 4, 5}
-					assert.ElementsMatch(t, aa, bb)
+					assertSlicesEqual(t, aa, bb)
 				}
 			},
 		},
@@ -1871,7 +1871,7 @@ var Specifications = []Specification{
 				aa := []interface{}{1, 2, 3}
 				generic.Tail(&aa)
 				bb := []interface{}{2, 3}
-				assert.ElementsMatch(t, aa, bb)
+				assertSlicesEqual(t, aa, bb)
 			},
 		},
 		AlternativePath: Behavior{
@@ -1889,7 +1889,7 @@ var Specifications = []Specification{
 				aa := []interface{}{1, 2, 3, 4}
 				generic.Take(&aa, 2)
 				bb := []interface{}{1, 2}
-				assert.ElementsMatch(t, aa, bb)
+				assertSlicesEqual(t, aa, bb)
 			},
 		},
 		AlternativePath: Behavior{
@@ -1898,7 +1898,7 @@ var Specifications = []Specification{
 				aa := []interface{}{}
 				generic.Take(&aa, 2)
 				bb := []interface{}{}
-				assert.ElementsMatch(t, aa, bb)
+				assertSlicesEqual(t, aa, bb)
 			},
 		},
 		EdgeCases: []Behavior{
@@ -1923,7 +1923,7 @@ var Specifications = []Specification{
 				}
 				generic.TakeWhile(&aa, test)
 				bb := []interface{}{1, 2}
-				assert.ElementsMatch(t, aa, bb)
+				assertSlicesEqual(t, aa, bb)
 			},
 		},
 		AlternativePath: Behavior{
@@ -1942,7 +1942,7 @@ var Specifications = []Specification{
 				bb := []interface{}{4, 5, 6}
 				generic.Union(&aa, bb)
 				cc := []interface{}{1, 2, 3, 4, 5, 6}
-				assert.ElementsMatch(t, aa, cc)
+				assertSlicesEqual(t, aa, cc)
 
 			},
 		},
@@ -1960,11 +1960,11 @@ var Specifications = []Specification{
 			Expectation: func(t *testing.T) {
 				aa := []interface{}{1, 2, 3, 4, 5}
 				bb := generic.Unzip(aa)
-				cc := generic.SliceType2{
+				cc := generic.SliceType{
 					generic.SliceType{1, 3, 5},
 					generic.SliceType{2, 4},
 				}
-				assert.ElementsMatch(t, bb, cc)
+				assertSlicesEqual(t, bb, cc)
 			},
 		},
 		AlternativePath: Behavior{
@@ -1989,7 +1989,7 @@ var Specifications = []Specification{
 				aa := []interface{}{1.0, 2.0, 3.0, 4.0, 5.0}
 				bb := generic.WindowCentered(aa, 4, windowFn)
 				cc := []interface{}{1.5, 2.0, 2.5, 3.5, 4.0}
-				assert.ElementsMatch(t, bb, cc)
+				assertSlicesEqual(t, bb, cc)
 			},
 		},
 		AlternativePath: Behavior{
@@ -2005,7 +2005,7 @@ var Specifications = []Specification{
 				aa := []interface{}{"1", "2", "3"}
 				bb := generic.WindowCentered(aa, 3, windowFn)
 				cc := []interface{}{"12", "123", "23"}
-				assert.ElementsMatch(t, bb, cc)
+				assertSlicesEqual(t, bb, cc)
 			},
 		},
 		EdgeCases: []Behavior{
@@ -2022,7 +2022,7 @@ var Specifications = []Specification{
 					aa := []interface{}{"1", "2", "3", "4", "5"}
 					bb := generic.WindowCentered(aa, 4, windowFn)
 					cc := []interface{}{"12", "123", "1234", "2345", "345"}
-					assert.ElementsMatch(t, bb, cc)
+					assertSlicesEqual(t, bb, cc)
 				},
 			},
 		},
@@ -2042,7 +2042,7 @@ var Specifications = []Specification{
 				aa := []interface{}{1.0, 2.0, 3.0, 4.0, 5.0}
 				bb := generic.WindowLeft(aa, 4, windowFn)
 				cc := []interface{}{2.5, 3.5, 4.0, 4.5, 5.0}
-				assert.ElementsMatch(t, bb, cc)
+				assertSlicesEqual(t, bb, cc)
 			},
 		},
 		AlternativePath: Behavior{
@@ -2058,7 +2058,7 @@ var Specifications = []Specification{
 				aa := []interface{}{"1", "2", "3"}
 				bb := generic.WindowLeft(aa, 2, windowFn)
 				cc := []interface{}{"12", "23", "3"}
-				assert.ElementsMatch(t, bb, cc)
+				assertSlicesEqual(t, bb, cc)
 			},
 		},
 	},
@@ -2077,7 +2077,7 @@ var Specifications = []Specification{
 				aa := []interface{}{1.0, 2.0, 3.0, 4.0, 5.0}
 				bb := generic.WindowRight(aa, 4, windowFn)
 				cc := []interface{}{1.0, 1.5, 2.0, 2.5, 3.5}
-				assert.ElementsMatch(t, bb, cc)
+				assertSlicesEqual(t, bb, cc)
 			},
 		},
 		AlternativePath: Behavior{
@@ -2093,7 +2093,7 @@ var Specifications = []Specification{
 				aa := []interface{}{"1", "2", "3"}
 				bb := generic.WindowRight(aa, 2, windowFn)
 				cc := []interface{}{"1", "12", "23"}
-				assert.ElementsMatch(t, bb, cc)
+				assertSlicesEqual(t, bb, cc)
 			},
 		},
 	},
@@ -2143,7 +2143,7 @@ var Specifications = []Specification{
 
 				for _, tc := range testCases {
 					cc := generic.Zip(tc.aa, tc.bb)
-					assert.ElementsMatch(t, cc, tc.dd)
+					assertSlicesEqual(t, cc, tc.dd)
 				}
 			},
 		},
@@ -2164,4 +2164,39 @@ func TestTransforms(t *testing.T) {
 			t.Run(fmt.Sprintf("%vEdgeCase%v", specification.FunctionName, i+1), edgeCase.Expectation)
 		}
 	}
+}
+
+func assertSlicesEqual(t *testing.T, xx, yy []interface{}) bool {
+	// often dealing with using []interface{} as the key (hash) value in a map
+	// which go doesn't like because []interface{} types are unhashable.
+	// We convert the values to a string to get around this limitation.
+	hash := func(z interface{}) string {
+		return fmt.Sprintf("%v", z)
+	}
+
+	if len(xx) != len(yy) {
+		t.Errorf("Expected lengths to match. Wanted %v, got %v", xx, yy)
+		return false
+	}
+	diff := make(map[interface{}]int, len(xx))
+	for _, x := range xx {
+		diff[hash(x)]++
+	}
+	for _, y := range yy {
+		hashy := hash(y)
+		if _, ok := diff[hashy]; !ok {
+			t.Errorf("Expected %v, but got %v", xx, yy)
+			return false
+		}
+		diff[hashy] -= 1
+		if diff[hashy] == 0 {
+			delete(diff, hashy)
+		}
+	}
+	if len(diff) == 0 {
+		return true
+	}
+
+	t.Errorf("Expected %v, but got %v", xx, yy)
+	return false
 }
