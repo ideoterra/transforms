@@ -5,9 +5,9 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/jecolasurdo/transforms/pkg/slices/generic"
-	"github.com/jecolasurdo/transforms/pkg/slices/generic/closures"
-	"github.com/jecolasurdo/transforms/pkg/slices/shared"
+	"github.com/ideoterra/transforms/pkg/slices/generic"
+	"github.com/ideoterra/transforms/pkg/slices/generic/closures"
+	"github.com/ideoterra/transforms/pkg/slices/shared"
 	"github.com/stretchr/testify/assert"
 )
 

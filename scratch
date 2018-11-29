@@ -1,0 +1,23 @@
+Methods with SliceType2|Slice2
+
+Group
+GroupI
+Partition
+Permute
+SplitAfter
+SplitAt
+SplitBefore
+Unzip
+
+Functions with [][]interface{}
+
+Flatten <- not tested
+*Group
+*GroupByTrait
+*GroupI
+*Partition
+*Permute
+*SplitAfter
+*SplitAt
+*SplitBefore
+Unzip

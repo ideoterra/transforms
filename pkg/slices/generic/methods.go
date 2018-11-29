@@ -3,8 +3,8 @@ package generic
 import (
 	"math/big"
 
-	"github.com/jecolasurdo/transforms/pkg/slices/generic/closures"
-	"github.com/jecolasurdo/transforms/pkg/slices/shared"
+	"github.com/ideoterra/transforms/pkg/slices/generic/closures"
+	"github.com/ideoterra/transforms/pkg/slices/shared"
 )
 
 func unbox(aa []interface{}) *SliceType {

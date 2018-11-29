@@ -7,7 +7,7 @@ import (
 	"sort"
 	"sync"
 
-	"github.com/jecolasurdo/transforms/pkg/slices/shared"
+	"github.com/ideoterra/transforms/pkg/slices/shared"
 )
 
 // All applies a test function to each element in the slice, and returns true if

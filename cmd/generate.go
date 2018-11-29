@@ -9,8 +9,8 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/jecolasurdo/transforms/pkg/slices/generic"
-	"github.com/jecolasurdo/transforms/pkg/slices/shared"
+	"github.com/ideoterra/transforms/pkg/slices/generic"
+	"github.com/ideoterra/transforms/pkg/slices/shared"
 )
 
 type primitiveType struct {
@@ -31,7 +31,7 @@ type typeNames struct {
 }
 
 const (
-	basePath    = `/Users/joe/workspace/go/src/github.com/jecolasurdo/transforms/pkg/slices`
+	basePath    = `/Users/joe/workspace/go/src/github.com/ideoterra/transforms/pkg/slices`
 	genericPath = basePath + "/generic"
 )
 
