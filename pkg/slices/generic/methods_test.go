@@ -8,7 +8,6 @@ import (
 	"github.com/ideoterra/transforms/pkg/slices/generic"
 	"github.com/ideoterra/transforms/pkg/slices/generic/closures"
 	"github.com/ideoterra/transforms/pkg/slices/shared"
-	"github.com/stretchr/testify/assert"
 )
 
 // As a rule, all methods in this package (methods.go) are just wrappers around
@@ -266,6 +265,7 @@ func TestMutatingMethods(t *testing.T) {
 
 	methodCalls := []func(*generic.SliceType){
 		func(aa *generic.SliceType) { aa.Append(1) },
+		func(aa *generic.SliceType) { aa.Apply(func(a interface{}) interface{} { return a.(int) * 2 }) },
 		func(aa *generic.SliceType) { aa.Clear() },
 		func(aa *generic.SliceType) { aa.Dequeue() },
 		func(aa *generic.SliceType) { aa.Distinct(equality) },
@@ -274,7 +274,6 @@ func TestMutatingMethods(t *testing.T) {
 		func(aa *generic.SliceType) { aa.InsertAfter(1, condition) },
 		func(aa *generic.SliceType) { aa.InsertBefore(1, condition) },
 		func(aa *generic.SliceType) { aa.InsertAt(1, 0) },
-		func(aa *generic.SliceType) { aa.Map(func(a interface{}) interface{} { return a.(int) * 2 }) },
 		func(aa *generic.SliceType) { aa.Pop() },
 		func(aa *generic.SliceType) { aa.Push(1) },
 		func(aa *generic.SliceType) { aa.Remove(condition) },
@@ -409,13 +408,4 @@ func TestNonMutatingMethods(t *testing.T) {
 		}
 		t.Run(fmt.Sprintf("Mutation condition %v", i+1), condition)
 	}
-}
-
-func TestFoo(t *testing.T) {
-	aa := &generic.SliceType{1, 2, 3}
-	aa.
-		Append(4).
-		Map(func(a interface{}) interface{} { return a.(int) * 2 })
-	bb := generic.SliceType{2, 4, 6, 8}
-	assert.ElementsMatch(t, *aa, bb)
 }
