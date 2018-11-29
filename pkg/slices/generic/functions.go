@@ -349,10 +349,11 @@ func ForEachR(aa []interface{}, fn func(interface{}) shared.Continue) {
 
 // Group consolidates like-items into groups according to the supplied grouper
 // function, and returns them as a [][]interface{}.
-// The grouper function is expected to return a hash value which Group will use
-// to determine into which bucket each element wil be placed.
-func Group(aa []interface{}, grouper func(interface{}) int64) []interface{} {
-	return GroupI(aa, func(_ int64, a interface{}) int64 { return grouper(a) })
+// The grouper function is expected to return a hash value (in the form of a
+// string) which Group will use to determine into which bucket each element
+// will be placed.
+func Group(aa []interface{}, grouper func(interface{}) string) []interface{} {
+	return GroupI(aa, func(_ int64, a interface{}) string { return grouper(a) })
 }
 
 // GroupByTrait compares each item (a[i]) in the slice to every other item
@@ -404,11 +405,12 @@ func GroupByTrait(aa []interface{}, trait func(ai, an interface{}) bool, equalit
 
 // GroupI consolidates like-items into groups according to the supplied grouper
 // function, and returns them as a [][]interface{}.
-// The grouper function is expected to return a hash value which Group will use
-// to determine into which bucket each element wil be placed. For convenience
-// the index value from aa is also passed into the grouper function.
-func GroupI(aa []interface{}, grouper func(int64, interface{}) int64) []interface{} {
-	groupMap := map[int64][]interface{}{}
+// The grouper function is expected to return a hash value (in the form of a
+// string) which Group will use to determine into which bucket each element
+// will be placed. For convenience the index value from aa is also passed into
+// the grouper function.
+func GroupI(aa []interface{}, grouper func(int64, interface{}) string) []interface{} {
+	groupMap := map[string][]interface{}{}
 	for i, a := range aa {
 		hash := grouper(int64(i), a)
 		if _, exists := groupMap[hash]; exists {
@@ -656,11 +658,11 @@ func Pairwise(aa []interface{}, init interface{}, xform func(a, b interface{}) i
 //
 // Partition is a special case of the Group function.
 func Partition(aa []interface{}, test func(interface{}) bool) []interface{} {
-	grouper := func(a interface{}) int64 {
+	grouper := func(a interface{}) string {
 		if test(a) {
-			return 1
+			return "1"
 		}
-		return 0
+		return "0"
 	}
 	return Group(aa, grouper)
 }

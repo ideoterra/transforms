@@ -196,7 +196,7 @@ func (aa *SliceType) ForEachR(fn func(interface{}) shared.Continue) *SliceType {
 // function, and returns them as a *SliceType.
 // The grouper function is expected to return a hash value which Group will use
 // to determine into which bucket each element wil be placed.
-func (aa *SliceType) Group(grouper func(interface{}) int64) *SliceType {
+func (aa *SliceType) Group(grouper func(interface{}) string) *SliceType {
 	return unbox(Group(box(*aa), grouper))
 }
 
@@ -205,7 +205,7 @@ func (aa *SliceType) Group(grouper func(interface{}) int64) *SliceType {
 // The grouper function is expected to return a hash value which Group will use
 // to determine into which bucket each element wil be placed. For convenience
 // the index value from aa is also passed into the grouper function.
-func (aa *SliceType) GroupI(grouper func(int64, interface{}) int64) *SliceType {
+func (aa *SliceType) GroupI(grouper func(int64, interface{}) string) *SliceType {
 	return unbox(GroupI(box(*aa), grouper))
 }
 

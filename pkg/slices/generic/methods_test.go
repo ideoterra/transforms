@@ -3,6 +3,7 @@ package generic_test
 import (
 	"fmt"
 	"reflect"
+	"strconv"
 	"testing"
 
 	"github.com/ideoterra/transforms/pkg/slices/generic"
@@ -122,10 +123,10 @@ func TestUnaryClosureHappyPaths(t *testing.T) {
 			aa.ForEachR(func(interface{}) shared.Continue { return shared.ContinueNo })
 		},
 		func(aa generic.SliceType) {
-			aa.Group(func(interface{}) int64 { return 0 })
+			aa.Group(func(interface{}) string { return "0" })
 		},
 		func(aa generic.SliceType) {
-			aa.GroupI(func(int64, interface{}) int64 { return 0 })
+			aa.GroupI(func(int64, interface{}) string { return "0" })
 		},
 		func(aa generic.SliceType) {
 			aa.Map(func(interface{}) interface{} { return primitiveZero })
@@ -359,8 +360,10 @@ func TestNonMutatingMethods(t *testing.T) {
 		func(aa *generic.SliceType) {
 			aa.ForEachR(func(_ interface{}) shared.Continue { return shared.ContinueYes })
 		},
-		func(aa *generic.SliceType) { aa.Group(func(_ interface{}) int64 { return 0 }) },
-		func(aa *generic.SliceType) { aa.GroupI(func(i int64, _ interface{}) int64 { return i }) },
+		func(aa *generic.SliceType) { aa.Group(func(_ interface{}) string { return "0" }) },
+		func(aa *generic.SliceType) {
+			aa.GroupI(func(i int64, _ interface{}) string { return strconv.Itoa(int(i)) })
+		},
 		func(aa *generic.SliceType) { aa.Head() },
 		func(aa *generic.SliceType) { aa.Intersection([]interface{}{1, 2}, equality) },
 		func(aa *generic.SliceType) { aa.IsProperSubset([]interface{}{1, 2}, equality) },

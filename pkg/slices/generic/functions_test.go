@@ -747,14 +747,14 @@ var Specifications = []Specification{
 			Description: "Elements are grouped as expected.",
 			Expectation: func(t *testing.T) {
 				aa := []interface{}{"A", "B", "C", "D", "E", "F"}
-				grouper := func(a interface{}) int64 {
+				grouper := func(a interface{}) string {
 					switch {
 					case a.(string) == "A" || a.(string) == "B":
-						return 1
+						return "1"
 					case a.(string) == "C" || a.(string) == "D":
-						return 2
+						return "2"
 					default:
-						return 3
+						return "3"
 					}
 				}
 				bb := generic.Group(aa, grouper)
@@ -807,14 +807,14 @@ var Specifications = []Specification{
 			Description: "Elements are grouped as expected.",
 			Expectation: func(t *testing.T) {
 				aa := []interface{}{"A", "B", "C", "D", "E", "F"}
-				grouper := func(i int64, a interface{}) int64 {
+				grouper := func(i int64, a interface{}) string {
 					switch {
 					case i <= 1:
-						return 1
+						return "1"
 					case i <= 3:
-						return 2
+						return "2"
 					default:
-						return 3
+						return "3"
 					}
 				}
 				bb := generic.GroupI(aa, grouper)
