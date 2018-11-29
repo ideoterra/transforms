@@ -43,6 +43,12 @@ func (aa *SliceType) Append(values ...interface{}) *SliceType {
 	return aa
 }
 
+// Apply applies a tranform to each element of the list.
+func (aa *SliceType) Apply(convertFn func(interface{}) interface{}) *SliceType {
+	Apply(boxP(aa), convertFn)
+	return aa
+}
+
 // Clear removes all of the items from the slice, setting the slice to nil
 // such that any memory previously allocated to the slice can be garbage
 // collected.
@@ -307,14 +313,15 @@ func (aa *SliceType) Len() int {
 	return Len(box(*aa))
 }
 
-// Map applies a tranform to each element of the list.
+// Map applies a tranform to each element of the list, permitting the resulting
+// type to be different from the source type (at the cost of additional
+// allocations). Also see Apply.
 func (aa *SliceType) Map(mapFn func(interface{}) interface{}) *SliceType {
-	Map(boxP(aa), mapFn)
-	return aa
+	return unbox(Map(box(*aa), mapFn))
 }
 
 // None applies a condition function to each element in and returns true if
-// the condition function returns false for all items.
+// the condition function reurns false for all items.
 func (aa *SliceType) None(condition closures.ConditionFn) bool {
 	return None(box(*aa), condition)
 }

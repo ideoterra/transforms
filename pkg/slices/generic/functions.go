@@ -42,6 +42,18 @@ func Append(aa *[]interface{}, values ...interface{}) {
 	*aa = append(*aa, values...)
 }
 
+// Apply applies a transform to each element of the list.
+// Apply is similar to Map in that both project a transform across each element
+// of a list. However, Apply mutates the source list, while Map does not
+// mutate the source list. Thus, Map allows for the resulting list to be of a
+// different type than the source list (at the cost of allocating a second
+// list).
+func Apply(aa *[]interface{}, transformFn func(interface{}) interface{}) {
+	for i, a := range *aa {
+		(*aa)[i] = transformFn(a)
+	}
+}
+
 // Clear removes all of the items from the slice, setting the slice to nil
 // such that any memory previously allocated to the slice can be garbage
 // collected.
@@ -590,11 +602,18 @@ func Len(aa []interface{}) int {
 	return len(aa)
 }
 
-// Map applies a tranform to each element of the list.
-func Map(aa *[]interface{}, mapFn func(interface{}) interface{}) {
-	for i, a := range *aa {
-		(*aa)[i] = mapFn(a)
+// Map applies a transform to each element of the list, emitting a new list.
+// Map is similar to Apply in that both project a transform across each element
+// of a list. However, Apply mutates the source list, while Map does not
+// mutate the source list. Thus, Map allows for the resulting list to be of a
+// different type than the source list (at the cost of allocating a second
+// list).
+func Map(aa []interface{}, convertFn func(interface{}) interface{}) []interface{} {
+	bb := []interface{}{}
+	for _, a := range aa {
+		bb = append(bb, convertFn(a))
 	}
+	return bb
 }
 
 // None applies a test function to each element in aa, and returns true if

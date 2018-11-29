@@ -1210,7 +1210,7 @@ var Specifications = []Specification{
 		},
 	},
 	Specification{
-		FunctionName: "Map",
+		FunctionName: "Apply",
 		StandardPath: Behavior{
 			Description: "Applies the transform to each element",
 			Expectation: func(t *testing.T) {
@@ -1218,7 +1218,7 @@ var Specifications = []Specification{
 				mapFn := func(a interface{}) interface{} {
 					return a.(int) * 2
 				}
-				generic.Map(&aa, mapFn)
+				generic.Apply(&aa, mapFn)
 				bb := []interface{}{2, 4, 6}
 				assertSlicesEqual(t, aa, bb)
 			},

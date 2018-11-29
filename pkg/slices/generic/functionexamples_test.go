@@ -1,6 +1,7 @@
 package generic_test
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/ideoterra/transforms/pkg/slices/generic"
@@ -18,10 +19,12 @@ func Example_mapReduce() {
 		return len(word.(string))
 	}
 
-	wordLengths := generic.Map(&words, wordLength)
+	wordLengths := generic.Map(words, wordLength)
 
 	totalLength := generic.Reduce(wordLengths, func(a, acc interface{}) interface{} {
 		return a.(int) + acc.(int)
 	})
 
+	fmt.Println(totalLength)
+	//Output:[40]
 }
