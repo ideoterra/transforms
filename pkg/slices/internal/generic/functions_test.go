@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ideoterra/transforms/pkg/slices/generic"
+	"github.com/ideoterra/transforms/pkg/slices/internal/generic"
 	"github.com/ideoterra/transforms/pkg/slices/shared"
 	"github.com/stretchr/testify/assert"
 )

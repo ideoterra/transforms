@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/ideoterra/transforms/pkg/slices/generic"
+	"github.com/ideoterra/transforms/pkg/slices/internal/generic"
 )
 
 func Example_mapReduce() {
