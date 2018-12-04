@@ -1,4 +1,4 @@
-package generic
+package oldgeneric
 
 import (
 	"encoding/json"

@@ -1,4 +1,4 @@
-package generic_test
+package oldgeneric_test
 
 import (
 	"fmt"
@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ideoterra/transforms/pkg/slices/internal/generic"
+	"github.com/ideoterra/transforms/pkg/slices/internal/oldgeneric"
 	"github.com/ideoterra/transforms/pkg/slices/shared"
 	"github.com/stretchr/testify/assert"
 )
@@ -35,7 +35,7 @@ var Specifications = []Specification{
 				test := func(p interface{}) bool {
 					return p.(int) < 5
 				}
-				assert.True(t, generic.All(s, test))
+				assert.True(t, oldgeneric.All(s, test))
 			},
 		},
 		AlternativePath: Behavior{
@@ -45,7 +45,7 @@ var Specifications = []Specification{
 				test := func(p interface{}) bool {
 					return p.(int) < 5
 				}
-				assert.False(t, generic.All(s, test))
+				assert.False(t, oldgeneric.All(s, test))
 			},
 		},
 	},
@@ -58,7 +58,7 @@ var Specifications = []Specification{
 				test := func(a interface{}) bool {
 					return a.(int) == 2
 				}
-				assert.True(t, generic.Any(aa, test))
+				assert.True(t, oldgeneric.Any(aa, test))
 			},
 		},
 		AlternativePath: Behavior{
@@ -68,7 +68,7 @@ var Specifications = []Specification{
 				test := func(a interface{}) bool {
 					return a.(int) == 5
 				}
-				assert.False(t, generic.Any(aa, test))
+				assert.False(t, oldgeneric.Any(aa, test))
 			},
 		},
 	},
@@ -79,7 +79,7 @@ var Specifications = []Specification{
 			Expectation: func(t *testing.T) {
 				aa := []interface{}{1, 2, 3, 4}
 				bb := []interface{}{5, 6, 7, 8}
-				generic.Append(&aa, bb...)
+				oldgeneric.Append(&aa, bb...)
 				assertSlicesEqual(t, []interface{}{1, 2, 3, 4, 5, 6, 7, 8}, aa)
 			},
 		},
@@ -88,7 +88,7 @@ var Specifications = []Specification{
 			Expectation: func(t *testing.T) {
 				aa := []interface{}{1, 2, 3, 4}
 				bb := []interface{}{}
-				generic.Append(&aa, bb...)
+				oldgeneric.Append(&aa, bb...)
 				assertSlicesEqual(t, []interface{}{1, 2, 3, 4}, aa)
 			},
 		},
@@ -98,7 +98,7 @@ var Specifications = []Specification{
 				Expectation: func(t *testing.T) {
 					var aa []interface{}
 					bb := []interface{}{5, 6, 7, 8}
-					generic.Append(&aa, bb...)
+					oldgeneric.Append(&aa, bb...)
 					assertSlicesEqual(t, []interface{}{5, 6, 7, 8}, aa)
 				},
 			},
@@ -111,7 +111,7 @@ var Specifications = []Specification{
 			Description: "The slice is set to nil",
 			Expectation: func(t *testing.T) {
 				aa := []interface{}{1, 2, 3, 4}
-				generic.Clear(&aa)
+				oldgeneric.Clear(&aa)
 				assert.Nil(t, aa)
 			},
 		},
@@ -119,8 +119,8 @@ var Specifications = []Specification{
 			Description: "An already nil slice can be cleared.",
 			Expectation: func(t *testing.T) {
 				aa := []interface{}{1, 2, 3, 4}
-				generic.Clear(&aa)
-				generic.Append(&aa, 6, 7, 8)
+				oldgeneric.Clear(&aa)
+				oldgeneric.Append(&aa, 6, 7, 8)
 				assertSlicesEqual(t, []interface{}{6, 7, 8}, aa)
 			},
 		},
@@ -131,7 +131,7 @@ var Specifications = []Specification{
 			Description: "A new identical slice is allocated in memory.",
 			Expectation: func(t *testing.T) {
 				aa := []interface{}{1, 2, 3, 4}
-				bb := generic.Clone(aa)
+				bb := oldgeneric.Clone(aa)
 				if &aa == &bb {
 					t.Error("Slices aa and bb should not have the same address")
 				}
@@ -143,7 +143,7 @@ var Specifications = []Specification{
 			Expectation: func(t *testing.T) {
 				value := 1
 				aa := []interface{}{&value}
-				bb := generic.Clone(aa)
+				bb := oldgeneric.Clone(aa)
 				a := aa[0].(*int)
 				b := bb[0].(*int)
 				if a != b {
@@ -162,7 +162,7 @@ var Specifications = []Specification{
 				collector := func(a, b interface{}) interface{} {
 					return a.(string) + b.(string)
 				}
-				cc := generic.Collect(aa, bb, collector)
+				cc := oldgeneric.Collect(aa, bb, collector)
 				dd := []interface{}{"AY", "AZ", "BY", "BZ"}
 				assertSlicesEqual(t, cc, dd)
 			},
@@ -183,7 +183,7 @@ var Specifications = []Specification{
 				test := func(a interface{}) bool {
 					return a.(int)%2 == 0
 				}
-				assert.Equal(t, int64(2), generic.Count(aa, test))
+				assert.Equal(t, int64(2), oldgeneric.Count(aa, test))
 			},
 		},
 		AlternativePath: Behavior{
@@ -193,7 +193,7 @@ var Specifications = []Specification{
 				test := func(a interface{}) bool {
 					return a.(int) == 6
 				}
-				assert.Equal(t, int64(0), generic.Count(aa, test))
+				assert.Equal(t, int64(0), oldgeneric.Count(aa, test))
 			},
 		},
 	},
@@ -203,7 +203,7 @@ var Specifications = []Specification{
 			Description: "Removes and returns head.",
 			Expectation: func(t *testing.T) {
 				aa := []interface{}{1, 2, 3}
-				bb := generic.Dequeue(&aa)
+				bb := oldgeneric.Dequeue(&aa)
 				assert.Equal(t, 1, bb[0])
 				cc := []interface{}{2, 3}
 				assertSlicesEqual(t, aa, cc)
@@ -213,7 +213,7 @@ var Specifications = []Specification{
 			Description: "If source slice is empty, empty slice is returned.",
 			Expectation: func(t *testing.T) {
 				aa := []interface{}{}
-				bb := generic.Dequeue(&aa)
+				bb := oldgeneric.Dequeue(&aa)
 				if len(bb) != 0 {
 					t.Error("Expected bb to be empty.")
 				}
@@ -230,7 +230,7 @@ var Specifications = []Specification{
 				equality := func(a, b interface{}) bool {
 					return a.(int) == b.(int)
 				}
-				cc := generic.Difference(aa, bb, equality)
+				cc := oldgeneric.Difference(aa, bb, equality)
 				dd := []interface{}{1, 2, 5}
 				assertSlicesEqual(t, cc, dd)
 			},
@@ -245,7 +245,7 @@ var Specifications = []Specification{
 				equality := func(a, b interface{}) bool {
 					return a.(int) == b.(int)
 				}
-				cc := generic.Difference(aa, bb, equality)
+				cc := oldgeneric.Difference(aa, bb, equality)
 				dd := []interface{}{1, 2, 1, 5, 5}
 				assertSlicesEqual(t, cc, dd)
 			},
@@ -260,7 +260,7 @@ var Specifications = []Specification{
 				equality := func(a, b interface{}) bool {
 					return a.(string) == b.(string)
 				}
-				generic.Distinct(&aa, equality)
+				oldgeneric.Distinct(&aa, equality)
 				bb := []interface{}{"Dani", "Riley", "Tori", "Janice"}
 				assertSlicesEqual(t, aa, bb)
 			},
@@ -278,14 +278,14 @@ var Specifications = []Specification{
 			Description: "Returns true if slice is empty",
 			Expectation: func(t *testing.T) {
 				aa := []interface{}{}
-				assert.True(t, generic.Empty(aa))
+				assert.True(t, oldgeneric.Empty(aa))
 			},
 		},
 		AlternativePath: Behavior{
 			Description: "Returns false if slice is not empty",
 			Expectation: func(t *testing.T) {
 				aa := []interface{}{1}
-				assert.False(t, generic.Empty(aa))
+				assert.False(t, oldgeneric.Empty(aa))
 			},
 		},
 	},
@@ -295,7 +295,7 @@ var Specifications = []Specification{
 			Description: "Returns a slice with the last element.",
 			Expectation: func(t *testing.T) {
 				aa := []interface{}{1, 2, 3}
-				bb := generic.End(aa)
+				bb := oldgeneric.End(aa)
 				assert.Equal(t, 3, bb[0])
 			},
 		},
@@ -303,8 +303,8 @@ var Specifications = []Specification{
 			Description: "An empty slice returns an empty slice.",
 			Expectation: func(t *testing.T) {
 				aa := []interface{}{}
-				bb := generic.End(aa)
-				assert.True(t, generic.Empty(bb))
+				bb := oldgeneric.End(aa)
+				assert.True(t, oldgeneric.Empty(bb))
 			},
 		},
 	},
@@ -314,7 +314,7 @@ var Specifications = []Specification{
 			Description: "The value is added to the head of the slice.",
 			Expectation: func(t *testing.T) {
 				aa := []interface{}{1, 2, 3}
-				generic.Enqueue(&aa, 4)
+				oldgeneric.Enqueue(&aa, 4)
 				bb := []interface{}{4, 1, 2, 3}
 				assertSlicesEqual(t, aa, bb)
 			},
@@ -337,7 +337,7 @@ var Specifications = []Specification{
 					c := string(a.(string)[1])
 					return []interface{}{b, c}
 				}
-				bb := generic.Expand(aa, expansion)
+				bb := oldgeneric.Expand(aa, expansion)
 				cc := []interface{}{"A", "B", "C", "D", "E", "F"}
 				assertSlicesEqual(t, bb, cc)
 			},
@@ -358,7 +358,7 @@ var Specifications = []Specification{
 				test := func(a interface{}) bool {
 					return a.(int)%2 == 0
 				}
-				generic.Filter(&aa, test)
+				oldgeneric.Filter(&aa, test)
 				bb := []interface{}{1, 3}
 				assertSlicesEqual(t, aa, bb)
 			},
@@ -379,7 +379,7 @@ var Specifications = []Specification{
 				test := func(a interface{}) bool {
 					return a.(int) >= 3
 				}
-				n := generic.FindIndex(aa, test)
+				n := oldgeneric.FindIndex(aa, test)
 				assert.Equal(t, int64(2), n)
 			},
 		},
@@ -390,7 +390,7 @@ var Specifications = []Specification{
 				test := func(a interface{}) bool {
 					return a.(int) >= 5
 				}
-				n := generic.FindIndex(aa, test)
+				n := oldgeneric.FindIndex(aa, test)
 				assert.Equal(t, int64(-1), n)
 			},
 		},
@@ -404,7 +404,7 @@ var Specifications = []Specification{
 				test := func(a interface{}) bool {
 					return a.(int) >= 2
 				}
-				bb := generic.First(aa, test)
+				bb := oldgeneric.First(aa, test)
 				cc := []interface{}{2}
 				assertSlicesEqual(t, bb, cc)
 			},
@@ -416,7 +416,7 @@ var Specifications = []Specification{
 				test := func(a interface{}) bool {
 					return a.(int) >= 5
 				}
-				bb := generic.First(aa, test)
+				bb := oldgeneric.First(aa, test)
 				cc := []interface{}{}
 				assertSlicesEqual(t, bb, cc)
 			},
@@ -431,7 +431,7 @@ var Specifications = []Specification{
 				folder := func(a, acc interface{}) interface{} {
 					return a.(int) + acc.(int)
 				}
-				bb := generic.Fold(aa, 1, folder)
+				bb := oldgeneric.Fold(aa, 1, folder)
 				assert.Equal(t, 11, bb[0].(int))
 			},
 		},
@@ -454,7 +454,7 @@ var Specifications = []Specification{
 						strconv.Itoa(int(i)),
 						a.(string))
 				}
-				bb := generic.FoldI(aa, "X", folder)
+				bb := oldgeneric.FoldI(aa, "X", folder)
 				assert.Equal(t, "X0A1B2C", bb[0].(string))
 			},
 		},
@@ -476,7 +476,7 @@ var Specifications = []Specification{
 					result = result + a.(string)
 					return shared.ContinueYes
 				}
-				generic.ForEach(aa, fn)
+				oldgeneric.ForEach(aa, fn)
 				assert.Equal(t, "ABC", result)
 			},
 		},
@@ -489,7 +489,7 @@ var Specifications = []Specification{
 					result = result + a.(string)
 					return a.(string) != "B"
 				}
-				generic.ForEach(aa, fn)
+				oldgeneric.ForEach(aa, fn)
 				assert.Equal(t, "AB", result)
 			},
 		},
@@ -508,9 +508,9 @@ var Specifications = []Specification{
 					result = result + a.(string)
 					return shared.ContinueYes
 				}
-				generic.ForEachC(aa, 1, fn)
+				oldgeneric.ForEachC(aa, 1, fn)
 				bb := []interface{}{"ABC", "BAC", "CAB", "ACB", "BCA", "CBA"}
-				if !generic.Any(bb, func(b interface{}) bool {
+				if !oldgeneric.Any(bb, func(b interface{}) bool {
 					return b.(string) == result
 				}) {
 					t.Errorf("Expected a variant of 'ABC', but got '%v'", result)
@@ -531,7 +531,7 @@ var Specifications = []Specification{
 				}
 				assert.PanicsWithValue(t,
 					"ForEachC: The concurrency pool size (c) must be non-negative.",
-					func() { generic.ForEachC(aa, -1, fn) })
+					func() { oldgeneric.ForEachC(aa, -1, fn) })
 			},
 		},
 		EdgeCases: []Behavior{
@@ -581,7 +581,7 @@ var Specifications = []Specification{
 							}
 						}
 					}
-					generic.ForEachC(aa, 3, fn)
+					oldgeneric.ForEachC(aa, 3, fn)
 				},
 			},
 			Behavior{
@@ -638,7 +638,7 @@ var Specifications = []Specification{
 							}
 						}
 					}
-					generic.ForEachC(aa, 3, fn)
+					oldgeneric.ForEachC(aa, 3, fn)
 					assert.True(t, aExitedCleanly)
 					assert.True(t, bExitedCleanly)
 				},
@@ -705,7 +705,7 @@ var Specifications = []Specification{
 						}
 						return shared.ContinueYes
 					}
-					generic.ForEachC(aa, 3, fn)
+					oldgeneric.ForEachC(aa, 3, fn)
 					assert.False(t, eStarted)
 				},
 			},
@@ -723,7 +723,7 @@ var Specifications = []Specification{
 					result = result + a.(string)
 					return true
 				}
-				generic.ForEachR(aa, fn)
+				oldgeneric.ForEachR(aa, fn)
 				assert.Equal(t, "CBA", result)
 			},
 		},
@@ -736,7 +736,7 @@ var Specifications = []Specification{
 					result = result + a.(string)
 					return a.(string) != "B"
 				}
-				generic.ForEachR(aa, fn)
+				oldgeneric.ForEachR(aa, fn)
 				assert.Equal(t, "CB", result)
 			},
 		},
@@ -757,11 +757,11 @@ var Specifications = []Specification{
 						return "3"
 					}
 				}
-				bb := generic.Group(aa, grouper)
-				cc := generic.SliceType{
-					generic.SliceType{"A", "B"},
-					generic.SliceType{"C", "D"},
-					generic.SliceType{"E", "F"},
+				bb := oldgeneric.Group(aa, grouper)
+				cc := oldgeneric.SliceType{
+					oldgeneric.SliceType{"A", "B"},
+					oldgeneric.SliceType{"C", "D"},
+					oldgeneric.SliceType{"E", "F"},
 				}
 				assertSlicesEqual(t, bb, cc)
 			},
@@ -785,11 +785,11 @@ var Specifications = []Specification{
 				equality := func(a, b interface{}) bool {
 					return a.(string) == b.(string)
 				}
-				bb := generic.GroupByTrait(aa, trait, equality)
-				cc := generic.SliceType{
-					generic.SliceType{"dog", "dogs"},
-					generic.SliceType{"cat"},
-					generic.SliceType{"pigdog", "pigs", "pigdogs", "pig"},
+				bb := oldgeneric.GroupByTrait(aa, trait, equality)
+				cc := oldgeneric.SliceType{
+					oldgeneric.SliceType{"dog", "dogs"},
+					oldgeneric.SliceType{"cat"},
+					oldgeneric.SliceType{"pigdog", "pigs", "pigdogs", "pig"},
 				}
 				assertSlicesEqual(t, bb, cc)
 			},
@@ -817,11 +817,11 @@ var Specifications = []Specification{
 						return "3"
 					}
 				}
-				bb := generic.GroupI(aa, grouper)
-				cc := generic.SliceType{
-					generic.SliceType{"A", "B"},
-					generic.SliceType{"C", "D"},
-					generic.SliceType{"E", "F"},
+				bb := oldgeneric.GroupI(aa, grouper)
+				cc := oldgeneric.SliceType{
+					oldgeneric.SliceType{"A", "B"},
+					oldgeneric.SliceType{"C", "D"},
+					oldgeneric.SliceType{"E", "F"},
 				}
 				assertSlicesEqual(t, bb, cc)
 			},
@@ -839,7 +839,7 @@ var Specifications = []Specification{
 			Description: "Returns the first item from the slice.",
 			Expectation: func(t *testing.T) {
 				aa := []interface{}{1, 2, 3}
-				bb := generic.Head(aa)
+				bb := oldgeneric.Head(aa)
 				assertSlicesEqual(t, bb, []interface{}{1})
 			},
 		},
@@ -847,7 +847,7 @@ var Specifications = []Specification{
 			Description: "Returns an empty slice if the source slice is empty.",
 			Expectation: func(t *testing.T) {
 				aa := []interface{}{}
-				bb := generic.Head(aa)
+				bb := oldgeneric.Head(aa)
 				if len(bb) != 0 {
 					t.Error("Expected bb to be empty.")
 				}
@@ -863,7 +863,7 @@ var Specifications = []Specification{
 				test := func(a interface{}) bool {
 					return a.(int)%2 != 0
 				}
-				generic.InsertAfter(&aa, 9, test)
+				oldgeneric.InsertAfter(&aa, 9, test)
 				bb := []interface{}{1, 9, 2, 3}
 				assertSlicesEqual(t, aa, bb)
 			},
@@ -875,7 +875,7 @@ var Specifications = []Specification{
 				test := func(a interface{}) bool {
 					return a.(int) > 10
 				}
-				generic.InsertAfter(&aa, 9, test)
+				oldgeneric.InsertAfter(&aa, 9, test)
 				bb := []interface{}{1, 2, 3, 9}
 				assertSlicesEqual(t, aa, bb)
 			},
@@ -890,7 +890,7 @@ var Specifications = []Specification{
 				test := func(a interface{}) bool {
 					return a.(int)%2 == 0
 				}
-				generic.InsertBefore(&aa, 9, test)
+				oldgeneric.InsertBefore(&aa, 9, test)
 				bb := []interface{}{1, 9, 2, 3, 4}
 				assertSlicesEqual(t, aa, bb)
 			},
@@ -902,7 +902,7 @@ var Specifications = []Specification{
 				test := func(a interface{}) bool {
 					return a.(int) == 10
 				}
-				generic.InsertBefore(&aa, 9, test)
+				oldgeneric.InsertBefore(&aa, 9, test)
 				bb := []interface{}{9, 1, 2, 3, 4}
 				assertSlicesEqual(t, aa, bb)
 			},
@@ -914,7 +914,7 @@ var Specifications = []Specification{
 			Description: "Inserts properly in middle of list.",
 			Expectation: func(t *testing.T) {
 				aa := []interface{}{1, 2, 3}
-				generic.InsertAt(&aa, 9, 2)
+				oldgeneric.InsertAt(&aa, 9, 2)
 				bb := []interface{}{1, 2, 9, 3}
 				assertSlicesEqual(t, aa, bb)
 			},
@@ -923,7 +923,7 @@ var Specifications = []Specification{
 			Description: "Inserts into an empty list.",
 			Expectation: func(t *testing.T) {
 				aa := []interface{}{}
-				generic.InsertAt(&aa, 9, 0)
+				oldgeneric.InsertAt(&aa, 9, 0)
 				bb := []interface{}{9}
 				assertSlicesEqual(t, aa, bb)
 			},
@@ -933,7 +933,7 @@ var Specifications = []Specification{
 				Description: "Negative index inserted at 0",
 				Expectation: func(t *testing.T) {
 					aa := []interface{}{1, 2, 3}
-					generic.InsertAt(&aa, 9, -2)
+					oldgeneric.InsertAt(&aa, 9, -2)
 					bb := []interface{}{9, 1, 2, 3}
 					assertSlicesEqual(t, aa, bb)
 				},
@@ -942,7 +942,7 @@ var Specifications = []Specification{
 				Description: "Index greater than length appended to end.",
 				Expectation: func(t *testing.T) {
 					aa := []interface{}{1, 2, 3}
-					generic.InsertAt(&aa, 9, 99)
+					oldgeneric.InsertAt(&aa, 9, 99)
 					bb := []interface{}{1, 2, 3, 9}
 					assertSlicesEqual(t, aa, bb)
 				},
@@ -959,7 +959,7 @@ var Specifications = []Specification{
 				equality := func(a, b interface{}) bool {
 					return a.(int) == b.(int)
 				}
-				cc := generic.Intersection(aa, bb, equality)
+				cc := oldgeneric.Intersection(aa, bb, equality)
 				dd := []interface{}{4, 2}
 				assertSlicesEqual(t, cc, dd)
 			},
@@ -972,7 +972,7 @@ var Specifications = []Specification{
 				equality := func(a, b interface{}) bool {
 					return a.(int) == b.(int)
 				}
-				cc := generic.Intersection(aa, bb, equality)
+				cc := oldgeneric.Intersection(aa, bb, equality)
 				dd := []interface{}{4, 2}
 				assertSlicesEqual(t, cc, dd)
 			},
@@ -988,7 +988,7 @@ var Specifications = []Specification{
 				equality := func(a, b interface{}) bool {
 					return a.(int) == b.(int)
 				}
-				result := generic.IsProperSubset(aa, bb, equality)
+				result := oldgeneric.IsProperSubset(aa, bb, equality)
 				assert.True(t, result)
 			},
 		},
@@ -1000,7 +1000,7 @@ var Specifications = []Specification{
 				equality := func(a, b interface{}) bool {
 					return a.(int) == b.(int)
 				}
-				result := generic.IsProperSubset(aa, bb, equality)
+				result := oldgeneric.IsProperSubset(aa, bb, equality)
 				assert.False(t, result)
 			},
 		},
@@ -1015,7 +1015,7 @@ var Specifications = []Specification{
 				equality := func(a, b interface{}) bool {
 					return a.(int) == b.(int)
 				}
-				result := generic.IsProperSuperset(aa, bb, equality)
+				result := oldgeneric.IsProperSuperset(aa, bb, equality)
 				assert.True(t, result)
 			},
 		},
@@ -1027,7 +1027,7 @@ var Specifications = []Specification{
 				equality := func(a, b interface{}) bool {
 					return a.(int) == b.(int)
 				}
-				result := generic.IsProperSuperset(aa, bb, equality)
+				result := oldgeneric.IsProperSuperset(aa, bb, equality)
 				assert.False(t, result)
 			},
 		},
@@ -1042,7 +1042,7 @@ var Specifications = []Specification{
 				equality := func(a, b interface{}) bool {
 					return a.(int) == b.(int)
 				}
-				result := generic.IsSubset(aa, bb, equality)
+				result := oldgeneric.IsSubset(aa, bb, equality)
 				assert.True(t, result)
 			},
 		},
@@ -1054,7 +1054,7 @@ var Specifications = []Specification{
 				equality := func(a, b interface{}) bool {
 					return a.(int) == b.(int)
 				}
-				result := generic.IsSubset(aa, bb, equality)
+				result := oldgeneric.IsSubset(aa, bb, equality)
 				assert.False(t, result)
 			},
 		},
@@ -1069,7 +1069,7 @@ var Specifications = []Specification{
 				equality := func(a, b interface{}) bool {
 					return a.(int) == b.(int)
 				}
-				result := generic.IsSuperset(aa, bb, equality)
+				result := oldgeneric.IsSuperset(aa, bb, equality)
 				assert.True(t, result)
 			},
 		},
@@ -1081,7 +1081,7 @@ var Specifications = []Specification{
 				equality := func(a, b interface{}) bool {
 					return a.(int) == b.(int)
 				}
-				result := generic.IsSuperset(aa, bb, equality)
+				result := oldgeneric.IsSuperset(aa, bb, equality)
 				assert.False(t, result)
 			},
 		},
@@ -1092,7 +1092,7 @@ var Specifications = []Specification{
 			Description: "Element at i is returned.",
 			Expectation: func(t *testing.T) {
 				aa := []interface{}{1, 2, 3}
-				bb := generic.Item(aa, 1)
+				bb := oldgeneric.Item(aa, 1)
 				cc := []interface{}{2}
 				assertSlicesEqual(t, bb, cc)
 			},
@@ -1102,7 +1102,7 @@ var Specifications = []Specification{
 			Expectation: func(t *testing.T) {
 				for i := int64(-1); i <= 1; i++ {
 					aa := []interface{}{}
-					bb := generic.ItemFuzzy(aa, i)
+					bb := oldgeneric.ItemFuzzy(aa, i)
 					cc := []interface{}{}
 					assertSlicesEqual(t, bb, cc)
 				}
@@ -1113,7 +1113,7 @@ var Specifications = []Specification{
 				Description: "i < 0 returns empty",
 				Expectation: func(t *testing.T) {
 					aa := []interface{}{1, 2, 3}
-					bb := generic.Item(aa, -1)
+					bb := oldgeneric.Item(aa, -1)
 					cc := []interface{}{}
 					assertSlicesEqual(t, bb, cc)
 				},
@@ -1122,7 +1122,7 @@ var Specifications = []Specification{
 				Description: "i >= len(aa) returns empty",
 				Expectation: func(t *testing.T) {
 					aa := []interface{}{1, 2, 3}
-					bb := generic.Item(aa, 10)
+					bb := oldgeneric.Item(aa, 10)
 					cc := []interface{}{}
 					assertSlicesEqual(t, bb, cc)
 				},
@@ -1135,7 +1135,7 @@ var Specifications = []Specification{
 			Description: "Element at i is returned.",
 			Expectation: func(t *testing.T) {
 				aa := []interface{}{1, 2, 3}
-				bb := generic.ItemFuzzy(aa, 1)
+				bb := oldgeneric.ItemFuzzy(aa, 1)
 				cc := []interface{}{2}
 				assertSlicesEqual(t, bb, cc)
 			},
@@ -1145,7 +1145,7 @@ var Specifications = []Specification{
 			Expectation: func(t *testing.T) {
 				for i := int64(-1); i <= 1; i++ {
 					aa := []interface{}{}
-					bb := generic.ItemFuzzy(aa, i)
+					bb := oldgeneric.ItemFuzzy(aa, i)
 					cc := []interface{}{}
 					assertSlicesEqual(t, bb, cc)
 				}
@@ -1156,7 +1156,7 @@ var Specifications = []Specification{
 				Description: "i < 0 returns head",
 				Expectation: func(t *testing.T) {
 					aa := []interface{}{1, 2, 3}
-					bb := generic.ItemFuzzy(aa, -1)
+					bb := oldgeneric.ItemFuzzy(aa, -1)
 					cc := []interface{}{1}
 					assertSlicesEqual(t, bb, cc)
 				},
@@ -1165,7 +1165,7 @@ var Specifications = []Specification{
 				Description: "i >= len(aa) returns end",
 				Expectation: func(t *testing.T) {
 					aa := []interface{}{1, 2, 3}
-					bb := generic.ItemFuzzy(aa, 10)
+					bb := oldgeneric.ItemFuzzy(aa, 10)
 					cc := []interface{}{3}
 					assertSlicesEqual(t, bb, cc)
 				},
@@ -1181,7 +1181,7 @@ var Specifications = []Specification{
 				test := func(a interface{}) bool {
 					return a.(int)%2 != 0
 				}
-				bb := generic.Last(aa, test)
+				bb := oldgeneric.Last(aa, test)
 				cc := []interface{}{7}
 				assertSlicesEqual(t, bb, cc)
 			},
@@ -1199,7 +1199,7 @@ var Specifications = []Specification{
 			Description: "Returns the length of the slice",
 			Expectation: func(t *testing.T) {
 				aa := []interface{}{1, 2, 3, 4, 5, 6, 7, 8}
-				assert.Equal(t, 8, generic.Len(aa))
+				assert.Equal(t, 8, oldgeneric.Len(aa))
 			},
 		},
 		AlternativePath: Behavior{
@@ -1218,7 +1218,7 @@ var Specifications = []Specification{
 				mapFn := func(a interface{}) interface{} {
 					return a.(int) * 2
 				}
-				generic.Apply(&aa, mapFn)
+				oldgeneric.Apply(&aa, mapFn)
 				bb := []interface{}{2, 4, 6}
 				assertSlicesEqual(t, aa, bb)
 			},
@@ -1239,7 +1239,7 @@ var Specifications = []Specification{
 				test := func(a interface{}) bool {
 					return a.(int) == 4
 				}
-				assert.True(t, generic.None(aa, test))
+				assert.True(t, oldgeneric.None(aa, test))
 			},
 		},
 		AlternativePath: Behavior{
@@ -1249,7 +1249,7 @@ var Specifications = []Specification{
 				test := func(a interface{}) bool {
 					return a.(int) == 2
 				}
-				assert.False(t, generic.None(aa, test))
+				assert.False(t, oldgeneric.None(aa, test))
 			},
 		},
 	},
@@ -1262,7 +1262,7 @@ var Specifications = []Specification{
 				xform := func(a, b interface{}) interface{} {
 					return a.(string) + b.(string)
 				}
-				bb := generic.Pairwise(aa, "V", xform)
+				bb := oldgeneric.Pairwise(aa, "V", xform)
 				cc := []interface{}{"VW", "WX", "XY", "YZ"}
 				assertSlicesEqual(t, bb, cc)
 			},
@@ -1274,7 +1274,7 @@ var Specifications = []Specification{
 				xform := func(a, b interface{}) interface{} {
 					return a.(string) + b.(string)
 				}
-				bb := generic.Pairwise(aa, "V", xform)
+				bb := oldgeneric.Pairwise(aa, "V", xform)
 				cc := []interface{}{}
 				assertSlicesEqual(t, bb, cc)
 			},
@@ -1289,8 +1289,8 @@ var Specifications = []Specification{
 				test := func(a interface{}) bool {
 					return a.(int)%2 == 0
 				}
-				bb := generic.Partition(aa, test)
-				cc := generic.SliceType{generic.SliceType{2, 4, 6}, []interface{}{1, 3, 5}}
+				bb := oldgeneric.Partition(aa, test)
+				cc := oldgeneric.SliceType{oldgeneric.SliceType{2, 4, 6}, []interface{}{1, 3, 5}}
 				assertSlicesEqual(t, bb, cc)
 			},
 		},
@@ -1308,9 +1308,9 @@ var Specifications = []Specification{
 			Expectation: func(t *testing.T) {
 				aa := []interface{}{}
 				for i := 0; i < 20; i++ {
-					generic.Append(&aa, i)
+					oldgeneric.Append(&aa, i)
 				}
-				assert.True(t, generic.Permutable(aa))
+				assert.True(t, oldgeneric.Permutable(aa))
 			},
 		},
 		AlternativePath: Behavior{
@@ -1318,9 +1318,9 @@ var Specifications = []Specification{
 			Expectation: func(t *testing.T) {
 				aa := []interface{}{}
 				for i := 0; i < 21; i++ {
-					generic.Append(&aa, i)
+					oldgeneric.Append(&aa, i)
 				}
-				assert.False(t, generic.Permutable(aa))
+				assert.False(t, oldgeneric.Permutable(aa))
 			},
 		},
 	},
@@ -1330,7 +1330,7 @@ var Specifications = []Specification{
 			Description: "Returns the correct number of possible permutations.",
 			Expectation: func(t *testing.T) {
 				aa := []interface{}{1, 2, 3, 4, 5, 6}
-				p := generic.Permutations(aa)
+				p := oldgeneric.Permutations(aa)
 				assert.Equal(t, int64(720), p.Int64())
 			},
 		},
@@ -1347,14 +1347,14 @@ var Specifications = []Specification{
 			Description: "Creates permutations.",
 			Expectation: func(t *testing.T) {
 				aa := []interface{}{"A", "B", "C"}
-				bb := generic.Permute(aa)
-				cc := generic.SliceType{
-					generic.SliceType{"A", "B", "C"},
-					generic.SliceType{"B", "A", "C"},
-					generic.SliceType{"C", "A", "B"},
-					generic.SliceType{"A", "C", "B"},
-					generic.SliceType{"B", "C", "A"},
-					generic.SliceType{"C", "B", "A"},
+				bb := oldgeneric.Permute(aa)
+				cc := oldgeneric.SliceType{
+					oldgeneric.SliceType{"A", "B", "C"},
+					oldgeneric.SliceType{"B", "A", "C"},
+					oldgeneric.SliceType{"C", "A", "B"},
+					oldgeneric.SliceType{"A", "C", "B"},
+					oldgeneric.SliceType{"B", "C", "A"},
+					oldgeneric.SliceType{"C", "B", "A"},
 				}
 				assertSlicesEqual(t, bb, cc)
 			},
@@ -1363,7 +1363,7 @@ var Specifications = []Specification{
 			Description: "Original slice is unaltered.",
 			Expectation: func(t *testing.T) {
 				aa := []interface{}{"A", "B", "C"}
-				generic.Permute(aa)
+				oldgeneric.Permute(aa)
 				cc := []interface{}{"A", "B", "C"}
 				assertSlicesEqual(t, aa, cc)
 			},
@@ -1375,16 +1375,16 @@ var Specifications = []Specification{
 				Expectation: func(t *testing.T) {
 					aa := []interface{}{}
 					for n := 0; n < 21; n++ {
-						generic.Append(&aa, n)
+						oldgeneric.Append(&aa, n)
 					}
-					assert.Panics(t, func() { generic.Permute(aa) })
+					assert.Panics(t, func() { oldgeneric.Permute(aa) })
 				},
 			},
 			Behavior{
 				Description: `If source is empty, empty slice should be returned.`,
 				Expectation: func(t *testing.T) {
 					aa := []interface{}{}
-					bb := generic.Permute(aa)
+					bb := oldgeneric.Permute(aa)
 					if len(bb) != 0 {
 						t.Error("Expected bb to be empty, but it was not.")
 					}
@@ -1398,7 +1398,7 @@ var Specifications = []Specification{
 			Description: "Returns the head element from the slice, removing it from the slice.",
 			Expectation: func(t *testing.T) {
 				aa := []interface{}{1, 2, 3}
-				bb := generic.Pop(&aa)
+				bb := oldgeneric.Pop(&aa)
 				cc := []interface{}{2, 3}
 				dd := []interface{}{1}
 				assertSlicesEqual(t, aa, cc)
@@ -1409,7 +1409,7 @@ var Specifications = []Specification{
 			Description: "Slice is empty, returns an empty slice.",
 			Expectation: func(t *testing.T) {
 				aa := []interface{}{}
-				bb := generic.Pop(&aa)
+				bb := oldgeneric.Pop(&aa)
 				if len(bb) > 0 {
 					t.Error("Expected bb to be empty.")
 				}
@@ -1422,7 +1422,7 @@ var Specifications = []Specification{
 			Description: "Inserts a new element at the head of the slice.",
 			Expectation: func(t *testing.T) {
 				aa := []interface{}{1, 2, 3}
-				generic.Push(&aa, 9)
+				oldgeneric.Push(&aa, 9)
 				bb := []interface{}{9, 1, 2, 3}
 				assertSlicesEqual(t, aa, bb)
 			},
@@ -1443,7 +1443,7 @@ var Specifications = []Specification{
 				reducer := func(a, acc interface{}) interface{} {
 					return a.(int) + acc.(int)
 				}
-				bb := generic.Reduce(aa, reducer)
+				bb := oldgeneric.Reduce(aa, reducer)
 				cc := []interface{}{10}
 				assertSlicesEqual(t, bb, cc)
 			},
@@ -1455,7 +1455,7 @@ var Specifications = []Specification{
 				reducer := func(a, acc interface{}) interface{} {
 					return a.(int) + acc.(int)
 				}
-				bb := generic.Reduce(aa, reducer)
+				bb := oldgeneric.Reduce(aa, reducer)
 				cc := []interface{}{}
 				assertSlicesEqual(t, bb, cc)
 			},
@@ -1468,7 +1468,7 @@ var Specifications = []Specification{
 					reducer := func(a, acc interface{}) interface{} {
 						return a.(int) + acc.(int)
 					}
-					bb := generic.Reduce(aa, reducer)
+					bb := oldgeneric.Reduce(aa, reducer)
 					cc := []interface{}{1}
 					assertSlicesEqual(t, bb, cc)
 				},
@@ -1484,7 +1484,7 @@ var Specifications = []Specification{
 				test := func(a interface{}) bool {
 					return a.(int)%2 == 0
 				}
-				generic.Remove(&aa, test)
+				oldgeneric.Remove(&aa, test)
 				bb := []interface{}{1, 3, 5}
 				assertSlicesEqual(t, aa, bb)
 			},
@@ -1496,7 +1496,7 @@ var Specifications = []Specification{
 				test := func(a interface{}) bool {
 					return a.(int) == 10
 				}
-				generic.Remove(&aa, test)
+				oldgeneric.Remove(&aa, test)
 				bb := []interface{}{1, 2, 3, 4, 5, 6}
 				assertSlicesEqual(t, aa, bb)
 			},
@@ -1508,7 +1508,7 @@ var Specifications = []Specification{
 			Description: "Removes the item at the specified index.",
 			Expectation: func(t *testing.T) {
 				aa := []interface{}{1, 2, 3, 4}
-				generic.RemoveAt(&aa, 2)
+				oldgeneric.RemoveAt(&aa, 2)
 				bb := []interface{}{1, 2, 4}
 				assertSlicesEqual(t, aa, bb)
 			},
@@ -1517,7 +1517,7 @@ var Specifications = []Specification{
 			Description: "Does nothing if slice is empty.",
 			Expectation: func(t *testing.T) {
 				aa := []interface{}{}
-				generic.RemoveAt(&aa, 2)
+				oldgeneric.RemoveAt(&aa, 2)
 				bb := []interface{}{}
 				assertSlicesEqual(t, aa, bb)
 			},
@@ -1527,7 +1527,7 @@ var Specifications = []Specification{
 				Description: "Does nothing if slice is nil",
 				Expectation: func(t *testing.T) {
 					var aa []interface{}
-					generic.RemoveAt(&aa, 2)
+					oldgeneric.RemoveAt(&aa, 2)
 					assert.Nil(t, aa)
 				},
 			},
@@ -1535,7 +1535,7 @@ var Specifications = []Specification{
 				Description: "Does nothing if index is negative",
 				Expectation: func(t *testing.T) {
 					aa := []interface{}{1, 2, 3, 4}
-					generic.RemoveAt(&aa, -1)
+					oldgeneric.RemoveAt(&aa, -1)
 					bb := []interface{}{1, 2, 3, 4}
 					assertSlicesEqual(t, aa, bb)
 				},
@@ -1544,7 +1544,7 @@ var Specifications = []Specification{
 				Description: "Does nothing if index greater than max",
 				Expectation: func(t *testing.T) {
 					aa := []interface{}{1, 2, 3, 4}
-					generic.RemoveAt(&aa, 10)
+					oldgeneric.RemoveAt(&aa, 10)
 					bb := []interface{}{1, 2, 3, 4}
 					assertSlicesEqual(t, aa, bb)
 				},
@@ -1557,7 +1557,7 @@ var Specifications = []Specification{
 			Description: "Reverses slice",
 			Expectation: func(t *testing.T) {
 				aa := []interface{}{1, 2, 3, 4}
-				generic.Reverse(&aa)
+				oldgeneric.Reverse(&aa)
 				bb := []interface{}{4, 3, 2, 1}
 				assertSlicesEqual(t, aa, bb)
 			},
@@ -1566,7 +1566,7 @@ var Specifications = []Specification{
 			Description: "Empty slice has no effect",
 			Expectation: func(t *testing.T) {
 				aa := []interface{}{}
-				generic.Reverse(&aa)
+				oldgeneric.Reverse(&aa)
 				bb := []interface{}{}
 				assertSlicesEqual(t, aa, bb)
 			},
@@ -1576,7 +1576,7 @@ var Specifications = []Specification{
 				Description: "Nil slice has no effect",
 				Expectation: func(t *testing.T) {
 					var aa []interface{}
-					generic.Reverse(&aa)
+					oldgeneric.Reverse(&aa)
 					assert.Nil(t, aa)
 				},
 			},
@@ -1588,7 +1588,7 @@ var Specifications = []Specification{
 			Description: "Skips the first n elements",
 			Expectation: func(t *testing.T) {
 				aa := []interface{}{1, 2, 3, 4}
-				generic.Skip(&aa, 2)
+				oldgeneric.Skip(&aa, 2)
 				bb := []interface{}{3, 4}
 				assertSlicesEqual(t, aa, bb)
 			},
@@ -1597,7 +1597,7 @@ var Specifications = []Specification{
 			Description: "Empties the list if n >= len(aa)",
 			Expectation: func(t *testing.T) {
 				aa := []interface{}{1, 2, 3, 4}
-				generic.Skip(&aa, 4)
+				oldgeneric.Skip(&aa, 4)
 				bb := []interface{}{}
 				assertSlicesEqual(t, aa, bb)
 			},
@@ -1607,7 +1607,7 @@ var Specifications = []Specification{
 				Description: "Empty list does nothing",
 				Expectation: func(t *testing.T) {
 					aa := []interface{}{}
-					generic.Skip(&aa, 4)
+					oldgeneric.Skip(&aa, 4)
 					bb := []interface{}{}
 					assertSlicesEqual(t, aa, bb)
 				},
@@ -1616,7 +1616,7 @@ var Specifications = []Specification{
 				Description: "Nil list does nothing",
 				Expectation: func(t *testing.T) {
 					var aa []interface{}
-					generic.Skip(&aa, 4)
+					oldgeneric.Skip(&aa, 4)
 					assert.Nil(t, aa)
 				},
 			},
@@ -1626,7 +1626,7 @@ var Specifications = []Specification{
 					nn := []int64{-1, 0}
 					for _, n := range nn {
 						aa := []interface{}{}
-						generic.Skip(&aa, n)
+						oldgeneric.Skip(&aa, n)
 						bb := []interface{}{}
 						assertSlicesEqual(t, aa, bb)
 					}
@@ -1643,7 +1643,7 @@ var Specifications = []Specification{
 				test := func(a interface{}) bool {
 					return a.(int) < 3
 				}
-				generic.SkipWhile(&aa, test)
+				oldgeneric.SkipWhile(&aa, test)
 				bb := []interface{}{3, 4}
 				assertSlicesEqual(t, aa, bb)
 			},
@@ -1655,7 +1655,7 @@ var Specifications = []Specification{
 				test := func(a interface{}) bool {
 					return a.(int) > 10
 				}
-				generic.SkipWhile(&aa, test)
+				oldgeneric.SkipWhile(&aa, test)
 				bb := []interface{}{1, 2, 3, 4}
 				assertSlicesEqual(t, aa, bb)
 			},
@@ -1670,7 +1670,7 @@ var Specifications = []Specification{
 				less := func(a, b interface{}) bool {
 					return a.(int) < b.(int)
 				}
-				generic.Sort(&aa, less)
+				oldgeneric.Sort(&aa, less)
 				bb := []interface{}{2, 3, 4, 5, 6}
 				assertSlicesEqual(t, aa, bb)
 			},
@@ -1691,10 +1691,10 @@ var Specifications = []Specification{
 				test := func(a interface{}) bool {
 					return a.(int) == 7
 				}
-				bb := generic.SplitAfter(aa, test)
-				cc := generic.SliceType{
-					generic.SliceType{6, 7},
-					generic.SliceType{8, 9},
+				bb := oldgeneric.SplitAfter(aa, test)
+				cc := oldgeneric.SliceType{
+					oldgeneric.SliceType{6, 7},
+					oldgeneric.SliceType{8, 9},
 				}
 				assertSlicesEqual(t, bb, cc)
 			},
@@ -1706,10 +1706,10 @@ var Specifications = []Specification{
 				test := func(a interface{}) bool {
 					return a.(int) == 10
 				}
-				bb := generic.SplitAfter(aa, test)
-				cc := generic.SliceType{
-					generic.SliceType{6, 7, 8, 9},
-					generic.SliceType{},
+				bb := oldgeneric.SplitAfter(aa, test)
+				cc := oldgeneric.SliceType{
+					oldgeneric.SliceType{6, 7, 8, 9},
+					oldgeneric.SliceType{},
 				}
 				assertSlicesEqual(t, bb, cc)
 			},
@@ -1721,10 +1721,10 @@ var Specifications = []Specification{
 			Description: "The slice is split as expected",
 			Expectation: func(t *testing.T) {
 				aa := []interface{}{6, 7, 8, 9}
-				bb := generic.SplitAt(aa, 2)
-				cc := generic.SliceType{
-					generic.SliceType{6, 7},
-					generic.SliceType{8, 9},
+				bb := oldgeneric.SplitAt(aa, 2)
+				cc := oldgeneric.SliceType{
+					oldgeneric.SliceType{6, 7},
+					oldgeneric.SliceType{8, 9},
 				}
 				assertSlicesEqual(t, bb, cc)
 			},
@@ -1733,10 +1733,10 @@ var Specifications = []Specification{
 			Description: "If the slice is empty, two empty slices are returned",
 			Expectation: func(t *testing.T) {
 				aa := []interface{}{}
-				bb := generic.SplitAt(aa, 2)
-				cc := generic.SliceType{
-					generic.SliceType{},
-					generic.SliceType{},
+				bb := oldgeneric.SplitAt(aa, 2)
+				cc := oldgeneric.SliceType{
+					oldgeneric.SliceType{},
+					oldgeneric.SliceType{},
 				}
 				assertSlicesEqual(t, bb, cc)
 			},
@@ -1745,11 +1745,11 @@ var Specifications = []Specification{
 			Behavior{
 				Description: "If the slice is nil, two empty slices are returned",
 				Expectation: func(t *testing.T) {
-					var aa generic.SliceType
-					bb := generic.SplitAt(aa, 2)
-					cc := generic.SliceType{
-						generic.SliceType{},
-						generic.SliceType{},
+					var aa oldgeneric.SliceType
+					bb := oldgeneric.SplitAt(aa, 2)
+					cc := oldgeneric.SliceType{
+						oldgeneric.SliceType{},
+						oldgeneric.SliceType{},
 					}
 					assertSlicesEqual(t, bb, cc)
 				},
@@ -1758,10 +1758,10 @@ var Specifications = []Specification{
 				Description: "If i < 0, the full slice will be placed in SliceType[1]",
 				Expectation: func(t *testing.T) {
 					aa := []interface{}{6, 7, 8, 9}
-					bb := generic.SplitAt(aa, -1)
-					cc := generic.SliceType{
-						generic.SliceType{},
-						generic.SliceType{6, 7, 8, 9},
+					bb := oldgeneric.SplitAt(aa, -1)
+					cc := oldgeneric.SliceType{
+						oldgeneric.SliceType{},
+						oldgeneric.SliceType{6, 7, 8, 9},
 					}
 					assertSlicesEqual(t, bb, cc)
 				},
@@ -1770,10 +1770,10 @@ var Specifications = []Specification{
 				Description: "If i >= len(aa), the full slice will be placed in SliceType[0]",
 				Expectation: func(t *testing.T) {
 					aa := []interface{}{6, 7, 8, 9}
-					bb := generic.SplitAt(aa, 4)
-					cc := generic.SliceType{
-						generic.SliceType{6, 7, 8, 9},
-						generic.SliceType{},
+					bb := oldgeneric.SplitAt(aa, 4)
+					cc := oldgeneric.SliceType{
+						oldgeneric.SliceType{6, 7, 8, 9},
+						oldgeneric.SliceType{},
 					}
 					assertSlicesEqual(t, bb, cc)
 				},
@@ -1789,10 +1789,10 @@ var Specifications = []Specification{
 				test := func(a interface{}) bool {
 					return a.(int) == 8
 				}
-				bb := generic.SplitBefore(aa, test)
-				cc := generic.SliceType{
-					generic.SliceType{6, 7},
-					generic.SliceType{8, 9},
+				bb := oldgeneric.SplitBefore(aa, test)
+				cc := oldgeneric.SliceType{
+					oldgeneric.SliceType{6, 7},
+					oldgeneric.SliceType{8, 9},
 				}
 				assertSlicesEqual(t, bb, cc)
 			},
@@ -1804,10 +1804,10 @@ var Specifications = []Specification{
 				test := func(a interface{}) bool {
 					return a.(int) == 10
 				}
-				bb := generic.SplitBefore(aa, test)
-				cc := generic.SliceType{
-					generic.SliceType{6, 7, 8, 9},
-					generic.SliceType{},
+				bb := oldgeneric.SplitBefore(aa, test)
+				cc := oldgeneric.SliceType{
+					oldgeneric.SliceType{6, 7, 8, 9},
+					oldgeneric.SliceType{},
 				}
 				assertSlicesEqual(t, bb, cc)
 			},
@@ -1819,7 +1819,7 @@ var Specifications = []Specification{
 			Description: "Returns string representation of slice.",
 			Expectation: func(t *testing.T) {
 				aa := []interface{}{1, 2, 3}
-				s := generic.String(aa)
+				s := oldgeneric.String(aa)
 				assert.Equal(t, "[1,2,3]", s)
 			},
 		},
@@ -1836,7 +1836,7 @@ var Specifications = []Specification{
 			Description: "Swaps the specified indices.",
 			Expectation: func(t *testing.T) {
 				aa := []interface{}{1, 2, 3, 4, 5}
-				generic.SwapIndex(aa, 2, 4)
+				oldgeneric.SwapIndex(aa, 2, 4)
 				bb := []interface{}{1, 2, 5, 4, 3}
 				assertSlicesEqual(t, aa, bb)
 			},
@@ -1856,7 +1856,7 @@ var Specifications = []Specification{
 				}
 				for _, ii := range indices {
 					aa := []interface{}{1, 2, 3, 4, 5}
-					generic.SwapIndex(aa, ii[0], ii[1])
+					oldgeneric.SwapIndex(aa, ii[0], ii[1])
 					bb := []interface{}{1, 2, 3, 4, 5}
 					assertSlicesEqual(t, aa, bb)
 				}
@@ -1869,7 +1869,7 @@ var Specifications = []Specification{
 			Description: "Removes the head from the slice.",
 			Expectation: func(t *testing.T) {
 				aa := []interface{}{1, 2, 3}
-				generic.Tail(&aa)
+				oldgeneric.Tail(&aa)
 				bb := []interface{}{2, 3}
 				assertSlicesEqual(t, aa, bb)
 			},
@@ -1887,7 +1887,7 @@ var Specifications = []Specification{
 			Description: "Normally retains first n elements",
 			Expectation: func(t *testing.T) {
 				aa := []interface{}{1, 2, 3, 4}
-				generic.Take(&aa, 2)
+				oldgeneric.Take(&aa, 2)
 				bb := []interface{}{1, 2}
 				assertSlicesEqual(t, aa, bb)
 			},
@@ -1896,7 +1896,7 @@ var Specifications = []Specification{
 			Description: "If slice is empty, Take does nothing",
 			Expectation: func(t *testing.T) {
 				aa := []interface{}{}
-				generic.Take(&aa, 2)
+				oldgeneric.Take(&aa, 2)
 				bb := []interface{}{}
 				assertSlicesEqual(t, aa, bb)
 			},
@@ -1906,7 +1906,7 @@ var Specifications = []Specification{
 				Description: "If slice is nil, Take does nothing",
 				Expectation: func(t *testing.T) {
 					var aa []interface{}
-					generic.Take(&aa, 2)
+					oldgeneric.Take(&aa, 2)
 					assert.Nil(t, aa)
 				},
 			},
@@ -1921,7 +1921,7 @@ var Specifications = []Specification{
 				test := func(a interface{}) bool {
 					return a.(int) < 3
 				}
-				generic.TakeWhile(&aa, test)
+				oldgeneric.TakeWhile(&aa, test)
 				bb := []interface{}{1, 2}
 				assertSlicesEqual(t, aa, bb)
 			},
@@ -1940,7 +1940,7 @@ var Specifications = []Specification{
 			Expectation: func(t *testing.T) {
 				aa := []interface{}{1, 2, 3}
 				bb := []interface{}{4, 5, 6}
-				generic.Union(&aa, bb)
+				oldgeneric.Union(&aa, bb)
 				cc := []interface{}{1, 2, 3, 4, 5, 6}
 				assertSlicesEqual(t, aa, cc)
 
@@ -1959,10 +1959,10 @@ var Specifications = []Specification{
 			Description: "Normally unzips.",
 			Expectation: func(t *testing.T) {
 				aa := []interface{}{1, 2, 3, 4, 5}
-				bb := generic.Unzip(aa)
-				cc := generic.SliceType{
-					generic.SliceType{1, 3, 5},
-					generic.SliceType{2, 4},
+				bb := oldgeneric.Unzip(aa)
+				cc := oldgeneric.SliceType{
+					oldgeneric.SliceType{1, 3, 5},
+					oldgeneric.SliceType{2, 4},
 				}
 				assertSlicesEqual(t, bb, cc)
 			},
@@ -1987,7 +1987,7 @@ var Specifications = []Specification{
 					return sum / float64(len(aa))
 				}
 				aa := []interface{}{1.0, 2.0, 3.0, 4.0, 5.0}
-				bb := generic.WindowCentered(aa, 4, windowFn)
+				bb := oldgeneric.WindowCentered(aa, 4, windowFn)
 				cc := []interface{}{1.5, 2.0, 2.5, 3.5, 4.0}
 				assertSlicesEqual(t, bb, cc)
 			},
@@ -2003,7 +2003,7 @@ var Specifications = []Specification{
 					return result
 				}
 				aa := []interface{}{"1", "2", "3"}
-				bb := generic.WindowCentered(aa, 3, windowFn)
+				bb := oldgeneric.WindowCentered(aa, 3, windowFn)
 				cc := []interface{}{"12", "123", "23"}
 				assertSlicesEqual(t, bb, cc)
 			},
@@ -2020,7 +2020,7 @@ var Specifications = []Specification{
 						return result
 					}
 					aa := []interface{}{"1", "2", "3", "4", "5"}
-					bb := generic.WindowCentered(aa, 4, windowFn)
+					bb := oldgeneric.WindowCentered(aa, 4, windowFn)
 					cc := []interface{}{"12", "123", "1234", "2345", "345"}
 					assertSlicesEqual(t, bb, cc)
 				},
@@ -2040,7 +2040,7 @@ var Specifications = []Specification{
 					return sum / float64(len(aa))
 				}
 				aa := []interface{}{1.0, 2.0, 3.0, 4.0, 5.0}
-				bb := generic.WindowLeft(aa, 4, windowFn)
+				bb := oldgeneric.WindowLeft(aa, 4, windowFn)
 				cc := []interface{}{2.5, 3.5, 4.0, 4.5, 5.0}
 				assertSlicesEqual(t, bb, cc)
 			},
@@ -2056,7 +2056,7 @@ var Specifications = []Specification{
 					return result
 				}
 				aa := []interface{}{"1", "2", "3"}
-				bb := generic.WindowLeft(aa, 2, windowFn)
+				bb := oldgeneric.WindowLeft(aa, 2, windowFn)
 				cc := []interface{}{"12", "23", "3"}
 				assertSlicesEqual(t, bb, cc)
 			},
@@ -2075,7 +2075,7 @@ var Specifications = []Specification{
 					return sum / float64(len(aa))
 				}
 				aa := []interface{}{1.0, 2.0, 3.0, 4.0, 5.0}
-				bb := generic.WindowRight(aa, 4, windowFn)
+				bb := oldgeneric.WindowRight(aa, 4, windowFn)
 				cc := []interface{}{1.0, 1.5, 2.0, 2.5, 3.5}
 				assertSlicesEqual(t, bb, cc)
 			},
@@ -2091,7 +2091,7 @@ var Specifications = []Specification{
 					return result
 				}
 				aa := []interface{}{"1", "2", "3"}
-				bb := generic.WindowRight(aa, 2, windowFn)
+				bb := oldgeneric.WindowRight(aa, 2, windowFn)
 				cc := []interface{}{"1", "12", "23"}
 				assertSlicesEqual(t, bb, cc)
 			},
@@ -2103,9 +2103,9 @@ var Specifications = []Specification{
 			Description: "Interleaves aa and bb",
 			Expectation: func(t *testing.T) {
 				type testCase struct {
-					aa generic.SliceType
-					bb generic.SliceType
-					dd generic.SliceType
+					aa oldgeneric.SliceType
+					bb oldgeneric.SliceType
+					dd oldgeneric.SliceType
 				}
 
 				testCases := []testCase{
@@ -2142,7 +2142,7 @@ var Specifications = []Specification{
 				}
 
 				for _, tc := range testCases {
-					cc := generic.Zip(tc.aa, tc.bb)
+					cc := oldgeneric.Zip(tc.aa, tc.bb)
 					assertSlicesEqual(t, cc, tc.dd)
 				}
 			},
@@ -2157,6 +2157,8 @@ var Specifications = []Specification{
 }
 
 func TestTransforms(t *testing.T) {
+	t.Parallel()
+
 	for _, specification := range Specifications {
 		t.Run(specification.FunctionName+"StandardPath", specification.StandardPath.Expectation)
 		t.Run(specification.FunctionName+"AlternativePath", specification.AlternativePath.Expectation)

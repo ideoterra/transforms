@@ -1,10 +1,10 @@
-package generic_test
+package oldgeneric_test
 
 import (
 	"fmt"
 	"strings"
 
-	"github.com/ideoterra/transforms/pkg/slices/internal/generic"
+	"github.com/ideoterra/transforms/pkg/slices/internal/oldgeneric"
 )
 
 func Example_mapReduce() {
@@ -12,16 +12,16 @@ func Example_mapReduce() {
 
 	words := []interface{}{}
 	for _, word := range strings.Split(sentance, " ") {
-		generic.Append(&words, word)
+		oldgeneric.Append(&words, word)
 	}
 
 	wordLength := func(word interface{}) interface{} {
 		return len(word.(string))
 	}
 
-	wordLengths := generic.Map(words, wordLength)
+	wordLengths := oldgeneric.Map(words, wordLength)
 
-	totalLength := generic.Reduce(wordLengths, func(a, acc interface{}) interface{} {
+	totalLength := oldgeneric.Reduce(wordLengths, func(a, acc interface{}) interface{} {
 		return a.(int) + acc.(int)
 	})
 
