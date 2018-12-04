@@ -1,4 +1,4 @@
-// Package generic contains transform functions for SliceTypes.
+// Package slices contains transform functions for SliceTypes.
 //
 // Function Naming Conventions:
 // Often the same conceptual function can be implemented in more than one way.
@@ -94,4 +94,4 @@
 // in a slice. As such, the set-type operations provided in this package are
 // allowed to be tollerant to duplicates. These differences are noted in the
 // description for each method, as warranted.package generic
-package generic
+package slices

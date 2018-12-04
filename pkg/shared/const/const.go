@@ -1,4 +1,4 @@
-package shared
+package const
 
 // Continue instructs iterators about whether or not to keep iterating.
 type Continue bool
@@ -10,3 +10,4 @@ const (
 	// ContinueNo signals to an iterator that it should stop iterating.
 	ContinueNo Continue = false
 )
+
