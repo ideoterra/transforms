@@ -1,3 +1,4 @@
 #!/bin/bash
 
-genny -in=gen.go -out=../../xint32/api.go -pkg="xint32" gen "AA=[]int32 A=int32 BB=[]string B=string"
+genny -in=all.go -out=../../xint32/all.go -pkg="xint32"  gen "TA=int32 TB=string"
+genny -in=map.go -out=../../xint32/map.go -pkg="xint32"  gen "TA=int32 TB=string"
