@@ -4,8 +4,8 @@
 
 package xstring
 
-// MapString contains methods for applying Map tranforms to various types.
+// MapString contains methods for applying Map tranforms between Strings and other types.
 type MapString struct{}
 
-// Map contains map functions.
+// Map provides access to MapString methods.
 var Map MapString
