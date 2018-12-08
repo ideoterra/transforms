@@ -4,9 +4,209 @@
 
 package xcomplex64
 
+import "math/big"
+
+// ToBool maps a []Complex64 to a []Bool.
+func (MapComplex64) ToBool(aa []complex64, mapFn func(complex64) bool) []bool {
+	bb := []bool{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToRune maps a []Complex64 to a []Rune.
+func (MapComplex64) ToRune(aa []complex64, mapFn func(complex64) rune) []rune {
+	bb := []rune{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToByte maps a []Complex64 to a []Byte.
+func (MapComplex64) ToByte(aa []complex64, mapFn func(complex64) byte) []byte {
+	bb := []byte{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToString maps a []Complex64 to a []String.
+func (MapComplex64) ToString(aa []complex64, mapFn func(complex64) string) []string {
+	bb := []string{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToInt maps a []Complex64 to a []Int.
+func (MapComplex64) ToInt(aa []complex64, mapFn func(complex64) int) []int {
+	bb := []int{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToInt8 maps a []Complex64 to a []Int8.
+func (MapComplex64) ToInt8(aa []complex64, mapFn func(complex64) int8) []int8 {
+	bb := []int8{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToInt16 maps a []Complex64 to a []Int16.
+func (MapComplex64) ToInt16(aa []complex64, mapFn func(complex64) int16) []int16 {
+	bb := []int16{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToInt32 maps a []Complex64 to a []Int32.
+func (MapComplex64) ToInt32(aa []complex64, mapFn func(complex64) int32) []int32 {
+	bb := []int32{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToInt64 maps a []Complex64 to a []Int64.
+func (MapComplex64) ToInt64(aa []complex64, mapFn func(complex64) int64) []int64 {
+	bb := []int64{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToFloat32 maps a []Complex64 to a []Float32.
+func (MapComplex64) ToFloat32(aa []complex64, mapFn func(complex64) float32) []float32 {
+	bb := []float32{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToFloat64 maps a []Complex64 to a []Float64.
+func (MapComplex64) ToFloat64(aa []complex64, mapFn func(complex64) float64) []float64 {
+	bb := []float64{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToUint maps a []Complex64 to a []Uint.
+func (MapComplex64) ToUint(aa []complex64, mapFn func(complex64) uint) []uint {
+	bb := []uint{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToUint8 maps a []Complex64 to a []Uint8.
+func (MapComplex64) ToUint8(aa []complex64, mapFn func(complex64) uint8) []uint8 {
+	bb := []uint8{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToUint16 maps a []Complex64 to a []Uint16.
+func (MapComplex64) ToUint16(aa []complex64, mapFn func(complex64) uint16) []uint16 {
+	bb := []uint16{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToUint32 maps a []Complex64 to a []Uint32.
+func (MapComplex64) ToUint32(aa []complex64, mapFn func(complex64) uint32) []uint32 {
+	bb := []uint32{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToUint64 maps a []Complex64 to a []Uint64.
+func (MapComplex64) ToUint64(aa []complex64, mapFn func(complex64) uint64) []uint64 {
+	bb := []uint64{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToComplex64 maps a []Complex64 to a []Complex64.
+func (MapComplex64) ToComplex64(aa []complex64, mapFn func(complex64) complex64) []complex64 {
+	bb := []complex64{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToComplex128 maps a []Complex64 to a []Complex128.
+func (MapComplex64) ToComplex128(aa []complex64, mapFn func(complex64) complex128) []complex128 {
+	bb := []complex128{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToUintptr maps a []Complex64 to a []Uintptr.
+func (MapComplex64) ToUintptr(aa []complex64, mapFn func(complex64) uintptr) []uintptr {
+	bb := []uintptr{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
 // ToError maps a []Complex64 to a []Error.
 func (MapComplex64) ToError(aa []complex64, mapFn func(complex64) error) []error {
 	bb := []error{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToBig_Int maps a []Complex64 to a []Big_Int.
+func (MapComplex64) ToBig_Int(aa []complex64, mapFn func(complex64) big.Int) []big.Int {
+	bb := []big.Int{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToBig_Float maps a []Complex64 to a []Big_Float.
+func (MapComplex64) ToBig_Float(aa []complex64, mapFn func(complex64) big.Float) []big.Float {
+	bb := []big.Float{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToBig_Rat maps a []Complex64 to a []Big_Rat.
+func (MapComplex64) ToBig_Rat(aa []complex64, mapFn func(complex64) big.Rat) []big.Rat {
+	bb := []big.Rat{}
 	for _, a := range aa {
 		bb = append(bb, mapFn(a))
 	}

@@ -4,9 +4,209 @@
 
 package xint32
 
+import "math/big"
+
+// ToBool maps a []Int32 to a []Bool.
+func (MapInt32) ToBool(aa []int32, mapFn func(int32) bool) []bool {
+	bb := []bool{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToRune maps a []Int32 to a []Rune.
+func (MapInt32) ToRune(aa []int32, mapFn func(int32) rune) []rune {
+	bb := []rune{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToByte maps a []Int32 to a []Byte.
+func (MapInt32) ToByte(aa []int32, mapFn func(int32) byte) []byte {
+	bb := []byte{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToString maps a []Int32 to a []String.
+func (MapInt32) ToString(aa []int32, mapFn func(int32) string) []string {
+	bb := []string{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToInt maps a []Int32 to a []Int.
+func (MapInt32) ToInt(aa []int32, mapFn func(int32) int) []int {
+	bb := []int{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToInt8 maps a []Int32 to a []Int8.
+func (MapInt32) ToInt8(aa []int32, mapFn func(int32) int8) []int8 {
+	bb := []int8{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToInt16 maps a []Int32 to a []Int16.
+func (MapInt32) ToInt16(aa []int32, mapFn func(int32) int16) []int16 {
+	bb := []int16{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToInt32 maps a []Int32 to a []Int32.
+func (MapInt32) ToInt32(aa []int32, mapFn func(int32) int32) []int32 {
+	bb := []int32{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToInt64 maps a []Int32 to a []Int64.
+func (MapInt32) ToInt64(aa []int32, mapFn func(int32) int64) []int64 {
+	bb := []int64{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToFloat32 maps a []Int32 to a []Float32.
+func (MapInt32) ToFloat32(aa []int32, mapFn func(int32) float32) []float32 {
+	bb := []float32{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToFloat64 maps a []Int32 to a []Float64.
+func (MapInt32) ToFloat64(aa []int32, mapFn func(int32) float64) []float64 {
+	bb := []float64{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToUint maps a []Int32 to a []Uint.
+func (MapInt32) ToUint(aa []int32, mapFn func(int32) uint) []uint {
+	bb := []uint{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToUint8 maps a []Int32 to a []Uint8.
+func (MapInt32) ToUint8(aa []int32, mapFn func(int32) uint8) []uint8 {
+	bb := []uint8{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToUint16 maps a []Int32 to a []Uint16.
+func (MapInt32) ToUint16(aa []int32, mapFn func(int32) uint16) []uint16 {
+	bb := []uint16{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToUint32 maps a []Int32 to a []Uint32.
+func (MapInt32) ToUint32(aa []int32, mapFn func(int32) uint32) []uint32 {
+	bb := []uint32{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToUint64 maps a []Int32 to a []Uint64.
+func (MapInt32) ToUint64(aa []int32, mapFn func(int32) uint64) []uint64 {
+	bb := []uint64{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToComplex64 maps a []Int32 to a []Complex64.
+func (MapInt32) ToComplex64(aa []int32, mapFn func(int32) complex64) []complex64 {
+	bb := []complex64{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToComplex128 maps a []Int32 to a []Complex128.
+func (MapInt32) ToComplex128(aa []int32, mapFn func(int32) complex128) []complex128 {
+	bb := []complex128{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToUintptr maps a []Int32 to a []Uintptr.
+func (MapInt32) ToUintptr(aa []int32, mapFn func(int32) uintptr) []uintptr {
+	bb := []uintptr{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
 // ToError maps a []Int32 to a []Error.
 func (MapInt32) ToError(aa []int32, mapFn func(int32) error) []error {
 	bb := []error{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToBig_Int maps a []Int32 to a []Big_Int.
+func (MapInt32) ToBig_Int(aa []int32, mapFn func(int32) big.Int) []big.Int {
+	bb := []big.Int{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToBig_Float maps a []Int32 to a []Big_Float.
+func (MapInt32) ToBig_Float(aa []int32, mapFn func(int32) big.Float) []big.Float {
+	bb := []big.Float{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToBig_Rat maps a []Int32 to a []Big_Rat.
+func (MapInt32) ToBig_Rat(aa []int32, mapFn func(int32) big.Rat) []big.Rat {
+	bb := []big.Rat{}
 	for _, a := range aa {
 		bb = append(bb, mapFn(a))
 	}

@@ -4,9 +4,209 @@
 
 package xerror
 
+import "math/big"
+
+// ToBool maps a []Error to a []Bool.
+func (MapError) ToBool(aa []error, mapFn func(error) bool) []bool {
+	bb := []bool{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToRune maps a []Error to a []Rune.
+func (MapError) ToRune(aa []error, mapFn func(error) rune) []rune {
+	bb := []rune{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToByte maps a []Error to a []Byte.
+func (MapError) ToByte(aa []error, mapFn func(error) byte) []byte {
+	bb := []byte{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToString maps a []Error to a []String.
+func (MapError) ToString(aa []error, mapFn func(error) string) []string {
+	bb := []string{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToInt maps a []Error to a []Int.
+func (MapError) ToInt(aa []error, mapFn func(error) int) []int {
+	bb := []int{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToInt8 maps a []Error to a []Int8.
+func (MapError) ToInt8(aa []error, mapFn func(error) int8) []int8 {
+	bb := []int8{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToInt16 maps a []Error to a []Int16.
+func (MapError) ToInt16(aa []error, mapFn func(error) int16) []int16 {
+	bb := []int16{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToInt32 maps a []Error to a []Int32.
+func (MapError) ToInt32(aa []error, mapFn func(error) int32) []int32 {
+	bb := []int32{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToInt64 maps a []Error to a []Int64.
+func (MapError) ToInt64(aa []error, mapFn func(error) int64) []int64 {
+	bb := []int64{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToFloat32 maps a []Error to a []Float32.
+func (MapError) ToFloat32(aa []error, mapFn func(error) float32) []float32 {
+	bb := []float32{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToFloat64 maps a []Error to a []Float64.
+func (MapError) ToFloat64(aa []error, mapFn func(error) float64) []float64 {
+	bb := []float64{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToUint maps a []Error to a []Uint.
+func (MapError) ToUint(aa []error, mapFn func(error) uint) []uint {
+	bb := []uint{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToUint8 maps a []Error to a []Uint8.
+func (MapError) ToUint8(aa []error, mapFn func(error) uint8) []uint8 {
+	bb := []uint8{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToUint16 maps a []Error to a []Uint16.
+func (MapError) ToUint16(aa []error, mapFn func(error) uint16) []uint16 {
+	bb := []uint16{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToUint32 maps a []Error to a []Uint32.
+func (MapError) ToUint32(aa []error, mapFn func(error) uint32) []uint32 {
+	bb := []uint32{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToUint64 maps a []Error to a []Uint64.
+func (MapError) ToUint64(aa []error, mapFn func(error) uint64) []uint64 {
+	bb := []uint64{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToComplex64 maps a []Error to a []Complex64.
+func (MapError) ToComplex64(aa []error, mapFn func(error) complex64) []complex64 {
+	bb := []complex64{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToComplex128 maps a []Error to a []Complex128.
+func (MapError) ToComplex128(aa []error, mapFn func(error) complex128) []complex128 {
+	bb := []complex128{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToUintptr maps a []Error to a []Uintptr.
+func (MapError) ToUintptr(aa []error, mapFn func(error) uintptr) []uintptr {
+	bb := []uintptr{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
 // ToError maps a []Error to a []Error.
 func (MapError) ToError(aa []error, mapFn func(error) error) []error {
 	bb := []error{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToBig_Int maps a []Error to a []Big_Int.
+func (MapError) ToBig_Int(aa []error, mapFn func(error) big.Int) []big.Int {
+	bb := []big.Int{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToBig_Float maps a []Error to a []Big_Float.
+func (MapError) ToBig_Float(aa []error, mapFn func(error) big.Float) []big.Float {
+	bb := []big.Float{}
+	for _, a := range aa {
+		bb = append(bb, mapFn(a))
+	}
+	return bb
+}
+
+// ToBig_Rat maps a []Error to a []Big_Rat.
+func (MapError) ToBig_Rat(aa []error, mapFn func(error) big.Rat) []big.Rat {
+	bb := []big.Rat{}
 	for _, a := range aa {
 		bb = append(bb, mapFn(a))
 	}
