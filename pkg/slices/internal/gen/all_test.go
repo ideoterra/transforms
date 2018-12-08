@@ -18,7 +18,7 @@ func init() {
 					test := func(p gen.TA) bool {
 						return p.(int) < 5
 					}
-					assert.True(t, gen.All{}.Do(s, test))
+					assert.True(t, gen.All.Do(s, test))
 				},
 			},
 			AlternativePath: Behavior{
@@ -28,7 +28,7 @@ func init() {
 					test := func(p gen.TA) bool {
 						return p.(int) < 5
 					}
-					assert.False(t, gen.All{}.Do(s, test))
+					assert.False(t, gen.All.Do(s, test))
 				},
 			},
 		},

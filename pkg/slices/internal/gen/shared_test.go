@@ -35,7 +35,7 @@ func TestTransforms(t *testing.T) {
 	}
 }
 
-func assertSlicesEqual(t *testing.T, xx []gen.B, yy []gen.B) bool {
+func assertSlicesEqual(t *testing.T, xx []gen.TB, yy []gen.TB) bool {
 	// often dealing with using []interface{} as the key (hash) value in a map
 	// which go doesn't like because []interface{} types are unhashable.
 	// We convert the values to a string to get around this limitation.

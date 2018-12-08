@@ -1,6 +1,8 @@
 package gen
 
-import "github.com/cheekybits/genny/generic"
+import (
+	"github.com/cheekybits/genny/generic"
+)
 
 // TA is a primitive type.
 type TA generic.Type

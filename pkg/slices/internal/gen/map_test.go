@@ -17,7 +17,7 @@ func init() {
 					mapFn := func(a gen.TA) gen.TB {
 						return a.(int) * 2
 					}
-					bb := gen.Map{}.ToB(aa, mapFn)
+					bb := gen.Map.ToTB(aa, mapFn)
 					cc := []gen.TB{2, 4, 6}
 					assertSlicesEqual(t, bb, cc)
 				},
