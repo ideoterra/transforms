@@ -2,18 +2,11 @@
 // Any changes will be lost if this file is regenerated.
 // see https://github.com/cheekybits/genny
 
-package xint32
+package xstring
+
+// AllString contains methods for applying an All trasnform to various types.
+type AllString struct{}
 
 // All applies a test function to each element in the slice, and returns true if
 // the test function returns true for all items in the slice.
-type All struct{}
-
-// Do executes the test against a []Int32.
-func (All) Do(aa []int32, test func(int32) bool) bool {
-	for _, a := range aa {
-		if !test(a) {
-			return false
-		}
-	}
-	return true
-}
+var All AllString
