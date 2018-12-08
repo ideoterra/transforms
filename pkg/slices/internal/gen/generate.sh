@@ -9,31 +9,37 @@ for x in ../../x*/; do
 done
 
 echo "Generating new transforms..."
-types=(
+base_types=(
 	bool
-	rune
-	byte
-	string
-	int
-	int8
-	int16
-	int32
-	int64
-	float32
-	float64
-	uint
-	uint8
-	uint16
-	uint32
-	uint64
-	complex64
-	complex128
-	uintptr
-	error
-	big_Int
-	big_Float
+	# rune
+	# byte
+	# string
+	# int
+	# int8
+	# int16
+	# int32
+	# int64
+	# float32
+	# float64
+	# uint
+	# uint8
+	# uint16
+	# uint32
+	# uint64
+	# complex64
+	# complex128
+	# uintptr
+	# error
+	# big_Int
+	# big_Float
 	big_Rat
 )
+
+types=()
+for type in ${base_types[@]}; do
+  types+=("$type")
+  types+=("*$type")
+done
 
 for type_b in ${types[@]}; do 
   type_b_list="$type_b_list,$type_b"
@@ -42,6 +48,11 @@ type_b_list=${type_b_list#,}
 
 for type_a in ${types[@]}; do
 	package=x${type_a/_/}
+  if [[ $package == *"*"* ]]; then 
+    package=$(echo $package | sed 's/\*//')ptr
+  fi
+  package=$(echo "$package" | tr '[:upper:]' '[:lower:]')
+
 	echo "  generating transforms for package $package..."
 
 	# Generate code for single-type_a functions.
